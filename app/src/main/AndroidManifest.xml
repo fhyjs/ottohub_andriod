@@ -18,13 +18,20 @@
         android:theme="@style/Theme.Ottohub_andriod"
         tools:targetApi="35">
         <activity
-            android:name=".activity.BlogActivity"
-            android:hardwareAccelerated="true"
+            android:name=".activity.ProfileActivity"
             android:exported="false" />
         <activity
+            android:name=".activity.LoginActivity"
+            android:exported="false"
+            android:label="@string/title_activity_login" />
+        <activity
+            android:name=".activity.BlogActivity"
+            android:exported="false"
+            android:hardwareAccelerated="true" />
+        <activity
             android:name=".activity.VideoPlayerActivity"
-            android:hardwareAccelerated="true"
-            android:exported="false" />
+            android:exported="false"
+            android:hardwareAccelerated="true" />
 
         <uses-library
             android:name="org.apache.http.legacy"
@@ -32,8 +39,8 @@
 
         <activity
             android:name=".MainActivity"
-            android:hardwareAccelerated="true"
-            android:exported="true">
+            android:exported="true"
+            android:hardwareAccelerated="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

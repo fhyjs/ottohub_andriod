@@ -4,7 +4,7 @@
     <string name="blogs">Blogs</string>
     <string name="user">User</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
     <string name="recommend">recommend</string>
     <string name="latest">latest</string>
     <string name="week_hot">weekly hot</string>
@@ -25,5 +25,19 @@
     <string name="like">Like</string>
     <string name="favourite">favourite</string>
     <string name="report">report</string>
+    <string name="title_activity_login">Login</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="no">no</string>
+    <string name="not_login">Loged out</string>
+    <string name="login_in_now">Do you want to login now?</string>
+    <string name="tip">TIP</string>
+    <string name="error_password">username or passwd is wrong</string>
 
 </resources>

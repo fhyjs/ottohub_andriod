@@ -1,5 +1,9 @@
 package org.eu.hanana.reimu.ottohub_andriod;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -12,8 +16,12 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
+import org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity;
+import org.eu.hanana.reimu.ottohub_andriod.activity.LoginActivity;
 import org.eu.hanana.reimu.ottohub_andriod.ui.blog.BlogListFragment;
+import org.eu.hanana.reimu.ottohub_andriod.ui.user.ProfileFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment;
+import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 
 public class MainActivity extends AppCompatActivity {
     private BottomNavigationView bottomNavigationView;
@@ -46,7 +54,23 @@ public class MainActivity extends AppCompatActivity {
                 } else if (itemId == R.id.nav_blog) {
                     selectedFragment = BlogListFragment.newInstance();
                 } else if (itemId == R.id.nav_user) {
-                    selectedFragment = null;
+                    if (MyApp.getInstance().getOttohubApi().getLoginToken()==null){
+                        AlertUtil.showYesNo(this, getString(R.string.not_login), getString(R.string.login_in_now), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                                startActivity(intent);
+                            }
+                        }, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }).show();
+                        return false;
+                    }else {
+                        selectedFragment = ProfileFragment.newInstance();
+                    }
                 }
 
                 if (selectedFragment != null) {

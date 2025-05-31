@@ -37,6 +37,9 @@ android {
         exclude 'META-INF/LICENSE-W3C-TEST'
         exclude 'META-INF/DEPENDENCIES'
     }
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 dependencies {
@@ -45,6 +48,9 @@ dependencies {
     implementation libs.akdanmaku
     implementation libs.gson // 最新版本
     implementation libs.glide
+    implementation libs.annotation
+    implementation libs.lifecycle.livedata.ktx
+    implementation libs.lifecycle.viewmodel.ktx
 
     annotationProcessor libs.compiler
     //implementation libs.volley

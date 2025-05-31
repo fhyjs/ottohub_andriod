@@ -2,6 +2,7 @@ package org.eu.hanana.reimu.ottohub_andriod.util;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
@@ -11,9 +12,26 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import org.eu.hanana.reimu.ottohub_andriod.R;
 
 public class AlertUtil {
+    public static androidx.appcompat.app.AlertDialog showYesNo(Context context, String title, String msg, DialogInterface.OnClickListener yes, DialogInterface.OnClickListener no) {
+        return new MaterialAlertDialogBuilder(context)
+                .setTitle(title)
+                .setMessage(msg)
+                .setPositiveButton(R.string.ok,yes)
+                .setNegativeButton(R.string.no,no)
+                .create();
+    }
+    public static androidx.appcompat.app.AlertDialog showMsg(Context context, String title, String msg) {
+        return new MaterialAlertDialogBuilder(context)
+                .setTitle(title)
+                .setMessage(msg)
+                .setPositiveButton(R.string.ok,null)
+                .create();
+    }
     public static AlertDialog showError(Context context, String message) {
 
         // 加载自定义布局
