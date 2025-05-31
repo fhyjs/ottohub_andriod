@@ -110,8 +110,11 @@ public class VideoPlayerActivity extends AppCompatActivity {
         mediaController = new MediaController(this);
         mediaController.setAnchorView(videoSurface); // 设置锚点视图
         videoSurface.setOnClickListener(v -> {
-            if()
-            mediaController.
+            if(mediaController.isShowing()){
+                mediaController.hide();
+            }else {
+                mediaController.show();
+            }
         });
         init();
     }
