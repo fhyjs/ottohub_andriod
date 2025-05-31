@@ -1,0 +1,33 @@
+pluginManagement {
+    repositories {
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+            }
+        }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        jcenter()
+        maven { url 'https://maven.aliyun.com/repository/public/' }
+        maven {
+            url 'https://maven.hanana2.link:2053/releases'
+        }
+        maven { url 'https://artifact.bytedance.com/repository/releases/' }
+        flatDir {
+            dirs 'libs'  // 指定本地仓库路径
+        }
+    }
+}
+
+rootProject.name = "ottohub_andriod"
+include ':app'
+include ':ijkplayerlib'

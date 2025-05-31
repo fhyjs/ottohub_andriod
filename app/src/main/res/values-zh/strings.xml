@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ottohub</string>
+    <string name="videos">视频</string>
+    <string name="blogs">动态</string>
+    <string name="user">吉吉国民</string>
+    <string name="recommend">推荐</string>
+    <string name="latest">最新</string>
+    <string name="week_hot">本周热门</string>
+    <string name="monthly_hot">本月热门</string>
+    <string name="sesson_hot">本季热门</string>
+    <string name="kichiku">鬼畜</string>
+    <string name="mad">音mad</string>
+    <string name="theater">剧场</string>
+    <string name="game">游戏</string>
+    <string name="nostalgia">怀旧</string>
+    <string name="music">音乐</string>
+    <string name="other">其他</string>
+    <string name="video_card_info_short">%d观看%d点赞%d收藏</string>
+    <string name="describe">简介</string>
+    <string name="comment">评论</string>
+</resources>

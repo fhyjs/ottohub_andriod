@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_video"
+        android:icon="@drawable/play_circle_24"
+        android:title="@string/videos" />
+    <item
+        android:id="@+id/nav_blog"
+        android:icon="@drawable/chat_24px"
+        android:title="@string/blogs" />
+    <item
+        android:id="@+id/nav_user"
+        android:icon="@drawable/account_circle_48px"
+        android:title="@string/user" />
+</menu>

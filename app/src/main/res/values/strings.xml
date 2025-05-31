@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">ottohub</string>
+    <string name="videos">Videos</string>
+    <string name="blogs">Blogs</string>
+    <string name="user">User</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="recommend">recommend</string>
+    <string name="latest">latest</string>
+    <string name="week_hot">weekly hot</string>
+    <string name="monthly_hot">monthly hot</string>
+    <string name="sesson_hot">sessonly hot</string>
+    <string name="kichiku">kichiku</string>
+    <string name="mad">mad</string>
+    <string name="vocaloid" translatable="false">VOCALOID</string>
+    <string name="theater">theater</string>
+    <string name="game">game</string>
+    <string name="nostalgia">nostalgia</string>
+    <string name="music">music</string>
+    <string name="other">other</string>
+    <string name="ok" translatable="false">ok</string>
+    <string name="video_card_info_short">%d Views %d Likes %d Favorit</string>
+    <string name="describe">Describe</string>
+    <string name="comment">Comment</string>
+
+</resources>
