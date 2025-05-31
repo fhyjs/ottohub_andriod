@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
-import org.eu.hanana.reimu.ottohub_andriod.ui.blog.BlogFragment;
+import org.eu.hanana.reimu.ottohub_andriod.ui.blog.BlogListFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
                 if (itemId == R.id.nav_video) {
                     selectedFragment = VideoListFragment.newInstance();
                 } else if (itemId == R.id.nav_blog) {
-                    selectedFragment = BlogFragment.newInstance();
+                    selectedFragment = BlogListFragment.newInstance();
                 } else if (itemId == R.id.nav_user) {
                     selectedFragment = null;
                 }

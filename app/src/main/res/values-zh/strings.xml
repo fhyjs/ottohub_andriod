@@ -19,4 +19,7 @@
     <string name="video_card_info_short">%d观看%d点赞%d收藏</string>
     <string name="describe">简介</string>
     <string name="comment">评论</string>
+    <string name="like">点赞</string>
+    <string name="favourite">收藏</string>
+    <string name="report">举报</string>
 </resources>

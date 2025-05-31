@@ -217,6 +217,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
         mediaPlayer.setEventListener(event -> {
             switch (event.type) {
                 case MediaPlayer.Event.Playing:
+                    if (isFinishing()) return;
                     danmakuPlayer.start(danmakuConfig);
                     danmakuPlayer.seekTo(event.getTimeChanged());
                     updateVideoScaling(videoSurface.getWidth(),videoSurface.getHeight());
@@ -274,7 +275,9 @@ public class VideoPlayerActivity extends AppCompatActivity {
                     Log.d(TAG, "loadData: danmaku data from storage");
                 }
                 if (!netData.isSuccess() || !danmakuData.isSuccess()) {
-                    AlertUtil.showError(videoSurface.getContext(), "ERROR" + netData.getMessage());
+                    runOnUiThread(()->{
+                        AlertUtil.showError(videoSurface.getContext(), "ERROR" + netData.getMessage());
+                    });
                     return;
                 }
                 loadDanmaku();
@@ -283,12 +286,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
                     loadData(true);
                 });
             });
-            thread.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-                @Override
-                public void uncaughtException(@NonNull Thread t, @NonNull Throwable e) {
-                    AlertUtil.showError(videoSurface.getContext(), "ERROR:"+ e);
-                }
-            });
+            thread.setUncaughtExceptionHandler((t, e) -> AlertUtil.showError(videoSurface.getContext(), "ERROR:"+ e));
             thread.start();
         }else {
             System.out.println(netData.title);

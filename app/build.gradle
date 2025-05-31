@@ -32,16 +32,21 @@ android {
         exclude 'META-INF/NOTICE'
         exclude 'META-INF/LICENSE'
         exclude 'META-INF/INDEX.LIST'
+        exclude 'META-INF/LICENSE-LGPL-2.1.txt'
+        exclude 'META-INF/LICENSE-LGPL-3.txt'
+        exclude 'META-INF/LICENSE-W3C-TEST'
+        exclude 'META-INF/DEPENDENCIES'
     }
 }
 
 dependencies {
-    implementation 'org.videolan.android:libvlc-all:3.6.2'
-    implementation 'com.kuaishou:akdanmaku:1.0.3'
+    implementation libs.flexmark.all
+    implementation libs.libvlc.all
+    implementation libs.akdanmaku
     implementation libs.gson // 最新版本
-    implementation 'com.github.bumptech.glide:glide:4.16.0'
+    implementation libs.glide
 
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
+    annotationProcessor libs.compiler
     //implementation libs.volley
     coreLibraryDesugaring libs.desugar.jdk.libs
     implementation (libs.ottohub.api)
@@ -53,4 +58,7 @@ dependencies {
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
+    // Lombok 核心依赖
+    compileOnly libs.lombok
+    annotationProcessor libs.lombok
 }

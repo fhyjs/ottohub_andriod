@@ -22,5 +22,8 @@
     <string name="video_card_info_short">%d Views %d Likes %d Favorit</string>
     <string name="describe">Describe</string>
     <string name="comment">Comment</string>
+    <string name="like">Like</string>
+    <string name="favourite">favourite</string>
+    <string name="report">report</string>
 
 </resources>

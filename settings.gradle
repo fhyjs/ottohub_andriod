@@ -14,10 +14,10 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
+        maven { url 'https://maven.aliyun.com/repository/public/' }
         google()
         mavenCentral()
         jcenter()
-        maven { url 'https://maven.aliyun.com/repository/public/' }
         maven {
             url 'https://maven.hanana2.link:2053/releases'
         }
