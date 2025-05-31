@@ -123,6 +123,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
     protected void onPause() {
         mediaPlayer.detachViews();
         mediaController.hide();
+        mediaPlayer.pause();
         super.onPause();
     }
 
