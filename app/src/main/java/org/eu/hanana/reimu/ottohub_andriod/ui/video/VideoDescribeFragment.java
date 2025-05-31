@@ -73,7 +73,11 @@ public class VideoDescribeFragment extends androidx.fragment.app.Fragment {
 
             }
         });
-
+        // 默认加载第一个 Fragment
+        getChildFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, new VideoListFragment())
+                .commit();
     }
 
     @Override

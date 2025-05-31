@@ -122,6 +122,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         mediaPlayer.detachViews();
+        mediaController.hide();
         super.onPause();
     }
 
@@ -172,6 +173,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
     }
 
     public void  destroy(){
+        mediaController.hide();
         if (danmakuPlayer!=null){
             danmakuPlayer.stop();
             danmakuPlayer.release();
@@ -227,6 +229,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
                     danmakuPlayer.stop();
                     danmakuPlayer.pause();
                     mediaController.show();
+                    mediaPlayer.stop();
                     break;
                 case MediaPlayer.Event.TimeChanged:
                     lastDanmakuUpdate++;
