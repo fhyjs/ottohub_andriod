@@ -15,6 +15,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         <com.google.android.material.imageview.ShapeableImageView
+            android:layout_gravity="center_vertical"
             android:id="@+id/ivAvatar"
             android:src="@drawable/ic_launcher_background"
             app:shapeAppearanceOverlay="@style/CircleImageViewStyle"
@@ -23,7 +24,7 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
             <LinearLayout
                 android:paddingTop="10dp"
                 android:orientation="horizontal"
@@ -41,6 +42,8 @@
                             android:textSize="24sp"
                             android:textColor="@color/black"
                             android:text="USERNAME"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginEnd="2dp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
                         <LinearLayout
@@ -55,6 +58,21 @@
                 android:id="@+id/tvInfo"
                 android:textSize="20sp"
                 android:text="info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/tvDetail"
+                    android:textSize="18sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </HorizontalScrollView>
+            <TextView
+                android:textColor="@android:color/primary_text_light"
+                android:textSize="19sp"
+                android:id="@+id/tvIntro"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
         </LinearLayout>

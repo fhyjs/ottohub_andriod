@@ -48,4 +48,7 @@
     <string name="defollowing">取关</string>
     <string name="refollow">互关</string>
     <string name="derefollow">取消互关</string>
+    <string name="issure">真的么?</string>
+    <string name="sex">性别</string>
+    <string name="register_time">注册日期</string>
 </resources>

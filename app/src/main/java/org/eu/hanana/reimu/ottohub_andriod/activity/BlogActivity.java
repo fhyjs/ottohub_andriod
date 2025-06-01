@@ -4,6 +4,7 @@ import static androidx.core.content.ContextCompat.startActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -21,12 +22,14 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.material.button.MaterialButton;
 import com.google.gson.Gson;
 import com.vladsch.flexmark.ext.abbreviation.AbbreviationExtension;
 import com.vladsch.flexmark.ext.anchorlink.AnchorLinkExtension;
@@ -46,10 +49,13 @@ import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataSet;
 
 import org.eu.hanana.reimu.lib.ottohub.api.blog.BlogResult;
+import org.eu.hanana.reimu.lib.ottohub.api.common.EmptyResult;
+import org.eu.hanana.reimu.lib.ottohub.api.engagement.EngagementResult;
 import org.eu.hanana.reimu.ottohub_andriod.MainActivity;
 import org.eu.hanana.reimu.ottohub_andriod.MyApp;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
+import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.CustomWebView;
 import org.jetbrains.annotations.NotNull;
 
@@ -114,8 +120,6 @@ public class BlogActivity extends AppCompatActivity {
                 .error(R.drawable.error_48px)        // 错误图
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC) // 缓存策略
                 .into((ImageView) findViewById(R.id.ivAvatar));
-        ((TextView) findViewById(R.id.btn_like)).setText(String.format(Locale.getDefault(),"%d%s",blogResult.like_count,getString(R.string.like)));
-        ((TextView) findViewById(R.id.btn_favourite)).setText(String.format(Locale.getDefault(),"%d%s",blogResult.favorite_count,getString(R.string.favourite)));
         findViewById(R.id.clAuthorInfo).setOnClickListener(v -> {
             Intent intent = new Intent(this, ProfileActivity.class);
             Bundle bundle = new Bundle();
@@ -123,7 +127,69 @@ public class BlogActivity extends AppCompatActivity {
             intent.putExtras(bundle);
             startActivity(intent);
         });
+        findViewById(R.id.btn_like).setOnClickListener(v -> {
+            if (MyApp.getInstance().getOttohubApi().getLoginToken()==null) {
+                AlertUtil.showError(this,getString(R.string.not_login)).show();
+                return;
+            }
+            Thread thread = new Thread(() -> {
+                EngagementResult engagementResult = MyApp.getInstance().getOttohubApi().getEngagementApi().like_blog(bid);
+                ApiUtil.throwApiError(engagementResult);
+                blogResult.like_count=engagementResult.like_count;
+                blogResult.if_like=engagementResult.if_like;
+                runOnUiThread(this::updateActionBtns);
+            });
+            thread.setUncaughtExceptionHandler(new AlertUtil.ThreadAlert(BlogActivity.this));
+            thread.start();
+        });
+        findViewById(R.id.btn_favourite).setOnClickListener(v -> {
+            if (MyApp.getInstance().getOttohubApi().getLoginToken()==null) {
+                AlertUtil.showError(this,getString(R.string.not_login)).show();
+                return;
+            }
+            Thread thread = new Thread(() -> {
+                EngagementResult engagementResult = MyApp.getInstance().getOttohubApi().getEngagementApi().favorite_blog(bid);
+                ApiUtil.throwApiError(engagementResult);
+                blogResult.favorite_count=engagementResult.favorite_count;
+                blogResult.if_favorite=engagementResult.if_favorite;
+                runOnUiThread(this::updateActionBtns);
+            });
+            thread.setUncaughtExceptionHandler(new AlertUtil.ThreadAlert(BlogActivity.this));
+            thread.start();
+        });
+        findViewById(R.id.btn_report).setOnClickListener(v -> {
+            if (MyApp.getInstance().getOttohubApi().getLoginToken()==null) {
+                AlertUtil.showError(this,getString(R.string.not_login)).show();
+                return;
+            }
+            Thread thread = new Thread(() -> {
+                EmptyResult emptyResult = MyApp.getInstance().getOttohubApi().getModerationApi().report_blog(bid);
+                ApiUtil.throwApiError(emptyResult);
+                runOnUiThread(()->{
+                    AlertUtil.showMsg(this, getString(R.string.report), getString(R.string.ok)).show();
+                });
+            });
+            thread.setUncaughtExceptionHandler(new AlertUtil.ThreadAlert(BlogActivity.this));
+            AlertUtil.showYesNo(this, getString(R.string.report), getString(R.string.issure), (dialog, which) -> thread.start(),null).show();
+        });
+        updateActionBtns();
     }
+
+    private void updateActionBtns() {
+        ((TextView) findViewById(R.id.btn_like)).setText(String.format(Locale.getDefault(),"%d%s",blogResult.like_count,getString(R.string.like)));
+        ((TextView) findViewById(R.id.btn_favourite)).setText(String.format(Locale.getDefault(),"%d%s",blogResult.favorite_count,getString(R.string.favourite)));
+        if (blogResult.if_like==1){
+            ((MaterialButton) findViewById(R.id.btn_like)).setIcon(AppCompatResources.getDrawable(this,R.drawable.thumb_up_24dp_fill));
+        }else {
+            ((MaterialButton) findViewById(R.id.btn_like)).setIcon(AppCompatResources.getDrawable(this,R.drawable.thumb_up_24dp));
+        }
+        if (blogResult.if_favorite==1){
+            ((MaterialButton) findViewById(R.id.btn_favourite)).setIcon(AppCompatResources.getDrawable(this,R.drawable.kitchen_24dp_fill));
+        }else {
+            ((MaterialButton) findViewById(R.id.btn_favourite)).setIcon(AppCompatResources.getDrawable(this,R.drawable.kitchen_24dp));
+        }
+    }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home) {

@@ -1,5 +1,6 @@
 package org.eu.hanana.reimu.ottohub_andriod.util;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,9 +14,14 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
+import com.badlogic.gdx.backends.android.AndroidApplicationBase;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.eu.hanana.reimu.ottohub_andriod.R;
+
+import lombok.AllArgsConstructor;
 
 public class AlertUtil {
     public static androidx.appcompat.app.AlertDialog showYesNo(Context context, String title, String msg, DialogInterface.OnClickListener yes, DialogInterface.OnClickListener no) {
@@ -77,5 +83,13 @@ public class AlertUtil {
 
         dialog.show();
         return dialog;
+    }
+    @AllArgsConstructor
+    public static class ThreadAlert implements Thread.UncaughtExceptionHandler{
+        protected Activity activity;
+        @Override
+        public void uncaughtException(@NonNull Thread t, @NonNull Throwable e) {
+            activity.runOnUiThread(()->AlertUtil.showMsg(activity,activity.getString(R.string.error),"ERROR:"+e+" at "+t.getName()).show());
+        }
     }
 }

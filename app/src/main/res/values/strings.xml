@@ -51,5 +51,8 @@
     <string name="defollowing">unfollow</string>
     <string name="refollow">follow</string>
     <string name="derefollow">unfollow</string>
+    <string name="issure">Are you sure?</string>
+    <string name="sex">sex</string>
+    <string name="register_time">register time</string>
 
 </resources>

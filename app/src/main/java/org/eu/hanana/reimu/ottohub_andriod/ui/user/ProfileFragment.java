@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
+import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -54,6 +55,8 @@ public class ProfileFragment extends Fragment {
     protected FollowStatusResult followStatus;
     private boolean login=true;
     protected LinearLayout pageBtnArea;
+    protected TextView tvIntro;
+    protected TextView tvDetail;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -103,6 +106,8 @@ public class ProfileFragment extends Fragment {
         btnVid=view.findViewById(R.id.btnVideo);
         btnBlog=view.findViewById(R.id.btnBlog);
         pageBtnArea=view.findViewById(R.id.video_type_button_area);
+        tvIntro=view.findViewById(R.id.tvIntro);
+        tvDetail=view.findViewById(R.id.tvDetail);
 
         Thread thread = new Thread(()->{
             init();
@@ -186,6 +191,8 @@ public class ProfileFragment extends Fragment {
         }
         setPage((Button) pageBtnArea.getChildAt(0));
 
+        tvIntro.setText(userResult.intro);
+        tvDetail.setText(String.format(Locale.getDefault(),"%s:%s %s:%s",getString(R.string.sex),userResult.sex,getString(R.string.register_time),userResult.time));
     }
     public void setPage(Button buttonClicked){
         buttonClicked.setEnabled(false);
