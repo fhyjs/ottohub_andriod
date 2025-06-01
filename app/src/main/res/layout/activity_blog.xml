@@ -17,11 +17,15 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:paddingStart="5dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
                 android:id="@+id/clAuthorInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <com.google.android.material.imageview.ShapeableImageView
+
                     android:id="@+id/ivAvatar"
                     android:layout_width="55dp"
                     android:layout_height="55dp"

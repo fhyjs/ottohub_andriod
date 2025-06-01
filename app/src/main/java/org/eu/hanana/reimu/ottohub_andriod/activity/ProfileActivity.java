@@ -9,9 +9,11 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import org.eu.hanana.reimu.ottohub_andriod.R;
+import org.eu.hanana.reimu.ottohub_andriod.ui.user.ProfileFragment;
+import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment;
 
 public class ProfileActivity extends AppCompatActivity {
-
+    public static final String KEY_UID = ProfileFragment.Arg_Uid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,5 +24,9 @@ public class ProfileActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        // 默认加载第一个 Fragment
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, ProfileFragment.newInstance(getIntent().getExtras().getInt(KEY_UID)))
+                .commit();
     }
 }

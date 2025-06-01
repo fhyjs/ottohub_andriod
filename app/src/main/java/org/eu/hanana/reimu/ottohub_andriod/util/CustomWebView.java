@@ -24,7 +24,7 @@ import java.nio.file.Paths;
 
 public class CustomWebView extends WebView {
     private ProgressBar progressBar;
-    public static final String internal = "file:///android_asset/";
+    public static final String internal = "https://android_asset/";
 
     public CustomWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -81,7 +81,9 @@ public class CustomWebView extends WebView {
             String url = request.getUrl().toString();
             String contentType = null;
             try {
-                contentType = Files.probeContentType(Paths.get(url));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    contentType = Files.probeContentType(Paths.get(url));
+                }
             } catch (IOException ignored) {
             }
             // 处理文件
@@ -98,7 +100,7 @@ public class CustomWebView extends WebView {
 
                 // 返回 WebResourceResponse
                 WebResourceResponse webResourceResponse = new WebResourceResponse(mimeType, "UTF-8", inputStream);
-                inputStream.close();
+                //inputStream.close();
                 return webResourceResponse;
 
             } catch (IOException e) {

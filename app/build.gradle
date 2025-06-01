@@ -2,12 +2,20 @@ plugins {
     alias(libs.plugins.android.application)
 }
 android {
+    signingConfigs {
+        debug {
+            storeFile file('C:\\Users\\a\\hanana.jks')
+            storePassword '12345678q'
+            keyPassword '12345678q'
+            keyAlias 'hananaapps'
+        }
+    }
     namespace 'org.eu.hanana.reimu.ottohub_andriod'
     compileSdk 35
 
     defaultConfig {
         applicationId "org.eu.hanana.reimu.ottohub_andriod"
-        minSdk 26
+        minSdk 21
         multiDexEnabled true
         targetSdk 35
         versionCode 1

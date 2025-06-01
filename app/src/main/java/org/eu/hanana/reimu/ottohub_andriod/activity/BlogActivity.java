@@ -1,7 +1,10 @@
 package org.eu.hanana.reimu.ottohub_andriod.activity;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -90,6 +93,13 @@ public class BlogActivity extends AppCompatActivity {
         thread.setUncaughtExceptionHandler((t, e) -> runOnUiThread(()-> AlertUtil.showError(BlogActivity.this,"ERROR: "+e)));
         thread.start();
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        webView.destroy();
+    }
+
     public void initUI(){
         setTitle(blogResult.title);
         ((TextView) findViewById(R.id.tvAuthor)).setText(blogResult.username);
@@ -101,6 +111,13 @@ public class BlogActivity extends AppCompatActivity {
                 .into((ImageView) findViewById(R.id.ivAvatar));
         ((TextView) findViewById(R.id.btn_like)).setText(String.format(Locale.getDefault(),"%d%s",blogResult.like_count,getString(R.string.like)));
         ((TextView) findViewById(R.id.btn_favourite)).setText(String.format(Locale.getDefault(),"%d%s",blogResult.favorite_count,getString(R.string.favourite)));
+        findViewById(R.id.clAuthorInfo).setOnClickListener(v -> {
+            Intent intent = new Intent(this, ProfileActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putInt(ProfileActivity.KEY_UID,blogResult.uid);
+            intent.putExtras(bundle);
+            startActivity(intent);
+        });
     }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {

@@ -224,8 +224,8 @@ public class VideoPlayerActivity extends AppCompatActivity {
                     mediaController.show();
                     break;
                 case MediaPlayer.Event.Paused:
+                    //danmakuPlayer.seekTo(event.getTimeChanged());
                     danmakuPlayer.pause();
-                    danmakuPlayer.seekTo(event.getTimeChanged());
                     break;
                 case MediaPlayer.Event.EndReached:
                     danmakuPlayer.stop();
@@ -296,16 +296,17 @@ public class VideoPlayerActivity extends AppCompatActivity {
                     .replace(R.id.fragment_container, VideoDescribeFragment.newInstance(netData))
                     .commit();
             mediaPlayer.play();
+            mediaPlayer.pause();
+            if (savedInstanceState.containsKey(KEY_PLAYER_TIME)){
+                long time = savedInstanceState.getLong(KEY_PLAYER_TIME);
+                if (time>0) seekVideo(time);
+            }
             if (savedInstanceState.containsKey(KEY_PLAYER_PLAYING)){
                 if (savedInstanceState.getBoolean(KEY_PLAYER_PLAYING)){
                     mediaPlayer.play();
                 }else {
                     mediaPlayer.pause();
                 }
-            }
-            if (savedInstanceState.containsKey(KEY_PLAYER_TIME)){
-                long time = savedInstanceState.getLong(KEY_PLAYER_TIME);
-                if (time>0) seekVideo(time);
             }
         }
     }

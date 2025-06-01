@@ -1,12 +1,17 @@
 package org.eu.hanana.reimu.ottohub_andriod;
 
+import static android.widget.Toast.LENGTH_SHORT;
 import static androidx.core.content.ContextCompat.startActivity;
 
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -16,12 +21,14 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
+import org.eu.hanana.reimu.lib.ottohub.api.auth.LoginResult;
 import org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.LoginActivity;
 import org.eu.hanana.reimu.ottohub_andriod.ui.blog.BlogListFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.user.ProfileFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
+import org.eu.hanana.reimu.ottohub_andriod.util.SharedPreferencesKeys;
 
 public class MainActivity extends AppCompatActivity {
     private BottomNavigationView bottomNavigationView;
@@ -43,7 +50,37 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, VideoListFragment.newInstance())
                 .commit();
+        autoLogin();
     }
+
+    private void autoLogin() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SharedPreferencesKeys.Perf_Auth, MODE_PRIVATE);
+        var un = sharedPreferences.getString(SharedPreferencesKeys.Key_Username,null);
+        var pw = sharedPreferences.getString(SharedPreferencesKeys.Key_Passwd,null);
+        if (un==null||pw==null) return;
+        AlertDialog alertDialog = AlertUtil.showLoading(this, getString(R.string.auto_login));
+        alertDialog.show();
+        Thread thread = new Thread(() -> {
+            LoginResult login = MyApp.getInstance().getOttohubApi().getAuthApi().login(un, pw);
+            if (!login.isSuccess()){
+                var msg = login.getMessage();
+                if (msg.contains("error_password")){
+                    msg=MyApp.getInstance().getString(R.string.error_password);
+                }
+                throw new IllegalStateException(msg);
+            }
+            runOnUiThread(()->{
+                alertDialog.dismiss();
+                Toast.makeText(MainActivity.this,R.string.welcome,LENGTH_SHORT).show();
+            });
+        });
+        thread.setUncaughtExceptionHandler((t, e) -> runOnUiThread(()->{
+            alertDialog.dismiss();
+            AlertUtil.showMsg(MainActivity.this,getString(R.string.auto_login),getString(R.string.error)).show();
+        }));
+        thread.start();
+    }
+
     private final NavigationBarView.OnItemSelectedListener navListener =
             item -> {
                 Fragment selectedFragment = null;
@@ -69,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
                         }).show();
                         return false;
                     }else {
-                        selectedFragment = ProfileFragment.newInstance();
+                        selectedFragment = ProfileFragment.newInstance(null);
                     }
                 }
 

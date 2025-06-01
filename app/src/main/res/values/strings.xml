@@ -39,5 +39,13 @@
     <string name="login_in_now">Do you want to login now?</string>
     <string name="tip">TIP</string>
     <string name="error_password">username or passwd is wrong</string>
+    <string name="auto_login">Auto Login</string>
+    <string name="error">error</string>
+    <string name="exp">exp</string>
+    <string name="followers">followers</string>
+    <string name="followings">followings</string>
+    <string name="follow">follow</string>
+    <string name="narcissism">narcissism</string>
+    <string name="narcissism_msg">You are too narcissism!</string>
 
 </resources>

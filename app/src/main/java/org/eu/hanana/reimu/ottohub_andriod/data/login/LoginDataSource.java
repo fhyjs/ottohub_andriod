@@ -1,9 +1,14 @@
 package org.eu.hanana.reimu.ottohub_andriod.data.login;
 
+import static android.content.Context.MODE_PRIVATE;
+
+import android.content.SharedPreferences;
+
 import org.eu.hanana.reimu.lib.ottohub.api.auth.LoginResult;
 import org.eu.hanana.reimu.ottohub_andriod.MyApp;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.data.login.model.LoggedInUser;
+import org.eu.hanana.reimu.ottohub_andriod.util.SharedPreferencesKeys;
 
 import java.io.IOException;
 
@@ -27,6 +32,11 @@ public class LoginDataSource {
                     new LoggedInUser(
                             Integer.parseInt(login.uid),
                             login.uid);
+            SharedPreferences sharedPreferences = MyApp.getInstance().getSharedPreferences(SharedPreferencesKeys.Perf_Auth, MODE_PRIVATE);
+            SharedPreferences.Editor edit = sharedPreferences.edit();
+            edit.putString(SharedPreferencesKeys.Key_Username,username);
+            edit.putString(SharedPreferencesKeys.Key_Passwd,password);
+            edit.apply();
             //throw new IOException();
             return new Result.Success<>(fakeUser);
         } catch (Exception e) {

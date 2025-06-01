@@ -30,4 +30,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "ottohub_andriod"
 include ':app'
-include ':ijkplayerlib'

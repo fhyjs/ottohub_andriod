@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -31,6 +32,18 @@ public class AlertUtil {
                 .setMessage(msg)
                 .setPositiveButton(R.string.ok,null)
                 .create();
+    }
+    public static AlertDialog showLoading(Context context,String title){
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(title).setCancelable(false); // 禁止返回键取消
+
+        // 创建一个圆形进度条
+        ProgressBar progressBar = new ProgressBar(context);
+        builder.setView(progressBar);
+
+        var loadingDialog = builder.create();
+        loadingDialog.setCanceledOnTouchOutside(false); // 禁止点击外部取消
+        return loadingDialog;
     }
     public static AlertDialog showError(Context context, String message) {
 
