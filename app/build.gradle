@@ -51,7 +51,9 @@ android {
 }
 
 dependencies {
-    implementation libs.flexmark.all
+    implementation (libs.flexmark.all){
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
     implementation libs.libvlc.all
     implementation libs.akdanmaku
     implementation libs.gson // 最新版本
