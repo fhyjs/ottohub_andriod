@@ -1,6 +1,7 @@
 package org.eu.hanana.reimu.ottohub_andriod.ui.video;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 
 
@@ -20,6 +21,7 @@ import com.google.gson.Gson;
 
 import org.eu.hanana.reimu.lib.ottohub.api.video.VideoResult;
 import org.eu.hanana.reimu.ottohub_andriod.R;
+import org.eu.hanana.reimu.ottohub_andriod.activity.ProfileActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -67,16 +69,18 @@ public class VideoDescribeFragment extends androidx.fragment.app.Fragment {
                 .error(R.drawable.error_48px)        // 错误图
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC) // 缓存策略
                 .into((ImageView) view.findViewById(R.id.ivAvatar));
-        view.findViewById(R.id.clAuthorInfo).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
+        view.findViewById(R.id.clAuthorInfo).setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), ProfileActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putInt(ProfileActivity.KEY_UID,vData.uid);
+            intent.putExtras(bundle);
+            startActivity(intent);
         });
+
         // 默认加载第一个 Fragment
         getChildFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fragment_container, new VideoListFragment())
+                .replace(R.id.fragment_container, VideoListFragment.newInstance())
                 .commit();
     }
 
