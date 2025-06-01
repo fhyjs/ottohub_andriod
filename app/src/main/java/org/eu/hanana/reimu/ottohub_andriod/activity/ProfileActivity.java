@@ -1,8 +1,10 @@
 package org.eu.hanana.reimu.ottohub_andriod.activity;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -24,9 +26,21 @@ public class ProfileActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        // 启用返回按钮
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         // 默认加载第一个 Fragment
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, ProfileFragment.newInstance(getIntent().getExtras().getInt(KEY_UID)))
                 .commit();
+    }
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish(); // 默认返回栈顶页面
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

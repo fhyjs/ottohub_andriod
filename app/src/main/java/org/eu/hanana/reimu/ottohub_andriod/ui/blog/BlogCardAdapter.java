@@ -30,7 +30,7 @@ public class BlogCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private static final int TYPE_LOADING = 1;
 
     private List<BlogResult> blogList;
-    private boolean isLoading = false;
+    boolean isLoading = false;
     public BlogCardAdapter(List<BlogResult> blogList) {
         this.blogList = blogList;
     }

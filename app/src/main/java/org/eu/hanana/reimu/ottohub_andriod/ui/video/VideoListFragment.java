@@ -1,5 +1,7 @@
 package org.eu.hanana.reimu.ottohub_andriod.ui.video;
 
+import static org.eu.hanana.reimu.ottohub_andriod.ui.user.ProfileFragment.Arg_Uid;
+
 import android.app.AlertDialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -56,7 +58,8 @@ public class VideoListFragment extends Fragment {
     public boolean error;
     public int[] buttonLabels = {R.string.recommend,R.string.latest,R.string.week_hot,R.string.monthly_hot,R.string.sesson_hot,R.string.kichiku,R.string.mad,R.string.vocaloid,R.string.theater,R.string.game,R.string.nostalgia,R.string.music,R.string.other};
     private View view;
-
+    @Nullable
+    public Integer uid;
 
     public VideoListFragment() {
         // Required empty public constructor
@@ -71,6 +74,9 @@ public class VideoListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null && getArguments().containsKey(Arg_Uid)) {
+            uid = getArguments().getInt(Arg_Uid);
+        }
         viewModel = new ViewModelProvider(this).get(VideoViewModel.class);
 
         viewModel.getVideos().observe(this, resource -> {
@@ -154,6 +160,9 @@ public class VideoListFragment extends Fragment {
             if (selectedButton==null){
                 selectedButton=button;
             }
+        }
+        if (uid!=null){
+            button_area.removeAllViews();
         }
         return inflate;
     }
@@ -273,6 +282,7 @@ public class VideoListFragment extends Fragment {
     }
 
     private void loadNextPage() {
+        if (adapter.isLoading) return;
         //adapter.setLoading(true); // 显示加载进度条
         adapter.showLoading();
         viewModel.loadVideos(this);

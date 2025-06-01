@@ -1,5 +1,7 @@
 package org.eu.hanana.reimu.ottohub_andriod.ui.blog;
 
+import static org.eu.hanana.reimu.ottohub_andriod.ui.user.ProfileFragment.Arg_Uid;
+
 import android.app.AlertDialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -41,6 +43,8 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class BlogListFragment extends Fragment {
+    @Nullable
+    public Integer uid;
 
     public BlogListFragment() {
         // Required empty public constructor
@@ -68,6 +72,9 @@ public class BlogListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null && getArguments().containsKey(Arg_Uid)) {
+            uid = getArguments().getInt(Arg_Uid);
+        }
         viewModel = new ViewModelProvider(this).get(BlogViewModel.class);
 
         viewModel.getVideos().observe(this, resource -> {
@@ -151,6 +158,9 @@ public class BlogListFragment extends Fragment {
             if (selectedButton==null){
                 selectedButton=button;
             }
+        }
+        if (uid!=null){
+            button_area.removeAllViews();
         }
         return inflate;
     }
@@ -270,6 +280,7 @@ public class BlogListFragment extends Fragment {
     }
 
     private void loadNextPage() {
+        if (adapter.isLoading) return;
         //adapter.setLoading(true); // 显示加载进度条
         adapter.showLoading();
         viewModel.loadVideos(this);

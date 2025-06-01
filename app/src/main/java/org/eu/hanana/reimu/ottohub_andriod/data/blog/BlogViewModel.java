@@ -73,16 +73,20 @@ public class BlogViewModel extends ViewModel {
 
     private List<BlogResult> fetchFromNetwork(BlogListFragment blogListFragment) throws IOException {
         BlogListResult listResult = null;
-        if (blogListFragment.selectedButton.getTag().equals(blogListFragment.buttonLabels[0])){
-            listResult = MyApp.getInstance().getOttohubApi().getBlogApi().random_blog_list(12);
-        }else if (blogListFragment.selectedButton.getTag().equals(blogListFragment.buttonLabels[1])){
-            listResult = MyApp.getInstance().getOttohubApi().getBlogApi().new_blog_list(blogListFragment.currentPage*12,12);
-        }else if (blogListFragment.selectedButton.getTag().equals(blogListFragment.buttonLabels[2])){
-            listResult = MyApp.getInstance().getOttohubApi().getBlogApi().popular_blog_list(7,blogListFragment.currentPage*12,12);
-        }else if (blogListFragment.selectedButton.getTag().equals(blogListFragment.buttonLabels[3])){
-            listResult = MyApp.getInstance().getOttohubApi().getBlogApi().popular_blog_list(30,blogListFragment.currentPage*12,12);
-        }else if (blogListFragment.selectedButton.getTag().equals(blogListFragment.buttonLabels[4])){
-            listResult = MyApp.getInstance().getOttohubApi().getBlogApi().popular_blog_list(90,blogListFragment.currentPage*12,12);
+        if (blogListFragment.uid==null) {
+            if (blogListFragment.selectedButton.getTag().equals(blogListFragment.buttonLabels[0])) {
+                listResult = MyApp.getInstance().getOttohubApi().getBlogApi().random_blog_list(12);
+            } else if (blogListFragment.selectedButton.getTag().equals(blogListFragment.buttonLabels[1])) {
+                listResult = MyApp.getInstance().getOttohubApi().getBlogApi().new_blog_list(blogListFragment.currentPage * 12, 12);
+            } else if (blogListFragment.selectedButton.getTag().equals(blogListFragment.buttonLabels[2])) {
+                listResult = MyApp.getInstance().getOttohubApi().getBlogApi().popular_blog_list(7, blogListFragment.currentPage * 12, 12);
+            } else if (blogListFragment.selectedButton.getTag().equals(blogListFragment.buttonLabels[3])) {
+                listResult = MyApp.getInstance().getOttohubApi().getBlogApi().popular_blog_list(30, blogListFragment.currentPage * 12, 12);
+            } else if (blogListFragment.selectedButton.getTag().equals(blogListFragment.buttonLabels[4])) {
+                listResult = MyApp.getInstance().getOttohubApi().getBlogApi().popular_blog_list(90, blogListFragment.currentPage * 12, 12);
+            }
+        }else {
+            listResult = MyApp.getInstance().getOttohubApi().getBlogApi().user_blog_list(blogListFragment.uid,blogListFragment.currentPage * 12, 12);
         }
         //username用于存储额外信息.
         for (BlogResult blogResult : listResult.blog_list) {

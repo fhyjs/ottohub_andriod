@@ -1,7 +1,11 @@
 package org.eu.hanana.reimu.ottohub_andriod.util;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
+import android.os.Message;
 import android.util.AttributeSet;
 import android.view.View;
 import android.webkit.WebChromeClient;
@@ -25,6 +29,7 @@ import java.nio.file.Paths;
 public class CustomWebView extends WebView {
     private ProgressBar progressBar;
     public static final String internal = "https://android_asset/";
+    public WebSettings settings;
 
     public CustomWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -38,7 +43,7 @@ public class CustomWebView extends WebView {
         addView(progressBar);
         
         // 基础设置
-        WebSettings settings = getSettings();
+        settings = super.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
         settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
@@ -47,6 +52,8 @@ public class CustomWebView extends WebView {
         settings.setCacheMode(WebSettings.LOAD_DEFAULT);
         settings.setAllowFileAccessFromFileURLs(true);
         settings.setAllowUniversalAccessFromFileURLs(true);
+        settings.setSupportMultipleWindows(true);
+        settings.setSupportZoom(true);
         setWebContentsDebuggingEnabled(true);
         // 客户端设置
         setWebChromeClient(new CustomWebChromeClient());
@@ -56,10 +63,46 @@ public class CustomWebView extends WebView {
     @NonNull
     @Override
     public WebSettings getSettings() {
-        return super.getSettings();
+        return settings;
     }
 
-    private class CustomWebChromeClient extends WebChromeClient {
+    public class CustomWebChromeClient extends WebChromeClient {
+        @Override
+        public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
+            WebView.HitTestResult result = view.getHitTestResult();
+
+            String url = null;
+
+            if (result != null && result.getExtra() != null) {
+                // 某些情况下可以直接获取 URL
+                url = result.getExtra();
+            } else {
+                // 更常见的方式：使用新建的 WebView 获取 URL
+                WebView newWebView = new WebView(view.getContext());
+                newWebView.setWebViewClient(new WebViewClient() {
+                    @Override
+                    public void onPageStarted(WebView view, String url, android.graphics.Bitmap favicon) {
+                        // 一旦开始加载，立即用默认浏览器打开
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                        view.getContext().startActivity(intent);
+                    }
+                });
+
+                WebView.WebViewTransport transport = (WebView.WebViewTransport) resultMsg.obj;
+                transport.setWebView(newWebView);
+                resultMsg.sendToTarget();
+
+                return true; // 表示拦截了创建窗口，交由自定义处理
+            }
+
+            if (url != null) {
+                // 打开外部浏览器
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                view.getContext().startActivity(intent);
+            }
+
+            return false; // 不创建 WebView 的新窗口
+        }
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
             if (newProgress == 100) {
@@ -72,7 +115,7 @@ public class CustomWebView extends WebView {
         }
     }
 
-    private class CustomWebViewClient extends WebViewClient {
+    public class CustomWebViewClient extends WebViewClient {
         @Override
         public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
             if (!request.getUrl().toString().startsWith(internal))

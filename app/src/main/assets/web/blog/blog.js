@@ -24,6 +24,9 @@ function loadBlog() {
   $("#content").html($.parseHTML(content));
   $("#title").html(blog_data.title);
   $("#subtitle").html(blog_data.time);
+
+  $("#content").html(replaceAll( $("#content").html(),"\n","<br/>"));
+  $('a').attr('target', '_blank');
 }
 
 // replaceAll polyfill

@@ -44,4 +44,8 @@
     <string name="follow">关注</string>
     <string name="narcissism">自恋</string>
     <string name="narcissism_msg">你太自恋了,一边玩去!</string>
+    <string name="profile">个人主页</string>
+    <string name="defollowing">取关</string>
+    <string name="refollow">互关</string>
+    <string name="derefollow">取消互关</string>
 </resources>

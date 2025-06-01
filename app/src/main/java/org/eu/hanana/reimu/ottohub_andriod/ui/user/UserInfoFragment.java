@@ -16,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
  * Use the {@link UserInfoFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
+@Deprecated
 public class UserInfoFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match

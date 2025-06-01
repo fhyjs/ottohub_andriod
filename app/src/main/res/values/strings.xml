@@ -47,5 +47,9 @@
     <string name="follow">follow</string>
     <string name="narcissism">narcissism</string>
     <string name="narcissism_msg">You are too narcissism!</string>
+    <string name="profile">profile</string>
+    <string name="defollowing">unfollow</string>
+    <string name="refollow">follow</string>
+    <string name="derefollow">unfollow</string>
 
 </resources>

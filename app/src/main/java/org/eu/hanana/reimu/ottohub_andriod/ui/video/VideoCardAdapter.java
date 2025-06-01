@@ -28,7 +28,7 @@ public class VideoCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private static final int TYPE_LOADING = 1;
 
     private List<VideoCard> videoList;
-    private boolean isLoading = false;
+    boolean isLoading = false;
     public VideoCardAdapter(List<VideoCard> videoList) {
         this.videoList = videoList;
     }

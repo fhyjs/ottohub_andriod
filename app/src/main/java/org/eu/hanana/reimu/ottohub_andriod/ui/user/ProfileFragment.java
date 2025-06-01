@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -17,10 +18,14 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
+import org.eu.hanana.reimu.lib.ottohub.api.OttohubApi;
+import org.eu.hanana.reimu.lib.ottohub.api.following.FollowStatusResult;
 import org.eu.hanana.reimu.lib.ottohub.api.profile.ProfileResult;
 import org.eu.hanana.reimu.lib.ottohub.api.user.UserResult;
 import org.eu.hanana.reimu.ottohub_andriod.MyApp;
 import org.eu.hanana.reimu.ottohub_andriod.R;
+import org.eu.hanana.reimu.ottohub_andriod.ui.blog.BlogListFragment;
+import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ClassUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ProfileUtil;
@@ -40,11 +45,15 @@ public class ProfileFragment extends Fragment {
     protected ProfileResult userResult;
     protected UserResult userDataResult;
     protected LinearLayout llButtonPanel;
-    protected Button btnFollow;
+    protected FrameLayout frameLayout;
+    protected Button btnFollow,btnVid,btnBlog;
     @Getter
     protected int uid;
     @Getter
     protected boolean self =false;
+    protected FollowStatusResult followStatus;
+    private boolean login=true;
+    protected LinearLayout pageBtnArea;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -90,7 +99,10 @@ public class ProfileFragment extends Fragment {
         tvFollower=view.findViewById(R.id.tvFollowers);
         tvFollowing=view.findViewById(R.id.tvFollowings);
         btnFollow=view.findViewById(R.id.btnFollow);
-
+        frameLayout=view.findViewById(R.id.fragment_container);
+        btnVid=view.findViewById(R.id.btnVideo);
+        btnBlog=view.findViewById(R.id.btnBlog);
+        pageBtnArea=view.findViewById(R.id.video_type_button_area);
 
         Thread thread = new Thread(()->{
             init();
@@ -113,9 +125,22 @@ public class ProfileFragment extends Fragment {
             userResult=new ProfileResult();
             ClassUtil.copyFields(ProfileResult.class,UserResult.class,userResult,userDataResult,false);
         }
+        followStatus = MyApp.getInstance().getOttohubApi().getFollowingApi().follow_status(uid);
     }
+
+    @Override
+    public void onDestroy() {
+        getActivity().setTitle(R.string.app_name);
+        super.onDestroy();
+    }
+
     protected void init() {
-        this.self = uid==Integer.parseInt(MyApp.getInstance().getOttohubApi().getLoginResult().uid);
+        if (MyApp.getInstance().getOttohubApi().getLoginResult()==null){
+            self=false;
+            login=false;
+        }else {
+            this.self = uid == Integer.parseInt(MyApp.getInstance().getOttohubApi().getLoginResult().uid);
+        }
         try {
             fetchData();
         } catch (Exception e) {
@@ -149,11 +174,69 @@ public class ProfileFragment extends Fragment {
         tvBlogCount.setText(String.valueOf(userDataResult.blog_num));
         tvFollowing.setText(String.valueOf(userDataResult.followings_count));
         tvFollower.setText(String.valueOf(userDataResult.fans_count));
+        getActivity().setTitle(String.format(Locale.getDefault(),"%s's %s",userResult.username,getString(R.string.profile)));
+        if (!login){
+            updateFollowStatus(-1);
+        }else {
+            updateFollowStatus(followStatus.follow_status);
+        }
+        for (int i = 0; i < pageBtnArea.getChildCount(); i++) {
+            var child = pageBtnArea.getChildAt(i);
+            child.setOnClickListener(buttonClicked -> setPage((Button) buttonClicked));
+        }
+        setPage((Button) pageBtnArea.getChildAt(0));
 
-        if (isSelf()){
+    }
+    public void setPage(Button buttonClicked){
+        buttonClicked.setEnabled(false);
+        for (int i = 0; i < pageBtnArea.getChildCount(); i++) {
+            var child = pageBtnArea.getChildAt(i);
+            if (child!=buttonClicked){
+                child.setEnabled(true);
+            }
+        }
+        if (buttonClicked.getText().equals(getString(R.string.videos))){
+            var listFragment = VideoListFragment.newInstance();
+            listFragment.getArguments().putInt(Arg_Uid,uid);
+            getChildFragmentManager().beginTransaction().replace(R.id.fragment_container, listFragment).commit();
+        }else if (buttonClicked.getText().equals(getString(R.string.blogs))){
+            var listFragment = BlogListFragment.newInstance();
+            listFragment.getArguments().putInt(Arg_Uid,uid);
+            getChildFragmentManager().beginTransaction().replace(R.id.fragment_container, listFragment).commit();
+        }
+    }
+    public void doFollow(){
+        Thread thread = new Thread(()->{
+            followStatus= MyApp.getInstance().getOttohubApi().getFollowingApi().follow(uid);
+            getActivity().runOnUiThread(()->{
+                tvFollower.setText(String.valueOf(followStatus.new_fans_count));
+                updateFollowStatus(followStatus.follow_status);
+            });
+        });
+        thread.setUncaughtExceptionHandler((t, e) -> getActivity().runOnUiThread(()->{
+            AlertUtil.showError(getContext(),e.toString());
+        }));
+        thread.start();
+    }
+    protected void updateFollowStatus(int status){
+        btnFollow.setOnClickListener(v -> doFollow());
+        if (status==0){
             btnFollow.setText(R.string.narcissism);
             btnFollow.setOnClickListener(v -> {
                 AlertUtil.showMsg(getContext(),getString(R.string.narcissism),getString(R.string.narcissism_msg)).show();
+            });
+        }else if (status==1){
+            btnFollow.setText(R.string.follow);
+        }else if (status==2){
+            btnFollow.setText(R.string.defollowing);
+        }else if (status==3){
+            btnFollow.setText(R.string.refollow);
+        }else if (status==4){
+            btnFollow.setText(R.string.derefollow);
+        }else {
+            btnFollow.setText(R.string.not_login);
+            btnFollow.setOnClickListener(v -> {
+                AlertUtil.showMsg(getContext(),getString(R.string.follow),getString(R.string.not_login)).show();
             });
         }
     }

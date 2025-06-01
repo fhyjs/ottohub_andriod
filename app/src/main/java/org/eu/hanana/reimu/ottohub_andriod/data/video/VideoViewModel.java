@@ -78,35 +78,37 @@ public class VideoViewModel extends ViewModel {
     private List<VideoCard> fetchFromNetwork(VideoListFragment videoListFragment) throws IOException {
         ArrayList<VideoCard> objects = new ArrayList<>();
         VideoListResult videoListResult = null;
-
-        if (videoListFragment.selectedButton.getTag().equals(videoListFragment.buttonLabels[0])){
-            videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().random_video_list(12);
-        }else if (videoListFragment.selectedButton.getTag().equals(videoListFragment.buttonLabels[1])){
-            videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().new_video_list(videoListFragment.currentPage*12,12);
-        }else if (videoListFragment.selectedButton.getTag().equals(videoListFragment.buttonLabels[2])){
-            videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().popular_video_list(7,videoListFragment.currentPage*12,12);
-        }else if (videoListFragment.selectedButton.getTag().equals(videoListFragment.buttonLabels[3])){
-            videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().popular_video_list(30,videoListFragment.currentPage*12,12);
-        }else if (videoListFragment.selectedButton.getTag().equals(videoListFragment.buttonLabels[4])){
-            videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().popular_video_list(90,videoListFragment.currentPage*12,12);
-        }else if (videoListFragment.selectedButton.getTag().equals(videoListFragment.buttonLabels[5])){
-            videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().category_video_list(1,12);
-        }else if (videoListFragment.selectedButton.getTag().equals(videoListFragment.buttonLabels[6])){
-            videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().category_video_list(2,12);
-        }else if (videoListFragment.selectedButton.getTag().equals(videoListFragment.buttonLabels[7])){
-            videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().category_video_list(3,12);
-        }else if (videoListFragment.selectedButton.getTag().equals(videoListFragment.buttonLabels[8])){
-            videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().category_video_list(4,12);
-        }else if (videoListFragment.selectedButton.getTag().equals(videoListFragment.buttonLabels[9])){
-            videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().category_video_list(5,12);
-        }else if (videoListFragment.selectedButton.getTag().equals(videoListFragment.buttonLabels[10])){
-            videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().category_video_list(6,12);
-        }else if (videoListFragment.selectedButton.getTag().equals(videoListFragment.buttonLabels[11])){
-            videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().category_video_list(7,12);
-        }else if (videoListFragment.selectedButton.getTag().equals(videoListFragment.buttonLabels[12])){
-            videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().category_video_list(0,12);
+        if (videoListFragment.uid==null) {
+            if (videoListFragment.selectedButton.getTag().equals(videoListFragment.buttonLabels[0])) {
+                videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().random_video_list(12);
+            } else if (videoListFragment.selectedButton.getTag().equals(videoListFragment.buttonLabels[1])) {
+                videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().new_video_list(videoListFragment.currentPage * 12, 12);
+            } else if (videoListFragment.selectedButton.getTag().equals(videoListFragment.buttonLabels[2])) {
+                videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().popular_video_list(7, videoListFragment.currentPage * 12, 12);
+            } else if (videoListFragment.selectedButton.getTag().equals(videoListFragment.buttonLabels[3])) {
+                videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().popular_video_list(30, videoListFragment.currentPage * 12, 12);
+            } else if (videoListFragment.selectedButton.getTag().equals(videoListFragment.buttonLabels[4])) {
+                videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().popular_video_list(90, videoListFragment.currentPage * 12, 12);
+            } else if (videoListFragment.selectedButton.getTag().equals(videoListFragment.buttonLabels[5])) {
+                videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().category_video_list(1, 12);
+            } else if (videoListFragment.selectedButton.getTag().equals(videoListFragment.buttonLabels[6])) {
+                videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().category_video_list(2, 12);
+            } else if (videoListFragment.selectedButton.getTag().equals(videoListFragment.buttonLabels[7])) {
+                videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().category_video_list(3, 12);
+            } else if (videoListFragment.selectedButton.getTag().equals(videoListFragment.buttonLabels[8])) {
+                videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().category_video_list(4, 12);
+            } else if (videoListFragment.selectedButton.getTag().equals(videoListFragment.buttonLabels[9])) {
+                videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().category_video_list(5, 12);
+            } else if (videoListFragment.selectedButton.getTag().equals(videoListFragment.buttonLabels[10])) {
+                videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().category_video_list(6, 12);
+            } else if (videoListFragment.selectedButton.getTag().equals(videoListFragment.buttonLabels[11])) {
+                videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().category_video_list(7, 12);
+            } else if (videoListFragment.selectedButton.getTag().equals(videoListFragment.buttonLabels[12])) {
+                videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().category_video_list(0, 12);
+            }
+        }else {
+            videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().user_video_list(videoListFragment.uid,videoListFragment.currentPage * 12, 12);
         }
-
         if (videoListResult.video_list != null) {
             for (VideoResult videoResult : videoListResult.video_list) {
                 objects.add(new VideoCard(

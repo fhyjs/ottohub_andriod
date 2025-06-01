@@ -97,7 +97,12 @@ public class BlogActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
         webView.destroy();
+        super.onDestroy();
     }
 
     public void initUI(){
