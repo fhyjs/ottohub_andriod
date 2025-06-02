@@ -191,12 +191,12 @@ public class VideoPlayerActivity extends AppCompatActivity {
             AtomicInteger atomicInteger = new AtomicInteger(0xffffffff);
             BottomSheetDialog bottomSheetDialog = AlertUtil.showInput(this, input -> {
                 int i = atomicInteger.get();
-                i = i & 0x00FFFFFF;
-                int finalI = i;
+                String color = Integer.toHexString(i).substring(2);
                 Thread thread = new Thread(() -> {
-                    EmptyResult emptyResult = MyApp.getInstance().getOttohubApi().getDanmakuApi().send_danmaku(vid, input, mediaPlayer.getTime() / 1000d, "scroll", Integer.toHexString(finalI), "20px", "");
+                    EmptyResult emptyResult = MyApp.getInstance().getOttohubApi().getDanmakuApi().send_danmaku(vid, input, mediaPlayer.getTime() / 1000d, "scroll",color, "20px", "");
+
                     ApiUtil.throwApiError(emptyResult);
-                    danmakuPlayer.send(new DanmakuItemData(danmakuPlayer.getCurrentTimeMs(),mediaPlayer.getTime()+10,input,DANMAKU_MODE_ROLLING,20,finalI,0,DANMAKU_STYLE_SELF_SEND,0,null,MERGED_TYPE_NORMAL));
+                    danmakuPlayer.send(new DanmakuItemData(danmakuPlayer.getCurrentTimeMs(),mediaPlayer.getTime()+10,input,DANMAKU_MODE_ROLLING,20,Color.parseColor("#"+color),0,DANMAKU_STYLE_SELF_SEND,0,null,MERGED_TYPE_NORMAL));
                 });
                 thread.setUncaughtExceptionHandler(new AlertUtil.ThreadAlert(this));
                 thread.start();
