@@ -51,4 +51,7 @@
     <string name="issure">真的么?</string>
     <string name="sex">性别</string>
     <string name="register_time">注册日期</string>
+    <string name="history_video">历史视频</string>
+    <string name="history_blog">历史动态</string>
+    <string name="history">历史记录</string>
 </resources>

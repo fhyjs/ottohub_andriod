@@ -54,6 +54,7 @@ android {
 }
 
 dependencies {
+    implementation libs.ambilwarna
     implementation (libs.flexmark.all){
         exclude group: 'commons-logging', module: 'commons-logging'
     }

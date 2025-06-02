@@ -22,11 +22,12 @@
             <org.videolan.libvlc.util.VLCVideoLayout
                 android:id="@+id/video_view"
                 android:layout_width="match_parent"
-                android:layout_height="250dp" />
+                android:layout_height="match_parent" />
         </LinearLayout>
 
 
         <com.kuaishou.akdanmaku.ui.DanmakuView
+            android:visibility="invisible"
             android:id="@+id/sv_danmaku"
             android:layout_width="match_parent"
             android:layout_height="250dp"
@@ -45,6 +46,7 @@
                 android:orientation="horizontal">
 
                 <Button
+                    android:layout_marginEnd="1dp"
                     android:id="@+id/video_desc_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -52,11 +54,27 @@
                     android:text="@string/describe" />
 
                 <Button
+                    android:layout_marginEnd="1dp"
                     android:id="@+id/video_comment_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/comment" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnDanmaku"
+                    android:layout_marginEnd="4dp"
+                    app:icon="@drawable/chat_24px"
+                    android:paddingEnd="1dp"
+                    android:minWidth="0dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSend"
+                    app:icon="@drawable/send_24dp"
+                    android:paddingEnd="1dp"
+                    android:minWidth="0dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
             </LinearLayout>
         </HorizontalScrollView>
 

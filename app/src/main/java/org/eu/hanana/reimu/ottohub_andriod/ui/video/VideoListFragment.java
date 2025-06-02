@@ -60,6 +60,10 @@ public class VideoListFragment extends Fragment {
     private View view;
     @Nullable
     public Integer uid;
+    public static final String ARG_ACTION = "action";
+    public static final String ACTION_BY_USER = "byuser";
+    public static final String ACTION_HISTORY = "history";
+    public String action=ACTION_BY_USER;
 
     public VideoListFragment() {
         // Required empty public constructor
@@ -76,6 +80,9 @@ public class VideoListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null && getArguments().containsKey(Arg_Uid)) {
             uid = getArguments().getInt(Arg_Uid);
+        }
+        if (getArguments() != null && getArguments().containsKey(ARG_ACTION)) {
+            action = getArguments().getString(ARG_ACTION);
         }
         viewModel = new ViewModelProvider(this).get(VideoViewModel.class);
 

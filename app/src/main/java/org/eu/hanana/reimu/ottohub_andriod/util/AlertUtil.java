@@ -11,12 +11,14 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
 import com.badlogic.gdx.backends.android.AndroidApplicationBase;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.eu.hanana.reimu.ottohub_andriod.R;
@@ -83,6 +85,24 @@ public class AlertUtil {
 
         dialog.show();
         return dialog;
+    }
+    public static BottomSheetDialog showInput(Context context, InputCallback callback) {
+        BottomSheetDialog dialog = new BottomSheetDialog(context);
+        View view = LayoutInflater.from(context).inflate(R.layout.dialog_input_bottom, null);
+
+        EditText editText = view.findViewById(R.id.edit_input);
+        view.findViewById(R.id.btn_confirm).setOnClickListener(v -> {
+            if (callback != null) {
+                callback.onInput(editText.getText().toString());
+            }
+            dialog.dismiss();
+        });
+
+        dialog.setContentView(view);
+        return dialog;
+    }
+    public interface InputCallback {
+        void onInput(String input);
     }
     @AllArgsConstructor
     public static class ThreadAlert implements Thread.UncaughtExceptionHandler{

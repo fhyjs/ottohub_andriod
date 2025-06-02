@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.material.button.MaterialButton;
 
 import org.eu.hanana.reimu.lib.ottohub.api.OttohubApi;
 import org.eu.hanana.reimu.lib.ottohub.api.following.FollowStatusResult;
@@ -185,6 +186,7 @@ public class ProfileFragment extends Fragment {
         }else {
             updateFollowStatus(followStatus.follow_status);
         }
+        addPageBtn();
         for (int i = 0; i < pageBtnArea.getChildCount(); i++) {
             var child = pageBtnArea.getChildAt(i);
             child.setOnClickListener(buttonClicked -> setPage((Button) buttonClicked));
@@ -194,6 +196,15 @@ public class ProfileFragment extends Fragment {
         tvIntro.setText(userResult.intro);
         tvDetail.setText(String.format(Locale.getDefault(),"%s:%s %s:%s",getString(R.string.sex),userResult.sex,getString(R.string.register_time),userResult.time));
     }
+
+    private void addPageBtn() {
+        if (isSelf()){
+            Button button = new MaterialButton(getContext());
+            button.setText(R.string.history);
+            pageBtnArea.addView(button);
+        }
+    }
+
     public void setPage(Button buttonClicked){
         buttonClicked.setEnabled(false);
         for (int i = 0; i < pageBtnArea.getChildCount(); i++) {
@@ -209,6 +220,11 @@ public class ProfileFragment extends Fragment {
         }else if (buttonClicked.getText().equals(getString(R.string.blogs))){
             var listFragment = BlogListFragment.newInstance();
             listFragment.getArguments().putInt(Arg_Uid,uid);
+            getChildFragmentManager().beginTransaction().replace(R.id.fragment_container, listFragment).commit();
+        }else if (buttonClicked.getText().equals(getString(R.string.history))){
+            var listFragment = VideoListFragment.newInstance();
+            listFragment.getArguments().putInt(Arg_Uid,uid);
+            listFragment.getArguments().putString(VideoListFragment.ARG_ACTION,VideoListFragment.ACTION_HISTORY);
             getChildFragmentManager().beginTransaction().replace(R.id.fragment_container, listFragment).commit();
         }
     }

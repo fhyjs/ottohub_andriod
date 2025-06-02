@@ -4,30 +4,36 @@ import static com.kuaishou.akdanmaku.data.DanmakuItemData.DANMAKU_MODE_CENTER_BO
 import static com.kuaishou.akdanmaku.data.DanmakuItemData.DANMAKU_MODE_CENTER_TOP;
 import static com.kuaishou.akdanmaku.data.DanmakuItemData.DANMAKU_MODE_ROLLING;
 import static com.kuaishou.akdanmaku.data.DanmakuItemData.DANMAKU_STYLE_NONE;
+import static com.kuaishou.akdanmaku.data.DanmakuItemData.DANMAKU_STYLE_SELF_SEND;
 import static com.kuaishou.akdanmaku.data.DanmakuItemData.MERGED_TYPE_NORMAL;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Looper;
 import android.os.PersistableBundle;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.MediaController;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.button.MaterialButton;
 import com.google.gson.Gson;
 import com.kuaishou.akdanmaku.DanmakuConfig;
 import com.kuaishou.akdanmaku.data.DanmakuItemData;
@@ -35,6 +41,7 @@ import com.kuaishou.akdanmaku.data.DataSource;
 import com.kuaishou.akdanmaku.render.SimpleRenderer;
 import com.kuaishou.akdanmaku.ui.DanmakuPlayer;
 
+import org.eu.hanana.reimu.lib.ottohub.api.common.EmptyResult;
 import org.eu.hanana.reimu.lib.ottohub.api.danmaku.DanmakuListResult;
 import org.eu.hanana.reimu.lib.ottohub.api.video.VideoResult;
 import org.eu.hanana.reimu.ottohub_andriod.MyApp;
@@ -42,14 +49,17 @@ import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoCommentFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoDescribeFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
+import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.VlcMediaControl;
 import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.Media;
 import org.videolan.libvlc.MediaPlayer;
-import org.videolan.libvlc.interfaces.IMedia;
 import org.videolan.libvlc.util.VLCVideoLayout;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import yuku.ambilwarna.AmbilWarnaDialog;
 
 
 public class VideoPlayerActivity extends AppCompatActivity {
@@ -116,6 +126,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
                 mediaController.show();
             }
         });
+        setDanmakuEnable(true);
         init();
     }
 
@@ -133,6 +144,13 @@ public class VideoPlayerActivity extends AppCompatActivity {
         super.onResume();
     }
 
+    public void setDanmakuEnable(boolean danmakuEnable) {
+        findViewById(R.id.sv_danmaku).setVisibility(danmakuEnable?View.VISIBLE:View.INVISIBLE);
+        ((MaterialButton) findViewById(R.id.btnDanmaku)).setIcon(AppCompatResources.getDrawable(this,danmakuEnable?R.drawable.chat_24dp_fill:R.drawable.chat_24px));
+    }
+    public boolean getDanmakuEnable() {
+        return findViewById(R.id.sv_danmaku).getVisibility()==View.VISIBLE;
+    }
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -166,7 +184,58 @@ public class VideoPlayerActivity extends AppCompatActivity {
     }
 
     private void postinit() {
+        findViewById(R.id.btnDanmaku).setOnClickListener(v -> {
+            setDanmakuEnable(!getDanmakuEnable());
+        });
+        findViewById(R.id.btnSend).setOnClickListener(v -> {
+            AtomicInteger atomicInteger = new AtomicInteger(0xffffffff);
+            BottomSheetDialog bottomSheetDialog = AlertUtil.showInput(this, input -> {
+                int i = atomicInteger.get();
+                i = i & 0x00FFFFFF;
+                int finalI = i;
+                Thread thread = new Thread(() -> {
+                    EmptyResult emptyResult = MyApp.getInstance().getOttohubApi().getDanmakuApi().send_danmaku(vid, input, mediaPlayer.getTime() / 1000d, "scroll", Integer.toHexString(finalI), "20px", "");
+                    ApiUtil.throwApiError(emptyResult);
+                    danmakuPlayer.send(new DanmakuItemData(danmakuPlayer.getCurrentTimeMs(),mediaPlayer.getTime()+10,input,DANMAKU_MODE_ROLLING,20,finalI,0,DANMAKU_STYLE_SELF_SEND,0,null,MERGED_TYPE_NORMAL));
+                });
+                thread.setUncaughtExceptionHandler(new AlertUtil.ThreadAlert(this));
+                thread.start();
+            });
+            EditText editInput = bottomSheetDialog.findViewById(R.id.edit_input);
+            LinearLayout rootView = (LinearLayout) editInput.getParent();
+            rootView.removeView(editInput);
+            LinearLayout linearLayout = new LinearLayout(bottomSheetDialog.getContext());
+            linearLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT));
+            linearLayout.setOrientation(LinearLayout.HORIZONTAL);
+            linearLayout.addView(editInput);
+            MaterialButton colorBtn = new MaterialButton(bottomSheetDialog.getContext());
+            colorBtn.setIcon(AppCompatResources.getDrawable(this,R.drawable.border_color));
+            colorBtn.setPadding(0,0,5,0);
+            colorBtn.setMinWidth(0);
+            linearLayout.addView(colorBtn,0);
+            colorBtn.setOnClickListener(v1 -> {
+                editInput.clearFocus();
+                AmbilWarnaDialog dialog = new AmbilWarnaDialog(this, editInput.getCurrentTextColor(), new AmbilWarnaDialog.OnAmbilWarnaListener() {
+                    @Override
+                    public void onOk(AmbilWarnaDialog dialog, int color) {
+                        editInput.setTextColor(color);
+                        colorBtn.setIconTint(ColorStateList.valueOf(color));
+                        atomicInteger.set(color);
+                    }
 
+                    @Override
+                    public void onCancel(AmbilWarnaDialog dialog) {
+                        // cancel was selected by the user
+                    }
+                });
+                dialog.show();
+            });
+            rootView.addView(linearLayout,0);
+            bottomSheetDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+            bottomSheetDialog.show();
+        });
     }
 
     private void preinit() {
@@ -240,6 +309,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
                         lastDanmakuUpdate=0;
                         Log.d(TAG, "updated danmaku time");
                     }
+                    if (!mediaPlayer.isPlaying()) danmakuPlayer.pause();
                     break;
                 case MediaPlayer.Event.EncounteredError:
                     AlertUtil.showError(videoSurface.getContext(), "ERROR");
@@ -253,8 +323,10 @@ public class VideoPlayerActivity extends AppCompatActivity {
         });
     }
     public void seekVideo(long time){
-        if (danmakuPlayer!=null)
+        if (danmakuPlayer!=null) {
             danmakuPlayer.seekTo(time);
+            if (mediaPlayer!=null&&!mediaPlayer.isPlaying()) danmakuPlayer.pause();
+        }
         if (mediaPlayer!=null)
             mediaPlayer.setTime(time);
     }
@@ -307,6 +379,8 @@ public class VideoPlayerActivity extends AppCompatActivity {
                 }else {
                     mediaPlayer.pause();
                 }
+            }else {
+                mediaPlayer.play();
             }
         }
     }
@@ -330,13 +404,14 @@ public class VideoPlayerActivity extends AppCompatActivity {
                     data.text,
                     mode,
                     Integer.parseInt(data.font_size.substring(0,data.font_size.length()-2)),
-                    Integer.decode("0x"+danmakuData.data.get(0).color.substring(1)),
+                    Color.parseColor(data.color),
                     0,
                     DANMAKU_STYLE_NONE,
                     0,
                     null,
                     MERGED_TYPE_NORMAL
             ));
+            Log.d(TAG, "loadDanmaku: Color.parseColor(danmakuData.data.get(0).color): "+ Color.parseColor(data.color)+" raw: "+data.color);
         }
     }
 

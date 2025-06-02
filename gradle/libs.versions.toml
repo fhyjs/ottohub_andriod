@@ -2,6 +2,7 @@
 activityVersion = "1.10.1"
 agp = "8.10.1"
 akdanmaku = "1.0.3"
+ambilwarna = "2.0.1"
 desugar_jdk_libs = "2.1.5"
 flexmarkAll = "0.64.8"
 glide = "4.16.0"
@@ -15,7 +16,7 @@ lombok = "1.18.30"
 material = "1.12.0"
 activity = "1.10.1"
 constraintlayout = "2.2.1"
-ottohub_api = "1.0.7.2"
+ottohub_api = "1.0.7.3"
 pagingRuntime = "3.3.6"
 preference = "1.2.1"
 supportAnnotations = "28.0.0"
@@ -27,6 +28,7 @@ lifecycleViewmodelKtx = "2.9.0"
 [libraries]
 activity-v161 = { module = "androidx.activity:activity", version.ref = "activityVersion" }
 akdanmaku = { module = "com.kuaishou:akdanmaku", version.ref = "akdanmaku" }
+ambilwarna = { module = "com.github.yukuku:ambilwarna", version.ref = "ambilwarna" }
 compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide" }
 desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
 flexmark-all = { module = "com.vladsch.flexmark:flexmark-all", version.ref = "flexmarkAll" }

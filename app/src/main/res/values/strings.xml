@@ -54,5 +54,8 @@
     <string name="issure">Are you sure?</string>
     <string name="sex">sex</string>
     <string name="register_time">register time</string>
+    <string name="history_video">history videos</string>
+    <string name="history_blog">history blog</string>
+    <string name="history">history</string>
 
 </resources>

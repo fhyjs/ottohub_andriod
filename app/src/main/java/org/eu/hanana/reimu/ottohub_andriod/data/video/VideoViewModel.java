@@ -107,7 +107,17 @@ public class VideoViewModel extends ViewModel {
                 videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().category_video_list(0, 12);
             }
         }else {
-            videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().user_video_list(videoListFragment.uid,videoListFragment.currentPage * 12, 12);
+            if (videoListFragment.action.equals(VideoListFragment.ACTION_BY_USER)) {
+                videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().user_video_list(videoListFragment.uid, videoListFragment.currentPage * 12, 12);
+            }else if (videoListFragment.action.equals(VideoListFragment.ACTION_HISTORY)){
+                if (videoListFragment.currentPage==0)
+                    videoListResult = MyApp.getInstance().getOttohubApi().getProfileApi().history_video_list();
+                else {
+                    videoListResult = new VideoListResult();
+                    videoListResult.status="success";
+                    videoListResult.video_list=List.of();
+                }
+            }
         }
         if (videoListResult.video_list != null) {
             for (VideoResult videoResult : videoListResult.video_list) {
