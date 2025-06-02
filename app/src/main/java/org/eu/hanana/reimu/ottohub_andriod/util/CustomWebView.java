@@ -136,7 +136,7 @@ public class CustomWebView extends WebView {
         private WebResourceResponse getWebResourceResponseFromAssets(String url, String mimeType) {
             try {
                 // 从 URL 提取资源路径
-                String assetPath = url.replace(internal, "");
+                String assetPath = url.replace(internal, "").split("\\?")[0];
 
                 // 打开资源流
                 InputStream inputStream = getContext().getAssets().open(assetPath);

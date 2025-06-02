@@ -7,6 +7,8 @@ import static com.kuaishou.akdanmaku.data.DanmakuItemData.DANMAKU_STYLE_NONE;
 import static com.kuaishou.akdanmaku.data.DanmakuItemData.DANMAKU_STYLE_SELF_SEND;
 import static com.kuaishou.akdanmaku.data.DanmakuItemData.MERGED_TYPE_NORMAL;
 
+import static org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoCommentFragment.TYPE_VIDEO;
+
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -112,7 +114,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
             v.setEnabled(false);
             findViewById(R.id.video_desc_btn).setEnabled(true);
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, VideoCommentFragment.newInstance(netData))
+                    .replace(R.id.fragment_container, VideoCommentFragment.newInstance(netData.vid,TYPE_VIDEO))
                     .commit();
         });
         findViewById(R.id.video_desc_btn).setEnabled(false);

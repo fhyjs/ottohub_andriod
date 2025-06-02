@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Document</title>
+    <script src="../assets/jquery-3.7.1.min.js"></script>
+    <script src="../assets/materialize.min.js"></script>
+    <script src="../assets/cookie.js"></script>
+    <script src="../assets/text_processing.js"></script>
+    <link rel="stylesheet" href="../assets/materialize.min.css">
+    <!-- 让浏览器适应手机-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <style>
+        .comment-card {
+          display: flex;
+          padding: 12px;
+          align-items: flex-start;
+          border-bottom: 1px solid #eee;
+        }
+        .avatar {
+          width: 48px;
+          height: 48px;
+          border-radius: 50%;
+          margin-right: 12px;
+        }
+        .username {
+          font-weight: bold;
+          margin-right: 8px;
+        }
+        .tag {
+          background-color: #81d4fa;
+          color: white;
+          padding: 2px 6px;
+          border-radius: 8px;
+          font-size: 0.8rem;
+        }
+        .timestamp {
+          color: #777;
+          font-size: 0.9rem;
+        }
+        .content {
+          margin-top: 4px;
+        }
+        .actions {
+          margin-top: 4px;
+        }
+        .actions a {
+          color: #81d4fa;
+          margin-right: 12px;
+          font-size: 0.85rem;
+        }
+    </style>
+    <script src="comment.js"></script>
+    <style>
+        .comment_avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .comment_subtitle {
+            font-size: 2.2vh;
+            white-space: nowrap;
+            align-items: center;
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+        #commentbar {
+    flex-wrap: wrap;
+    align-content: flex-start;
+    overflow-x: hidden;
+    overflow-y: auto;
+    z-index: 997;
+    padding-bottom: 11vh;
+}
+        .footer {
+    position: relative;
+    width: 100%;
+    height: 4vh;
+    left: 0;
+    top: 0;
+    padding-right: 1vh;
+    display: flex
+;
+    justify-content: flex-end;
+}
+    </style>
+</head>
+<body>
+<div id="commentbar" class="comment_container white" name="0" offset="12" style="">
+</div>
+</body>
+</html>
