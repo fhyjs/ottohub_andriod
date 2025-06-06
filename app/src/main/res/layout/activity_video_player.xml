@@ -1,38 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<ScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:keepScreenOn="true"
     android:fillViewport="true"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
 
         tools:context=".activity.VideoPlayerActivity">
 
-        <LinearLayout
+        <FrameLayout
             android:id="@+id/video_view_wrapper"
             android:layout_width="match_parent"
             android:layout_height="250dp"
-            app:layout_constraintTop_toTopOf="parent"
-            android:orientation="vertical">
-            <org.videolan.libvlc.util.VLCVideoLayout
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.media3.ui.PlayerView
                 android:id="@+id/video_view"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </LinearLayout>
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:background="#FFFF00FF"
+                android:fitsSystemWindows="false"
+                app:resize_mode="fill" />
 
+            <com.kuaishou.akdanmaku.ui.DanmakuView
+                android:id="@+id/sv_danmaku"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="invisible" />
 
-        <com.kuaishou.akdanmaku.ui.DanmakuView
-            android:visibility="invisible"
-            android:id="@+id/sv_danmaku"
-            android:layout_width="match_parent"
-            android:layout_height="250dp"
-            app:layout_constraintTop_toTopOf="@+id/video_view_wrapper" />
-
+        </FrameLayout>
         <HorizontalScrollView
             android:id="@+id/horizontalScrollView"
             android:layout_width="match_parent"

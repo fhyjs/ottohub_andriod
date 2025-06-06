@@ -7,13 +7,13 @@ import static com.kuaishou.akdanmaku.data.DanmakuItemData.DANMAKU_STYLE_NONE;
 import static com.kuaishou.akdanmaku.data.DanmakuItemData.DANMAKU_STYLE_SELF_SEND;
 import static com.kuaishou.akdanmaku.data.DanmakuItemData.MERGED_TYPE_NORMAL;
 
-import static org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoCommentFragment.TYPE_VIDEO;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.PersistableBundle;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -22,16 +22,28 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.MediaController;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.OptIn;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.media3.common.MediaItem;
+import androidx.media3.common.PlaybackException;
+import androidx.media3.common.PlaybackParameters;
+import androidx.media3.common.Player;
+import androidx.media3.common.util.UnstableApi;
+import androidx.media3.datasource.DefaultHttpDataSource;
+import androidx.media3.datasource.HttpDataSource;
+import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.exoplayer.source.MediaSource;
+import androidx.media3.exoplayer.source.ProgressiveMediaSource;
+import androidx.media3.ui.PlayerControlView;
+import androidx.media3.ui.PlayerView;
 
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -48,22 +60,18 @@ import org.eu.hanana.reimu.lib.ottohub.api.danmaku.DanmakuListResult;
 import org.eu.hanana.reimu.lib.ottohub.api.video.VideoResult;
 import org.eu.hanana.reimu.ottohub_andriod.MyApp;
 import org.eu.hanana.reimu.ottohub_andriod.R;
-import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoCommentFragment;
+import org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase;
 import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoDescribeFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
-import org.eu.hanana.reimu.ottohub_andriod.util.VlcMediaControl;
-import org.videolan.libvlc.LibVLC;
-import org.videolan.libvlc.Media;
-import org.videolan.libvlc.MediaPlayer;
-import org.videolan.libvlc.util.VLCVideoLayout;
 
-import java.util.ArrayList;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import yuku.ambilwarna.AmbilWarnaDialog;
 
 
+@UnstableApi
 public class VideoPlayerActivity extends AppCompatActivity {
     public static final String KEY_VID="vid";
     public static final String KEY_NET_DATA="netdata";
@@ -71,9 +79,8 @@ public class VideoPlayerActivity extends AppCompatActivity {
     public static final String KEY_PLAYER_PLAYING="pplaying";
     public static final String KEY_PLAYER_TIME="ptime";
     private static final String TAG = "VideoPlayerActivity";
-    private LibVLC libVLC;
-    private MediaPlayer mediaPlayer;
-    private VLCVideoLayout videoSurface;
+    private ExoPlayer mediaPlayer;
+    private PlayerView videoSurface;
     private DanmakuPlayer danmakuPlayer;
     private DanmakuConfig danmakuConfig;
     public int vid;
@@ -81,11 +88,13 @@ public class VideoPlayerActivity extends AppCompatActivity {
     private DanmakuListResult danmakuData;
     protected Bundle savedInstanceState;
     private long lastDanmakuUpdate;
-    public MediaController mediaController;
+    private Runnable updateRunnable;
+    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        handler = new Handler(getMainLooper());
         this.savedInstanceState=savedInstanceState;
         if (savedInstanceState==null){
             this.savedInstanceState=new Bundle();
@@ -114,35 +123,23 @@ public class VideoPlayerActivity extends AppCompatActivity {
             v.setEnabled(false);
             findViewById(R.id.video_desc_btn).setEnabled(true);
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, VideoCommentFragment.newInstance(netData.vid,TYPE_VIDEO))
+                    .replace(R.id.fragment_container, CommentFragmentBase.newInstance(netData.vid,CommentFragmentBase.TYPE_VIDEO))
                     .commit();
         });
         findViewById(R.id.video_desc_btn).setEnabled(false);
-        // 初始化 MediaController
-        mediaController = new MediaController(this);
-        mediaController.setAnchorView(videoSurface); // 设置锚点视图
-        videoSurface.setOnClickListener(v -> {
-            if(mediaController.isShowing()){
-                mediaController.hide();
-            }else {
-                mediaController.show();
-            }
-        });
         setDanmakuEnable(true);
         init();
     }
 
     @Override
     protected void onPause() {
-        mediaPlayer.detachViews();
-        mediaController.hide();
+
         mediaPlayer.pause();
         super.onPause();
     }
 
     @Override
     protected void onResume() {
-        bindVideoSurface(videoSurface);
         super.onResume();
     }
 
@@ -161,18 +158,10 @@ public class VideoPlayerActivity extends AppCompatActivity {
         outState.putString(KEY_DANMAKU_DATA,gson.toJson(danmakuData));
         if (mediaPlayer!=null){
             outState.putBoolean(KEY_PLAYER_PLAYING,mediaPlayer.isPlaying());
-            outState.putLong(KEY_PLAYER_TIME,mediaPlayer.getTime());
+            outState.putLong(KEY_PLAYER_TIME,mediaPlayer.getCurrentPosition());
         }
     }
 
-    private void updateVideoScaling(int width, int height) {
-        if (mediaPlayer==null) return;
-        // 二次应用填充
-        mediaPlayer.setScale(0);
-        mediaPlayer.setAspectRatio("fill");
-        // 特殊处理某些编解码器
-        mediaPlayer.setVideoScale(MediaPlayer.ScaleType.SURFACE_FILL);
-    }
     public void init(){
         setTitle("loading...");
         initDanmaku();
@@ -180,7 +169,6 @@ public class VideoPlayerActivity extends AppCompatActivity {
             preinit();
             initPlayer();
             loadData(false);
-            updateVideoScaling(videoSurface.getWidth(),videoSurface.getHeight());
             postinit();
         }).start();
     }
@@ -195,10 +183,10 @@ public class VideoPlayerActivity extends AppCompatActivity {
                 int i = atomicInteger.get();
                 String color = Integer.toHexString(i).substring(2);
                 Thread thread = new Thread(() -> {
-                    EmptyResult emptyResult = MyApp.getInstance().getOttohubApi().getDanmakuApi().send_danmaku(vid, input, mediaPlayer.getTime() / 1000d, "scroll",color, "20px", "");
+                    EmptyResult emptyResult = MyApp.getInstance().getOttohubApi().getDanmakuApi().send_danmaku(vid, input, mediaPlayer.getCurrentPosition() / 1000d, "scroll",color, "20px", "");
 
                     ApiUtil.throwApiError(emptyResult);
-                    danmakuPlayer.send(new DanmakuItemData(danmakuPlayer.getCurrentTimeMs(),mediaPlayer.getTime()+10,input,DANMAKU_MODE_ROLLING,20,Color.parseColor("#"+color),0,DANMAKU_STYLE_SELF_SEND,0,null,MERGED_TYPE_NORMAL));
+                    danmakuPlayer.send(new DanmakuItemData(danmakuPlayer.getCurrentTimeMs(),mediaPlayer.getCurrentPosition()+10,input,DANMAKU_MODE_ROLLING,20,Color.parseColor("#"+color),0,DANMAKU_STYLE_SELF_SEND,0,null,MERGED_TYPE_NORMAL));
                 });
                 thread.setUncaughtExceptionHandler(new AlertUtil.ThreadAlert(this));
                 thread.start();
@@ -245,7 +233,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
     }
 
     public void  destroy(){
-        mediaController.hide();
+        stopProgressUpdater();
         if (danmakuPlayer!=null){
             danmakuPlayer.stop();
             danmakuPlayer.release();
@@ -253,76 +241,77 @@ public class VideoPlayerActivity extends AppCompatActivity {
         }
         if (mediaPlayer != null) {
             mediaPlayer.stop();
-            mediaPlayer.getVLCVout().detachViews();
             mediaPlayer.release();
-            libVLC.release();
             mediaPlayer=null;
         }
-        // 释放资源
-        if (mediaController != null) {
-            mediaController.hide();
-        }
     }
-    public void bindVideoSurface(VLCVideoLayout videoSurface){
-        if (mediaPlayer==null||mediaPlayer.getVLCVout().areViewsAttached()||videoSurface==null) {
-            return;
-        }
-        mediaPlayer.attachViews(videoSurface, null, true, false);
-        updateVideoScaling(videoSurface.getWidth(),videoSurface.getHeight());
-    }
+
+    @OptIn(markerClass = UnstableApi.class)
     private void initPlayer() {
-        // 初始化VLC
-        final ArrayList<String> args = new ArrayList<>();
-        libVLC = new LibVLC(this, args);
-        args.add("--vout=android-display");  // Add this line!
-        args.add("-vvv");
-        args.add(":avcodec-hw=any"); // 启用硬件加速
-        args.add(":swscale-mode=0"); // 快速缩放模式
-        args.add(":no-frame-drop"); // 避免丢帧
         // 创建媒体播放器
-        mediaPlayer = new MediaPlayer(libVLC);
+        mediaPlayer = new ExoPlayer.Builder(this).build();
         runOnUiThread(()->{
-            bindVideoSurface(videoSurface);
+            videoSurface.setPlayer(mediaPlayer);
         });
-        // 设置播放事件监听
-        mediaPlayer.setEventListener(event -> {
-            switch (event.type) {
-                case MediaPlayer.Event.Playing:
+
+        mediaPlayer.addListener(new Player.Listener() {
+            @Override
+            public void onIsPlayingChanged(boolean isPlaying) {
+                if (isPlaying){
                     if (isFinishing()) return;
                     danmakuPlayer.start(danmakuConfig);
-                    danmakuPlayer.seekTo(event.getTimeChanged());
-                    updateVideoScaling(videoSurface.getWidth(),videoSurface.getHeight());
-                    mediaController.show();
-                    break;
-                case MediaPlayer.Event.Paused:
-                    //danmakuPlayer.seekTo(event.getTimeChanged());
+                    danmakuPlayer.seekTo(mediaPlayer.getCurrentPosition());
+                    //updateVideoScaling(videoSurface.getWidth(),videoSurface.getHeight());
+                }else {
                     danmakuPlayer.pause();
-                    break;
-                case MediaPlayer.Event.EndReached:
-                    danmakuPlayer.stop();
-                    danmakuPlayer.pause();
-                    mediaController.show();
-                    mediaPlayer.stop();
-                    break;
-                case MediaPlayer.Event.TimeChanged:
-                    lastDanmakuUpdate++;
-                    if (lastDanmakuUpdate>7||Math.abs(danmakuPlayer.getCurrentTimeMs()-mediaPlayer.getTime())>70) {
-                        danmakuPlayer.seekTo(mediaPlayer.getTime());
-                        lastDanmakuUpdate=0;
-                        Log.d(TAG, "updated danmaku time");
-                    }
-                    if (!mediaPlayer.isPlaying()) danmakuPlayer.pause();
-                    break;
-                case MediaPlayer.Event.EncounteredError:
-                    AlertUtil.showError(videoSurface.getContext(), "ERROR");
-                    break;
+                }
+            }
+
+            @Override
+            public void onPlaybackStateChanged(int playbackState) {
+                switch (playbackState){
+                    case Player.STATE_ENDED:
+                        danmakuPlayer.stop();
+                        danmakuPlayer.pause();
+                        mediaPlayer.stop();
+                        break;
+                    case Player.STATE_BUFFERING:
+                        break;
+                    case Player.STATE_IDLE:
+                        break;
+                    case Player.STATE_READY:
+                        break;
+                }
+            }
+
+            @Override
+            public void onPlayerError(PlaybackException error) {
+                AlertUtil.showError(videoSurface.getContext(), "ERROR:"+error);
+            }
+
+            @Override
+            public void onPositionDiscontinuity(Player.PositionInfo oldPosition, Player.PositionInfo newPosition, int reason) {
+                Player.Listener.super.onPositionDiscontinuity(oldPosition, newPosition, reason);
+                danmakuPlayer.seekTo(newPosition.positionMs);
+                internalTimeCheck();
+            }
+
+            @Override
+            public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
+                Player.Listener.super.onPlaybackParametersChanged(playbackParameters);
+                danmakuPlayer.updatePlaySpeed(playbackParameters.speed);
             }
         });
-        runOnUiThread(()->{
-            var mc=new VlcMediaControl(mediaPlayer);
-            mc.setSeeker(this::seekVideo);
-            mediaController.setMediaPlayer(mc);
-        });
+        startProgressUpdater();
+    }
+    public void internalTimeCheck(){
+        lastDanmakuUpdate++;
+        if (lastDanmakuUpdate>5||Math.abs(danmakuPlayer.getCurrentTimeMs()-mediaPlayer.getCurrentPosition())>70) {
+            danmakuPlayer.seekTo(mediaPlayer.getCurrentPosition());
+            lastDanmakuUpdate=0;
+            Log.d(TAG, "updated danmaku time");
+        }
+        if (!mediaPlayer.isPlaying()) danmakuPlayer.pause();
     }
     public void seekVideo(long time){
         if (danmakuPlayer!=null) {
@@ -330,7 +319,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
             if (mediaPlayer!=null&&!mediaPlayer.isPlaying()) danmakuPlayer.pause();
         }
         if (mediaPlayer!=null)
-            mediaPlayer.setTime(time);
+            mediaPlayer.seekTo(time);
     }
     private void loadData(boolean finish) {
         if (!finish) {
@@ -355,8 +344,8 @@ public class VideoPlayerActivity extends AppCompatActivity {
                     return;
                 }
                 loadDanmaku();
-                setMedia(Uri.parse(netData.video_url));
                 runOnUiThread(() -> {
+                    setMedia(Uri.parse(netData.video_url));
                     loadData(true);
                 });
             });
@@ -369,8 +358,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, VideoDescribeFragment.newInstance(netData))
                     .commit();
-            mediaPlayer.play();
-            mediaPlayer.pause();
+            mediaPlayer.prepare();
             if (savedInstanceState.containsKey(KEY_PLAYER_TIME)){
                 long time = savedInstanceState.getLong(KEY_PLAYER_TIME);
                 if (time>0) seekVideo(time);
@@ -417,15 +405,20 @@ public class VideoPlayerActivity extends AppCompatActivity {
         }
     }
 
+    @OptIn(markerClass = UnstableApi.class)
     public void setMedia(Uri uri){
         // 加载媒体
-        Media media = new Media(libVLC,uri);
-        media.setHWDecoderEnabled(true, false); // 启用硬件解码
-        media.addOption(":fullscreen");
-        media.addOption(":http-referrer=https://bilibili.com/");
-        media.addOption(":http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36 Ottohub 1.0.0");
-        mediaPlayer.setMedia(media);
-        media.release();
+        MediaItem mediaItem = MediaItem.fromUri(uri);
+        // 设置 Referer 头
+        HttpDataSource.Factory httpDataSourceFactory =
+                new DefaultHttpDataSource.Factory()
+                        .setDefaultRequestProperties(
+                                Map.of("Referer", "https://bilibili.com/")
+                        ).setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36 Ottohub 1.0.0");
+        // 使用 MediaSource 时注入 DataSource
+        MediaSource mediaSource = new ProgressiveMediaSource.Factory(httpDataSourceFactory)
+                .createMediaSource(mediaItem);
+        mediaPlayer.setMediaSource(mediaSource);
     }
     private void initDanmaku() {
         danmakuPlayer = new DanmakuPlayer(new SimpleRenderer(),new DataSource());
@@ -433,7 +426,27 @@ public class VideoPlayerActivity extends AppCompatActivity {
         danmakuConfig = new DanmakuConfig();
         danmakuConfig.setAllowOverlap(true);
     }
+    private void startProgressUpdater() {
+        updateRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (mediaPlayer != null) {
+                    long position = mediaPlayer.getCurrentPosition(); // 当前播放进度（毫秒）
+                    long duration = mediaPlayer.getDuration();        // 总时长
 
+                    // 执行你想做的事情，比如更新 TextView、发送数据、打印日志
+                    internalTimeCheck();
+                }
+                handler.postDelayed(this, 500); // 每隔 1 秒再执行
+            }
+        };
+
+        handler.post(updateRunnable); // 启动定时任务
+    }
+
+    private void stopProgressUpdater() {
+        handler.removeCallbacks(updateRunnable); // 停止任务
+    }
     @Override
     public void onPostCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
         super.onPostCreate(savedInstanceState, persistentState);

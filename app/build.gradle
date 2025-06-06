@@ -54,11 +54,16 @@ android {
 }
 
 dependencies {
+    // Media3 核心播放器组件
+    implementation libs.media3.exoplayer
+    // Media3 UI 组件（含 PlayerView）
+    implementation libs.media3.ui
+
     implementation libs.ambilwarna
     implementation (libs.flexmark.all){
         exclude group: 'commons-logging', module: 'commons-logging'
     }
-    implementation libs.libvlc.all
+    //implementation libs.libvlc.all
     implementation libs.akdanmaku
     implementation libs.gson // 最新版本
     implementation libs.glide
