@@ -19,7 +19,7 @@
     <string name="music">music</string>
     <string name="other">other</string>
     <string name="ok" translatable="false">ok</string>
-    <string name="video_card_info_short">%d Views %d Likes %d Favorit</string>
+    <string name="video_card_info_short">%d Views %d Likes %d Favourite</string>
     <string name="describe">Describe</string>
     <string name="comment">Comment</string>
     <string name="like">Like</string>
@@ -57,5 +57,6 @@
     <string name="history_video">history videos</string>
     <string name="history_blog">history blog</string>
     <string name="history">history</string>
+    <string name="toBottom">to bottom</string>
 
 </resources>

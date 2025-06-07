@@ -77,8 +77,10 @@ public class VideoDescribeFragment extends androidx.fragment.app.Fragment {
         ((TextView) view.findViewById(R.id.video_desc_text)).setText(vData.intro);
         ((TextView) view.findViewById(R.id.username)).setText(vData.username);
         ((TextView) view.findViewById(R.id.tvInfo)).setText(vData.userintro);
-        ((MaterialCardView) view.findViewById(R.id.clAuthorInfo)).removeView(view.findViewById(R.id.tvIntro));
-        ((MaterialCardView) view.findViewById(R.id.clAuthorInfo)).removeView(view.findViewById(R.id.tvDetail));
+        TextView vidInfo = view.findViewById(R.id.tvIntro);
+        vidInfo.setText(getString(R.string.video_card_info_short,vData.view_count,vData.like_count,vData.favorite_count));
+        TextView vidTime = view.findViewById(R.id.tvDetail);
+        vidTime.setText(vData.time);
         Glide.with(view.getContext())
                 .load(vData.avatar_url)
                 .placeholder(R.drawable.ic_launcher_background)  // 占位图

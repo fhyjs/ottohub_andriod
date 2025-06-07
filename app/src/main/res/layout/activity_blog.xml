@@ -9,6 +9,8 @@
 
 
     <ScrollView
+        android:nestedScrollingEnabled="true"
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -52,7 +54,12 @@
                 app:layout_constraintTop_toTopOf="parent">
 
             </org.eu.hanana.reimu.ottohub_andriod.util.CustomWebView>
-            <include layout="@layout/action_bar_card"/>
+            <include android:id="@+id/ll_actionBar" layout="@layout/action_bar_card"/>
+            <FrameLayout
+                android:minHeight="600dp"
+                android:id="@+id/fragment_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

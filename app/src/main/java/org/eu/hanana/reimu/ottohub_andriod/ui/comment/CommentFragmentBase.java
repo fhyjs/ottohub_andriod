@@ -62,6 +62,12 @@ public class CommentFragmentBase extends ListFragmentBase<CommentCardAdapter, Co
             type=arguments.getString(ARG_TYPE);
             dataId=arguments.getInt(ARG_ID);
         }
+
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
     }
 
     @Nullable
@@ -72,6 +78,6 @@ public class CommentFragmentBase extends ListFragmentBase<CommentCardAdapter, Co
 
     @Override
     public CommentCardAdapter createAdapter(List<CommentCard> list) {
-        return new CommentCardAdapter(list);
+        return new CommentCardAdapter(list,type,this);
     }
 }

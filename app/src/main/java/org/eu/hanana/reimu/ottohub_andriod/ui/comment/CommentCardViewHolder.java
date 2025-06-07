@@ -3,6 +3,7 @@ package org.eu.hanana.reimu.ottohub_andriod.ui.comment;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,7 +20,9 @@ public class CommentCardViewHolder extends RecyclerView.ViewHolder {
         content=itemView.findViewById(R.id.tvContent);
         reply=itemView.findViewById(R.id.btn_reply);
         report=itemView.findViewById(R.id.btn_report);
+        userinfo=itemView.findViewById(R.id.ll_userinfo);
     }
+    public final LinearLayout userinfo;
     public final TextView username;
     public final TextView info;
     public final ImageView avatar;

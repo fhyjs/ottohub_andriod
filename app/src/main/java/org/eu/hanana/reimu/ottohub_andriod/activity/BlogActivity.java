@@ -6,8 +6,13 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.webkit.JavascriptInterface;
 import android.webkit.JsResult;
@@ -16,14 +21,20 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.WindowDecorActionBar;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
+import androidx.core.view.MenuProvider;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
@@ -54,6 +65,8 @@ import org.eu.hanana.reimu.lib.ottohub.api.engagement.EngagementResult;
 import org.eu.hanana.reimu.ottohub_andriod.MainActivity;
 import org.eu.hanana.reimu.ottohub_andriod.MyApp;
 import org.eu.hanana.reimu.ottohub_andriod.R;
+import org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase;
+import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.CustomWebView;
@@ -173,8 +186,46 @@ public class BlogActivity extends AppCompatActivity {
             AlertUtil.showYesNo(this, getString(R.string.report), getString(R.string.issure), (dialog, which) -> thread.start(),null).show();
         });
         updateActionBtns();
-    }
 
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, CommentFragmentBase.newInstance(bid,CommentFragmentBase.TYPE_BLOG))
+                .commit();
+        addMenuProvider(new MyMenuProvider(),this);
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return super.onCreateOptionsMenu(menu);
+    }
+    private class MyMenuProvider implements MenuProvider {
+        @Override
+        public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+            // 加载菜单布局
+            Drawable drawable = AppCompatResources.getDrawable(BlogActivity.this, R.drawable.arrow_downward_24dp);
+            drawable.setTintList(ContextCompat.getColorStateList(BlogActivity.this,R.color.white));
+            menu.add(Menu.NONE,1,Menu.NONE,getString(R.string.toBottom)).setIcon(drawable).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        }
+
+        @Override
+        public void onPrepareMenu(@NonNull Menu menu) {
+            // 动态调整菜单项（替代旧的 onPrepareOptionsMenu）
+            MenuItem item = menu.findItem(1);
+            if (item != null) {
+                item.setVisible(true);
+                item.setEnabled(true);
+            }
+        }
+
+        @Override
+        public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+            // 处理点击事件
+            int id = menuItem.getItemId();
+            if (id == 1) {
+                findViewById(R.id.scrollView).scrollTo(0,findViewById(R.id.ll_actionBar).getTop());
+                return true;
+            }
+            return false;
+        }
+    }
     private void updateActionBtns() {
         ((TextView) findViewById(R.id.btn_like)).setText(String.format(Locale.getDefault(),"%d%s",blogResult.like_count,getString(R.string.like)));
         ((TextView) findViewById(R.id.btn_favourite)).setText(String.format(Locale.getDefault(),"%d%s",blogResult.favorite_count,getString(R.string.favourite)));

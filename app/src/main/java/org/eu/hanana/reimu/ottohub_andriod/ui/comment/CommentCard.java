@@ -4,10 +4,21 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import lombok.AllArgsConstructor;
+import org.eu.hanana.reimu.lib.ottohub.api.comment.CommentResult;
 
-@AllArgsConstructor
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 public class CommentCard {
-    public int cid;
-    public String username,avatarUrl,info,content;
+    public final int cid;
+    public final String username,avatarUrl,info,content;
+    @Getter
+    protected CommentResult commentResult;
+
+    public CommentCard withRaw(CommentResult commentResult){
+        this.commentResult=commentResult;
+        return this;
+    }
 }
