@@ -124,7 +124,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
             v.setEnabled(false);
             findViewById(R.id.video_desc_btn).setEnabled(true);
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, CommentFragmentBase.newInstance(netData.vid,CommentFragmentBase.TYPE_VIDEO))
+                    .replace(R.id.fragment_container, CommentFragmentBase.newInstance(netData.vid,0,CommentFragmentBase.TYPE_VIDEO))
                     .commit();
         });
         findViewById(R.id.video_desc_btn).setEnabled(false);

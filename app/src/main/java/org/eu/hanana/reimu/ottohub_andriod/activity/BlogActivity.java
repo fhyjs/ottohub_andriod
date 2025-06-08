@@ -14,19 +14,25 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewPropertyAnimator;
 import android.webkit.JavascriptInterface;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -82,12 +88,14 @@ public class BlogActivity extends AppCompatActivity {
     protected String blogPage = CustomWebView.internal+"web/blog/index.html";
     protected BlogResult blogResult;
     protected boolean inited=false;
+    private View currentPage;
+    private ViewGroup page1, page2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_blog);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.container), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
@@ -102,6 +110,10 @@ public class BlogActivity extends AppCompatActivity {
         webView = findViewById(R.id.wvContent);
         webView.addJavascriptInterface(new JsBridge(this), "blog"); // "AndroidBridge" 是 JS 调用的对象名
         webView.loadUrl(blogPage);
+
+        page1 = findViewById(R.id.scrollView);
+        page2 = findViewById(R.id.fragment_container);
+
     }
     public void init(){
         inited=true;
@@ -188,9 +200,36 @@ public class BlogActivity extends AppCompatActivity {
         updateActionBtns();
 
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, CommentFragmentBase.newInstance(bid,CommentFragmentBase.TYPE_BLOG))
+                .replace(R.id.fragment_container, CommentFragmentBase.newInstance(bid,0,CommentFragmentBase.TYPE_BLOG))
                 .commit();
         addMenuProvider(new MyMenuProvider(),this);
+        currentPage = page1; // 初始为第一页
+        Button btn_comment = findViewById(R.id.btn_comment);
+        Button btn_blog = findViewById(R.id.btn_blog);
+        btn_comment.setEnabled(true);
+
+        btn_comment.setOnClickListener(v -> {
+            v.setEnabled(false);
+            btn_blog.setEnabled(true);
+            switchPage(page2,true);
+        });
+        btn_blog.setOnClickListener(v -> {
+            v.setEnabled(false);
+            btn_comment.setEnabled(true);
+            switchPage(page1,false);
+        });
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (currentPage==page2) {
+                    btn_blog.callOnClick();
+                } else {
+                    setEnabled(false); // 暂时释放拦截
+                    getOnBackPressedDispatcher().onBackPressed(); // 调用系统默认行为
+                    setEnabled(true);
+                }
+            }
+        });
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -300,5 +339,26 @@ public class BlogActivity extends AppCompatActivity {
             // 输出 HTML
             return renderer.render(document);
         }
+    }
+    private void switchPage(View nextPage, boolean toLeft) {
+        if (currentPage == nextPage) return;
+
+        int width = currentPage.getWidth();
+        int fromToX = toLeft ? -width : width;
+        int toFromX = toLeft ? width : -width;
+
+        // 设置目标页起始位置
+        nextPage.setTranslationX(toFromX);
+        nextPage.setVisibility(View.VISIBLE);
+
+        // 动画：当前页滑出，目标页滑入
+        ViewPropertyAnimator hideAnim = currentPage.animate().translationX(fromToX).setDuration(300);
+        ViewPropertyAnimator showAnim = nextPage.animate().translationX(0).setDuration(300);
+
+        // 动画结束后隐藏当前页
+        hideAnim.withEndAction(() -> {
+            currentPage.setVisibility(View.GONE);
+            currentPage = nextPage;
+        });
     }
 }

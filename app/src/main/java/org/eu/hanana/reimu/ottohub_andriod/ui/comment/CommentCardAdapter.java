@@ -1,29 +1,39 @@
 package org.eu.hanana.reimu.ottohub_andriod.ui.comment;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static androidx.core.content.ContextCompat.startActivity;
 
+import static org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase.ARG_PARENT_DATA;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase.TYPE_VIDEO;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.gson.Gson;
 
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.activity.ProfileActivity;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.CardAdapterBase;
+import org.eu.hanana.reimu.ottohub_andriod.ui.blog.BlogListFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 
 import java.util.List;
 
 public class CommentCardAdapter extends CardAdapterBase<CommentCard, CommentCardViewHolder> {
+    private static final String TAG = "CommentCardAdapter";
     private final String type;
     private final CommentFragmentBase frag;
 
@@ -40,7 +50,7 @@ public class CommentCardAdapter extends CardAdapterBase<CommentCard, CommentCard
     }
 
     @Override
-    public void makeCardUi(CommentCardViewHolder holder, CommentCard object) {
+    public void makeCardUi(final CommentCardViewHolder holder,final CommentCard object) {
         var ctx = holder.avatar.getContext();
         holder.username.setText(object.username);
         holder.content.setText(object.content);
@@ -70,5 +80,42 @@ public class CommentCardAdapter extends CardAdapterBase<CommentCard, CommentCard
                 thread.start();
             },null).show();
         });
+        holder.showReply.setText(holder.itemView.getContext().getString(R.string.show_child_comment,object.commentResult.child_comment_num));
+        holder.showReply.setOnClickListener(v -> {
+            FragmentManager fm = frag.getParentFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.setCustomAnimations(
+                    R.anim.enter_from_bottom,
+                    R.anim.exit_to_bottom,
+                    R.anim.pop_enter_from_bottom,
+                    R.anim.pop_exit_to_bottom);
+            // 当前 Fragment 隐藏
+            ft.hide(frag);
+
+            // 查找是否已存在目标 Fragment
+            String tag = "comment_" + object.cid; // 用唯一 tag 标识
+            Fragment target = fm.findFragmentByTag(tag);
+
+            if (target == null) {
+                // 新建并添加
+                target = CommentFragmentBase.newInstance(frag.getDataId(), object.cid, frag.getType());
+                target.getArguments().putString(ARG_PARENT_DATA,new Gson().toJson(object));
+                ft.add(R.id.fragment_container, target, tag);
+            } else {
+                // 已存在，直接显示
+                return;
+            }
+
+            // 加入自定义返回栈（模拟效果）
+            ft.addToBackStack(null);
+            ft.commit();
+        });
+        Log.d(TAG, "makeCardUi: "+object.username+": "+object.commentResult.child_comment_num);
+        if (object.commentResult.child_comment_num != 0) {
+            holder.showReply.setVisibility(View.VISIBLE);
+            holder.showReply.setText(holder.itemView.getContext().getString(R.string.show_child_comment, object.commentResult.child_comment_num));
+        } else {
+            holder.showReply.setVisibility(View.GONE);
+        }
     }
 }

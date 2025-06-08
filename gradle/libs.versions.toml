@@ -21,6 +21,7 @@ ottohub_api = "1.0.8"
 pagingRuntime = "3.3.6"
 preference = "1.2.1"
 supportAnnotations = "28.0.0"
+viewpager2 = "1.1.0"
 volley = "1.2.1"
 annotation = "1.9.1"
 lifecycleLivedataKtx = "2.9.0"
@@ -34,6 +35,7 @@ compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide
 desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
 flexmark-all = { module = "com.vladsch.flexmark:flexmark-all", version.ref = "flexmarkAll" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
+glide-compiler = { module = "com.github.bumptech.glide:compiler" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -50,6 +52,7 @@ ottohub_api = { module = "org.eu.hanana.reimu.lib.ottohub:ottohub_api", version.
 paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "pagingRuntime" }
 preference = { module = "androidx.preference:preference", version.ref = "preference" }
 support-annotations = { module = "com.android.support:support-annotations", version.ref = "supportAnnotations" }
+viewpager2 = { module = "androidx.viewpager2:viewpager2", version.ref = "viewpager2" }
 volley = { module = "com.android.volley:volley", version.ref = "volley" }
 annotation = { group = "androidx.annotation", name = "annotation", version.ref = "annotation" }
 lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycleLivedataKtx" }

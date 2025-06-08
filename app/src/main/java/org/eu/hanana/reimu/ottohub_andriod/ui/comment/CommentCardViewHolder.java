@@ -21,7 +21,9 @@ public class CommentCardViewHolder extends RecyclerView.ViewHolder {
         reply=itemView.findViewById(R.id.btn_reply);
         report=itemView.findViewById(R.id.btn_report);
         userinfo=itemView.findViewById(R.id.ll_userinfo);
+        showReply=itemView.findViewById(R.id.btn_show);
     }
+    public final Button showReply;
     public final LinearLayout userinfo;
     public final TextView username;
     public final TextView info;

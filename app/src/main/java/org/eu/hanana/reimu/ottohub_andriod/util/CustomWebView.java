@@ -96,6 +96,7 @@ public class CustomWebView extends WebView {
             }
 
             if (url != null) {
+                if (url.startsWith(internal)) return false;
                 // 打开外部浏览器
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                 view.getContext().startActivity(intent);

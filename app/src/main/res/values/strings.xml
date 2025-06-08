@@ -58,5 +58,7 @@
     <string name="history_blog">history blog</string>
     <string name="history">history</string>
     <string name="toBottom">to bottom</string>
+    <string name="show_child_comment">show %d replies</string>
+    <string name="reply_of">replies of</string>
 
 </resources>

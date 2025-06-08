@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class CommentCard {
-    public final int cid;
+    public final int cid,parent;
     public final String username,avatarUrl,info,content;
     @Getter
     protected CommentResult commentResult;

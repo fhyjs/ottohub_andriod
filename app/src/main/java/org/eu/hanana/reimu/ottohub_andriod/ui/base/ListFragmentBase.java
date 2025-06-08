@@ -40,7 +40,7 @@ public abstract class ListFragmentBase<T extends CardAdapterBase<E,N>,N extends 
     protected InfiniteScrollListener scrollListener;
     public boolean error;
     protected View view;
-
+    protected MenuProvider refreshMenuProvider;
     public ListFragmentBase() {
         // Required empty public constructor
     }
@@ -144,7 +144,7 @@ public abstract class ListFragmentBase<T extends CardAdapterBase<E,N>,N extends 
             }
         });
         // 注册 MenuProvider
-        requireActivity().addMenuProvider(new MyMenuProvider(), getViewLifecycleOwner());
+        requireActivity().addMenuProvider(refreshMenuProvider=new MyMenuProvider(), getViewLifecycleOwner());
 
         refresh();
     }

@@ -1,65 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    android:id="@+id/container"
+    tools:context=".activity.BlogActivity"
+    android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.BlogActivity">
-
-
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:enabled="false"
+            android:layout_marginEnd="10dp"
+            android:id="@+id/btn_blog"
+            android:text="@string/blogs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:enabled="false"
+            android:id="@+id/btn_comment"
+            android:text="@string/comment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
     <ScrollView
-        android:nestedScrollingEnabled="true"
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:context=".activity.BlogActivity">
 
-        <LinearLayout
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:nestedScrollingEnabled="true"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:paddingStart="5dp"
-                android:paddingTop="5dp"
-                android:paddingBottom="5dp"
-                android:id="@+id/clAuthorInfo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+            android:layout_height="wrap_content">
 
-                <com.google.android.material.imageview.ShapeableImageView
-
-                    android:id="@+id/ivAvatar"
-                    android:layout_width="55dp"
-                    android:layout_height="55dp"
-                    android:src="@drawable/ic_launcher_background"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:shapeAppearanceOverlay="@style/CircleImageViewStyle" />
-
-                <TextView
-                    android:id="@+id/tvAuthor"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/app_name"
-                    android:textSize="25sp"
-                    android:textColor="@color/black"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/ivAvatar" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-            <org.eu.hanana.reimu.ottohub_andriod.util.CustomWebView
-                android:id="@+id/wvContent"
+            <LinearLayout
+                android:id="@+id/linearLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-            </org.eu.hanana.reimu.ottohub_andriod.util.CustomWebView>
-            <include android:id="@+id/ll_actionBar" layout="@layout/action_bar_card"/>
-            <FrameLayout
-                android:minHeight="600dp"
-                android:id="@+id/fragment_container"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/clAuthorInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="5dp"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp">
+
+                    <com.google.android.material.imageview.ShapeableImageView
+
+                        android:id="@+id/ivAvatar"
+                        android:layout_width="55dp"
+                        android:layout_height="55dp"
+                        android:src="@drawable/ic_launcher_background"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:shapeAppearanceOverlay="@style/CircleImageViewStyle" />
+
+                    <TextView
+                        android:id="@+id/tvAuthor"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/app_name"
+                        android:textColor="@color/black"
+                        android:textSize="25sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/ivAvatar" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <org.eu.hanana.reimu.ottohub_andriod.util.CustomWebView
+                    android:id="@+id/wvContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                </org.eu.hanana.reimu.ottohub_andriod.util.CustomWebView>
+            </LinearLayout>
+
+            <include
+                android:id="@+id/ll_actionBar"
+                layout="@layout/action_bar_card"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-        </LinearLayout>
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+    <FrameLayout
+        android:visibility="gone"
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</LinearLayout>

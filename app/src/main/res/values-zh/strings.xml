@@ -55,4 +55,6 @@
     <string name="history_blog">历史动态</string>
     <string name="history">历史记录</string>
     <string name="toBottom">转到底部</string>
+    <string name="show_child_comment">展开%d条回复</string>
+    <string name="reply_of">回复</string>
 </resources>

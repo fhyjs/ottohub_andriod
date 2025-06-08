@@ -54,6 +54,7 @@ android {
 }
 
 dependencies {
+    implementation libs.viewpager2
     // Media3 核心播放器组件
     implementation libs.media3.exoplayer
     // Media3 UI 组件（含 PlayerView）
@@ -66,6 +67,7 @@ dependencies {
     //implementation libs.libvlc.all
     implementation libs.akdanmaku
     implementation libs.gson // 最新版本
+    annotationProcessor libs.glide.compiler
     implementation libs.glide
     implementation libs.annotation
     implementation libs.lifecycle.livedata.ktx

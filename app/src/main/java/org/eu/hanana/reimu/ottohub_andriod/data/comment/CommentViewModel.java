@@ -20,14 +20,14 @@ public class CommentViewModel extends ListViewModelBase<CommentCard> {
         var commentFrag = ((CommentFragmentBase) videoListFragment);
         CommentListResult commentListResult;
         if (commentFrag.getType().equals(CommentFragmentBase.TYPE_VIDEO)){
-            commentListResult = ApiUtil.getAppApi().getCommentApi().video_comment_list(commentFrag.getDataId(), 0, commentFrag.currentPage * 12, 12);
+            commentListResult = ApiUtil.getAppApi().getCommentApi().video_comment_list(commentFrag.getDataId(), commentFrag.getParent(), commentFrag.currentPage * 12, 12);
         }else {
-            commentListResult = ApiUtil.getAppApi().getCommentApi().blog_comment_list(commentFrag.getDataId(), 0, commentFrag.currentPage * 12, 12);
+            commentListResult = ApiUtil.getAppApi().getCommentApi().blog_comment_list(commentFrag.getDataId(),  commentFrag.getParent(), commentFrag.currentPage * 12, 12);
         }
 
         var result = new ArrayList<CommentCard>();
         ApiUtil.throwApiError(commentListResult);
-        commentListResult.comment_list.stream().map(comment -> new CommentCard(comment.getCid(),comment.username,comment.avatar_url,comment.time,comment.content).withRaw(comment)).forEach(result::add);
+        commentListResult.comment_list.stream().map(comment -> new CommentCard(comment.getCid(),comment.getParentCid(),comment.username,comment.avatar_url,comment.time,comment.content).withRaw(comment)).forEach(result::add);
 
         if (result.isEmpty()){
             commentFrag.hasMoreData=false;
