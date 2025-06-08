@@ -27,6 +27,7 @@ import org.eu.hanana.reimu.lib.ottohub.api.user.UserResult;
 import org.eu.hanana.reimu.ottohub_andriod.MyApp;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.ui.blog.BlogListFragment;
+import org.eu.hanana.reimu.ottohub_andriod.ui.settings.SettingsFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ClassUtil;
@@ -197,14 +198,31 @@ public class ProfileFragment extends Fragment {
         tvDetail.setText(String.format(Locale.getDefault(),"%s:%s %s:%s",getString(R.string.sex),userResult.sex,getString(R.string.register_time),userResult.time));
     }
 
-    private void addPageBtn() {
+    protected void addPageBtn() {
         if (isSelf()){
-            Button button = new MaterialButton(getContext());
-            button.setText(R.string.history);
-            pageBtnArea.addView(button);
+            pageBtnArea.addView(makeButton(getString(R.string.history)));
+            pageBtnArea.addView(makeButton(getString(R.string.settings)));
         }
     }
+    protected MaterialButton makeButton(String text){
+        MaterialButton button = new MaterialButton(getContext());
+        button.setText(text);
 
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) button.getLayoutParams();
+        if (params == null) {
+            // 假设父布局是 LinearLayout，可以根据实际替换
+            params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
+        }
+        int marginInDp = 3;
+        float scale = button.getContext().getResources().getDisplayMetrics().density;
+        int marginInPx = (int) (marginInDp * scale + 0.5f);
+
+        params.setMargins(0, params.topMargin, marginInPx, params.bottomMargin);
+        button.setLayoutParams(params);
+        return button;
+    }
     public void setPage(Button buttonClicked){
         buttonClicked.setEnabled(false);
         for (int i = 0; i < pageBtnArea.getChildCount(); i++) {
@@ -226,6 +244,9 @@ public class ProfileFragment extends Fragment {
             listFragment.getArguments().putInt(Arg_Uid,uid);
             listFragment.getArguments().putString(VideoListFragment.ARG_ACTION,VideoListFragment.ACTION_HISTORY);
             getChildFragmentManager().beginTransaction().replace(R.id.fragment_container, listFragment).commit();
+        }else if (buttonClicked.getText().equals(getString(R.string.settings))){
+            var fragment = new SettingsFragment();
+            getChildFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
         }
     }
     public void doFollow(){

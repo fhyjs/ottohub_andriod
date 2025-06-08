@@ -57,4 +57,13 @@
     <string name="toBottom">转到底部</string>
     <string name="show_child_comment">展开%d条回复</string>
     <string name="reply_of">回复</string>
+    <string name="language">语言</string>
+    <string name="settings">设置</string>
+    <string name="loading">加载中...</string>
+    <string name="clear_cache">清除缓存</string>
+    <string name="about">关于</string>
+    <string name="auto_login_off">自动登录未启用</string>
+    <string name="version">版本</string>
+    <string name="package_name">包名</string>
+    <string name="build_time">打包时间</string>
 </resources>

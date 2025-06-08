@@ -17,6 +17,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
@@ -50,7 +51,11 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, VideoListFragment.newInstance())
                 .commit();
-        autoLogin();
+        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("auto_login",true)) {
+            autoLogin();
+        }else {
+            Toast.makeText(this,R.string.auto_login_off,LENGTH_SHORT).show();
+        }
     }
 
     private void autoLogin() {

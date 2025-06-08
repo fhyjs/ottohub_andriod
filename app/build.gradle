@@ -14,14 +14,16 @@ android {
     compileSdk 35
 
     defaultConfig {
+        android.buildFeatures.buildConfig = true
         applicationId "org.eu.hanana.reimu.ottohub_andriod"
         minSdk 21
         multiDexEnabled true
         targetSdk 35
-        versionCode 3
-        versionName "1.3"
+        versionCode 4
+        versionName "1.4"
         resConfigs "en", "zh" // Example: Support English and Spanish
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField "String", "BUILD_TIME", "\"${new Date().format("yyyy-MM-dd HH:mm:ss")}\""
     }
     buildTypes {
         release {
@@ -54,6 +56,7 @@ android {
 }
 
 dependencies {
+    implementation libs.preference.v120
     implementation libs.viewpager2
     // Media3 核心播放器组件
     implementation libs.media3.exoplayer

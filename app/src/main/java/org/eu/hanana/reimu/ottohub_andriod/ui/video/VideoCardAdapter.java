@@ -11,6 +11,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.OptIn;
+import androidx.media3.common.util.UnstableApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -78,6 +80,7 @@ public class VideoCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
+    @OptIn(markerClass = UnstableApi.class)
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof VideoCardViewHolder) {
