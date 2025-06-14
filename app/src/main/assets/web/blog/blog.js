@@ -20,7 +20,13 @@ function loadBlog() {
     content=replaceAll( content,"\n","<br/>");
   } else {
     // 兼容旧版 marked，使用函数调用而不是 marked.parse
-    content = marked.parse(blog_data.content);
+    try{
+        content = marked.parse(blog_data.content);
+    }catch(e){
+        //由java后端处理
+        content = blog.markdown(blog_data.content);
+        content=replaceAll( content,"\n","<br/>");
+    }
 
   }
 
