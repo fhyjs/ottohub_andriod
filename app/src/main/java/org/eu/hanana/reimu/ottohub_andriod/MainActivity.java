@@ -4,14 +4,22 @@ import static android.widget.Toast.LENGTH_SHORT;
 import static androidx.core.content.ContextCompat.startActivity;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.annotation.OptIn;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -19,6 +27,9 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
+import com.google.android.material.badge.BadgeDrawable;
+import com.google.android.material.badge.BadgeUtils;
+import com.google.android.material.badge.ExperimentalBadgeUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
@@ -29,10 +40,37 @@ import org.eu.hanana.reimu.ottohub_andriod.ui.blog.BlogListFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.user.ProfileFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
+import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.SharedPreferencesKeys;
 
 public class MainActivity extends AppCompatActivity {
+    private final Handler handler = new Handler(Looper.getMainLooper());
+    private Runnable fetchMsgCountRunnable = new Runnable() {
+        @Override
+        public void run() {
+            // 这里写你要定时执行的代码
+            BadgeDrawable badgeDrawable = bottomNavigationView.getOrCreateBadge(R.id.nav_user);
+
+            // 设置数字
+            badgeDrawable.setNumber(ApiUtil.getNewMegCount()); // 角标数字
+            badgeDrawable.setVisible(ApiUtil.getNewMegCount()>0);
+
+            // 继续循环执行
+            handler.postDelayed(this, 2000); // 5秒后再执行
+        }
+    };
     private BottomNavigationView bottomNavigationView;
+    @Override
+    protected void onResume() {
+        super.onResume();
+        handler.postDelayed(fetchMsgCountRunnable, 5000);  // 启动定时任务，延迟5秒执行
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        handler.removeCallbacks(fetchMsgCountRunnable);  // 停止任务，避免内存泄漏
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,13 +95,12 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this,R.string.auto_login_off,LENGTH_SHORT).show();
         }
     }
-
     private void autoLogin() {
         SharedPreferences sharedPreferences = getSharedPreferences(SharedPreferencesKeys.Perf_Auth, MODE_PRIVATE);
         var un = sharedPreferences.getString(SharedPreferencesKeys.Key_Username,null);
         var pw = sharedPreferences.getString(SharedPreferencesKeys.Key_Passwd,null);
         if (un==null||pw==null) return;
-        AlertDialog alertDialog = AlertUtil.showLoading(this, getString(R.string.auto_login));
+        var alertDialog = AlertUtil.showLoading(this, getString(R.string.auto_login));
         alertDialog.show();
         Thread thread = new Thread(() -> {
             LoginResult login = MyApp.getInstance().getOttohubApi().getAuthApi().login(un, pw);
@@ -74,9 +111,11 @@ public class MainActivity extends AppCompatActivity {
                 }
                 throw new IllegalStateException(msg);
             }
+            ApiUtil.fetchMsgCount();
             runOnUiThread(()->{
                 alertDialog.dismiss();
                 Toast.makeText(MainActivity.this,R.string.welcome,LENGTH_SHORT).show();
+                loginFinish();
             });
         });
         thread.setUncaughtExceptionHandler((t, e) -> runOnUiThread(()->{
@@ -84,6 +123,20 @@ public class MainActivity extends AppCompatActivity {
             AlertUtil.showMsg(MainActivity.this,getString(R.string.auto_login),getString(R.string.error)).show();
         }));
         thread.start();
+    }
+
+    @OptIn(markerClass = ExperimentalBadgeUtils.class)
+    private void loginFinish() {
+        BadgeDrawable badgeDrawable = bottomNavigationView.getOrCreateBadge(R.id.nav_user);
+
+        // 设置数字
+        badgeDrawable.setNumber(ApiUtil.getNewMegCount()); // 角标数字
+        badgeDrawable.setVisible(ApiUtil.getNewMegCount()>0);
+
+        // 设置位置（可选，默认右上角）
+        badgeDrawable.setHorizontalOffset(6); // 调整水平偏移
+        badgeDrawable.setVerticalOffset(-6);   // 调整垂直偏移
+
     }
 
     private final NavigationBarView.OnItemSelectedListener navListener =

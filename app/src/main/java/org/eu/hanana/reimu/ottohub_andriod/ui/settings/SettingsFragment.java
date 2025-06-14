@@ -29,7 +29,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         Preference clearCachePref = findPreference("clear_cache");
         if (clearCachePref != null) {
             clearCachePref.setOnPreferenceClickListener(preference -> {
-                AlertDialog alertDialog = AlertUtil.showLoading(getContext(), getString(R.string.loading));
+                var alertDialog = AlertUtil.showLoading(getContext(), getString(R.string.loading));
                 CacheUtil.clearCacheAsync(getContext(), success -> {
                     if (success) {
                         Toast.makeText(getContext(), "缓存已清除", Toast.LENGTH_SHORT).show();

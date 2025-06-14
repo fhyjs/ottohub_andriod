@@ -39,6 +39,7 @@ import org.eu.hanana.reimu.ottohub_andriod.R;
 
 import org.eu.hanana.reimu.ottohub_andriod.activity.SearchActivity;
 import org.eu.hanana.reimu.ottohub_andriod.data.blog.BlogViewModel;
+import org.eu.hanana.reimu.ottohub_andriod.ui.user.ProfileFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.InfiniteScrollListener;
 
 import java.util.ArrayList;
@@ -169,7 +170,7 @@ public class BlogListFragment extends Fragment {
                 selectedButton=button;
             }
         }
-        if (uid!=null||data!=null){
+        if (uid!=null||data!=null||(getParentFragment()!=null&&getParentFragment().getClass()== ProfileFragment.class)){
             button_area.removeAllViews();
         }
         return inflate;
@@ -248,15 +249,14 @@ public class BlogListFragment extends Fragment {
     private class MyMenuProvider implements MenuProvider {
         @Override
         public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+            if (getActivity().getClass()!=MainActivity.class||(getParentFragment()!=null&&getParentFragment().getClass()== ProfileFragment.class))
+                return;
             // 加载菜单布局
             menuInflater.inflate(R.menu.video_list_menu, menu);
         }
 
         @Override
         public void onPrepareMenu(@NonNull Menu menu) {
-            if (getActivity().getClass()!= MainActivity.class){
-                menu.clear();
-            }
             // 动态调整菜单项（替代旧的 onPrepareOptionsMenu）
             MenuItem item = menu.findItem(R.id.action_refresh_button);
             if (item != null) {

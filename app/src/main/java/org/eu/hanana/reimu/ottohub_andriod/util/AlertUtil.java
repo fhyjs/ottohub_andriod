@@ -1,7 +1,6 @@
 package org.eu.hanana.reimu.ottohub_andriod.util;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
@@ -16,10 +15,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 
-import com.badlogic.gdx.backends.android.AndroidApplicationBase;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.dialog.MaterialDialogs;
 
 import org.eu.hanana.reimu.ottohub_andriod.R;
 
@@ -41,8 +41,8 @@ public class AlertUtil {
                 .setPositiveButton(R.string.ok,null)
                 .create();
     }
-    public static AlertDialog showLoading(Context context,String title){
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+    public static androidx.appcompat.app.AlertDialog showLoading(Context context, String title){
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
         builder.setTitle(title).setCancelable(false); // 禁止返回键取消
 
         // 创建一个圆形进度条
@@ -64,11 +64,11 @@ public class AlertUtil {
         tvMessage.setText(message);
 
         // 构建对话框
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
         builder.setView(view);
         builder.setCancelable(false); // 禁止点击外部关闭
 
-        AlertDialog dialog = builder.create();
+        var dialog = builder.create();
 
         // 设置窗口参数（可选）
         Window window = dialog.getWindow();

@@ -6,14 +6,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <EditText
+    <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/edit_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Text"
         android:inputType="text" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_confirm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

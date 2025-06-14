@@ -1,12 +1,21 @@
 package org.eu.hanana.reimu.ottohub_andriod.ui.user;
 
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +27,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.material.badge.BadgeDrawable;
+import com.google.android.material.badge.BadgeUtils;
 import com.google.android.material.button.MaterialButton;
 
 import org.eu.hanana.reimu.lib.ottohub.api.OttohubApi;
@@ -26,10 +37,13 @@ import org.eu.hanana.reimu.lib.ottohub.api.profile.ProfileResult;
 import org.eu.hanana.reimu.lib.ottohub.api.user.UserResult;
 import org.eu.hanana.reimu.ottohub_andriod.MyApp;
 import org.eu.hanana.reimu.ottohub_andriod.R;
+import org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity;
+import org.eu.hanana.reimu.ottohub_andriod.activity.MessageActivity;
 import org.eu.hanana.reimu.ottohub_andriod.ui.blog.BlogListFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.settings.SettingsFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
+import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ClassUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ProfileUtil;
 
@@ -127,6 +141,7 @@ public class ProfileFragment extends Fragment {
             userResult=result.profile;
             userResult.status=result.status;
             userResult.message=result.getMessage();
+            ApiUtil.fetchMsgCount();
         }else {
             userDataResult=MyApp.getInstance().getOttohubApi().getUserApi().get_user_detail(uid);
             userResult=new ProfileResult();
@@ -196,6 +211,47 @@ public class ProfileFragment extends Fragment {
 
         tvIntro.setText(userResult.intro);
         tvDetail.setText(String.format(Locale.getDefault(),"%s:%s %s:%s",getString(R.string.sex),userResult.sex,getString(R.string.register_time),userResult.time));
+        addMenu();
+    }
+
+    private void addMenu() {
+        getActivity().addMenuProvider(new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                if (isSelf()){
+                    Drawable drawable = AppCompatResources.getDrawable(getContext(), R.drawable.mail_24dp);
+                    drawable.setTintList(ContextCompat.getColorStateList(getContext(),R.color.black));
+                    menu.add(Menu.NONE,10,Menu.NONE,getString(R.string.mail)).setIcon(drawable).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+                }
+            }
+
+            @Override
+            public void onPrepareMenu(@NonNull Menu menu) {
+                // 找到对应菜单项
+                MenuItem menuItem = menu.findItem(10);
+                if (menuItem!=null) {
+                    // 创建自定义的角标视图
+                    FrameLayout actionView = (FrameLayout) getLayoutInflater().inflate(R.layout.menu_item_badge, null, false);
+
+                    menuItem.setActionView(actionView);
+                    actionView.getRootView().setOnClickListener(v -> onMenuItemSelected(menuItem));
+                    // 更新角标数字
+                    TextView badgeTextView = actionView.findViewById(R.id.badge_text_view);
+                    badgeTextView.setText(String.valueOf(ApiUtil.getNewMegCount()));   // 角标数字
+                    badgeTextView.setVisibility(ApiUtil.getNewMegCount()>0?View.VISIBLE:View.GONE);
+                }
+            }
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                if (menuItem.getItemId()==10){
+                    Intent intent = new Intent(getContext(), MessageActivity.class);
+                    startActivity(intent);
+                    return true;
+                }
+                return false;
+            }
+        },getViewLifecycleOwner(), Lifecycle.State.RESUMED);
     }
 
     protected void addPageBtn() {

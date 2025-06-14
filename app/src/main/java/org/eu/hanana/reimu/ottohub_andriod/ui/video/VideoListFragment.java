@@ -37,6 +37,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.eu.hanana.reimu.ottohub_andriod.MainActivity;
@@ -45,6 +46,7 @@ import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.activity.SearchActivity;
 import org.eu.hanana.reimu.ottohub_andriod.data.video.VideoCard;
 import org.eu.hanana.reimu.ottohub_andriod.data.video.VideoViewModel;
+import org.eu.hanana.reimu.ottohub_andriod.ui.user.ProfileFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.InfiniteScrollListener;
 
 import java.util.ArrayList;
@@ -179,7 +181,7 @@ public class VideoListFragment extends Fragment {
                 selectedButton=button;
             }
         }
-        if (uid!=null||action.equals(ACTION_SEARCH)){
+        if (uid!=null||action.equals(ACTION_SEARCH)||(getParentFragment()!=null&&getParentFragment().getClass()== ProfileFragment.class)){
             button_area.removeAllViews();
         }
         return inflate;
@@ -187,7 +189,7 @@ public class VideoListFragment extends Fragment {
 
     @NonNull
     private Button getTypeBtn(int[] buttonLabels, int i) {
-        Button button = new Button(getContext());
+        MaterialButton button = new MaterialButton(getContext());
         // 设置按钮样式
         button.setText(buttonLabels[i]);
         button.setTag(buttonLabels[i]);
@@ -258,15 +260,14 @@ public class VideoListFragment extends Fragment {
     private class MyMenuProvider implements MenuProvider {
         @Override
         public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+            if (getActivity().getClass()!=MainActivity.class||(getParentFragment()!=null&&getParentFragment().getClass()== ProfileFragment.class))
+                return;
             // 加载菜单布局
             menuInflater.inflate(R.menu.video_list_menu, menu);
         }
 
         @Override
         public void onPrepareMenu(@NonNull Menu menu) {
-            if (getActivity().getClass()!=MainActivity.class){
-                menu.clear();
-            }
             // 动态调整菜单项（替代旧的 onPrepareOptionsMenu）
             MenuItem item = menu.findItem(R.id.action_refresh_button);
             if (item != null) {

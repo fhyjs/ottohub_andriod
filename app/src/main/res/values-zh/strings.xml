@@ -68,4 +68,12 @@
     <string name="build_time">打包时间</string>
     <string name="search">搜索</string>
     <string name="exp3">经验+3</string>
+    <string name="reply">回复</string>
+    <string name="danmaku">滚幕</string>
+    <string name="mail">邮件</string>
+    <string name="message">消息</string>
+    <string name="read_msg">已读</string>
+    <string name="unread_msg">未读</string>
+    <string name="sent_msg">已发</string>
+    <string name="send_msg">发送</string>
 </resources>

@@ -143,6 +143,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void showLoginFailed(Throwable errorString) {
+        if (isFinishing() || isDestroyed()) return; // 避免 window 泄露
+
         Toast.makeText(getApplicationContext(), errorString.toString(), Toast.LENGTH_SHORT).show();
         AlertDialog alertDialog = AlertUtil.showMsg(this, getString(R.string.tip), errorString.toString());
         alertDialog.setOnDismissListener(dialog -> {

@@ -150,13 +150,14 @@ public class CommentFragmentBase extends ListFragmentBase<CommentCardAdapter, Co
 // 4. 创建悬浮按钮
         FloatingActionButton fab = new FloatingActionButton(getContext());
         // 设置返回按钮图标和颜色
-        Drawable navIcon = ContextCompat.getDrawable(inflate.getContext(), android.R.drawable.ic_menu_edit);
+        Drawable navIcon = ContextCompat.getDrawable(inflate.getContext(), R.drawable.edit_24dp);
         if (navIcon != null) {
             navIcon.setTint(ContextCompat.getColor(inflate.getContext(), R.color.white));
             fab.setImageDrawable(navIcon); // 替换成你的图标
+            fab.setSupportImageTintList(ColorStateList.valueOf(ContextCompat.getColor(inflate.getContext(), R.color.white)));
         }
         fab.setBackgroundTintList(ColorStateList.valueOf(
-                ContextCompat.getColor(getContext(), R.color.bottom_nav_color)));
+                ContextCompat.getColor(getContext(), R.color.purple_500)));
 
 // 5. 设置悬浮按钮布局参数（右下角悬浮）
         FrameLayout.LayoutParams fabParams = new FrameLayout.LayoutParams(
