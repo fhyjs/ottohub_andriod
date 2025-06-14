@@ -27,9 +27,32 @@ function loadBlog() {
   $("#content").html(content);
   $("#title").html(blog_data.title);
   $("#subtitle").html(blog_data.time);
+  matchLink();
   $('a').attr('target', '_blank');
-}
 
+}
+function matchLink(){
+      // 匹配 ob、ov 或 uid 开头，后面跟数字，忽略大小写
+      var regex = /\b(ob|ov|uid)(\d+)\b/gi;
+
+      $('body *').each(function () {
+        var $el = $(this);
+
+        // 跳过某些不能插入 HTML 的标签
+        if (this.tagName.match(/^(SCRIPT|STYLE|TEXTAREA|INPUT|BUTTON|A)$/i)) return;
+
+        $el.contents().filter(function () {
+          return this.nodeType === 3 && regex.test(this.nodeValue);
+        }).each(function () {
+          var html = this.nodeValue.replace(regex, function (match, type, num) {
+            // 保留原始大小写 match，用于显示；统一小写 type 用于构造链接路径
+            return '<a href="https://m.ottohub.cn/' + type.toLowerCase() + '/' + num + '" target="_blank">' + match + '</a>';
+          });
+
+          $(this).replaceWith(html);
+        });
+      });
+}
 // replaceAll polyfill
 function replaceAll(str, search, replacement) {
   var escaped = search.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1');

@@ -91,6 +91,24 @@ public class SearchActivity extends AppCompatActivity {
         }else if (type.equals(TYPE_USER)){
             searchType.selectTab(searchType.getTabAt(2));
         }
+        searchType.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                if (!searchEditText.getText().toString().trim().isEmpty()){
+                    performSearch();
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
     }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {

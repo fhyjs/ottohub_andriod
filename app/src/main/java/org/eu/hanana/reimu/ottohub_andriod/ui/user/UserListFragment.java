@@ -39,6 +39,11 @@ public class UserListFragment extends ListFragmentBase<UserListCardAdapter,UserC
     }
 
     @Override
+    protected void registerMenuProviders() {
+
+    }
+
+    @Override
     public Class<UserListViewModel> getViewModelClass() {
         return UserListViewModel.class;
     }

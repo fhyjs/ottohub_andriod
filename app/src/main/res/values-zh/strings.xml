@@ -67,4 +67,5 @@
     <string name="package_name">包名</string>
     <string name="build_time">打包时间</string>
     <string name="search">搜索</string>
+    <string name="exp3">经验+3</string>
 </resources>

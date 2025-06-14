@@ -5,6 +5,7 @@ import static android.view.View.VISIBLE;
 import static androidx.core.content.ContextCompat.startActivity;
 
 import static org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase.ARG_PARENT_DATA;
+import static org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase.TYPE_BLOG;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase.TYPE_VIDEO;
 
 import android.content.Intent;
@@ -13,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -23,6 +25,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.gson.Gson;
 
+import org.eu.hanana.reimu.lib.ottohub.api.comment.IfGetExpResult;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.activity.ProfileActivity;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.CardAdapterBase;
@@ -117,5 +120,34 @@ public class CommentCardAdapter extends CardAdapterBase<CommentCard, CommentCard
         } else {
             holder.showReply.setVisibility(View.GONE);
         }
+        if (object.parent!=0){
+            holder.reply.setVisibility(GONE);
+        }else {
+            holder.reply.setVisibility(VISIBLE);
+        }
+
+        holder.reply.setOnClickListener(v -> {
+            AlertUtil.showInput(ctx,input -> {
+                Thread thread = new Thread(() -> {
+                    IfGetExpResult ifGetExpResult;
+                    if (frag.getType().equals(TYPE_BLOG)){
+                        ifGetExpResult = ApiUtil.getAppApi().getCommentApi().comment_blog(frag.getDataId(), object.cid, input);
+                    }else if (frag.getType().equals(TYPE_VIDEO)){
+                        ifGetExpResult = ApiUtil.getAppApi().getCommentApi().comment_video(frag.getDataId(), object.cid, input);
+                    } else {
+                        ifGetExpResult = null;
+                    }
+                    ApiUtil.throwApiError(ifGetExpResult);
+                    frag.getActivity().runOnUiThread(()->{
+                        if (ifGetExpResult.if_get_experience!=0){
+                            Toast.makeText(ctx,R.string.exp3, Toast.LENGTH_SHORT).show();
+                        }
+                        frag.refresh();
+                    });
+                });
+                thread.setUncaughtExceptionHandler(new AlertUtil.ThreadAlert(frag.getActivity()));
+                thread.start();
+            }).show();
+        });
     }
 }

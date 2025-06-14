@@ -5,6 +5,7 @@ import static android.widget.Toast.LENGTH_LONG;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
@@ -118,9 +119,12 @@ public class VideoViewModel extends ViewModel {
                     videoListResult.video_list=List.of();
                 }
             }else if (videoListFragment.action.equals(VideoListFragment.ACTION_SEARCH)){
-                if (videoListFragment.currentPage==0)
-                    videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().search_video_list(videoListFragment.data,36);
-                else {
+                if (videoListFragment.currentPage==0) {
+                    videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().search_video_list(videoListFragment.data, 36);
+                    if (videoListFragment.data.toLowerCase(Locale.ROOT).startsWith("ov")) {
+                        videoListResult.video_list.addAll(0,MyApp.getInstance().getOttohubApi().getVideoApi().id_video_list(Integer.parseInt(videoListFragment.data.substring(2))).video_list);
+                    }
+                }else {
                     videoListResult = new VideoListResult();
                     videoListResult.status="success";
                     videoListResult.video_list=List.of();

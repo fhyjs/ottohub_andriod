@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Message;
 import android.util.AttributeSet;
 import android.view.View;
@@ -17,6 +18,12 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.OptIn;
+import androidx.media3.common.util.UnstableApi;
+
+import org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity;
+import org.eu.hanana.reimu.ottohub_andriod.activity.ProfileActivity;
+import org.eu.hanana.reimu.ottohub_andriod.activity.VideoPlayerActivity;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -25,6 +32,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Locale;
 
 public class CustomWebView extends WebView {
     private ProgressBar progressBar;
@@ -66,6 +74,38 @@ public class CustomWebView extends WebView {
         return settings;
     }
 
+    @OptIn(markerClass = UnstableApi.class)
+    public void openUrl(String url){
+        if (url.toLowerCase(Locale.ROOT).contains("ottohub.cn")){
+            var ottohubUrl = url.split("/");
+            var ottohubOperation = ottohubUrl[ottohubUrl.length-2];
+            var ottohubTarget = ottohubUrl[ottohubUrl.length-1];
+            if (ottohubOperation.contains("b")){
+                Intent intent = new Intent(getContext(), BlogActivity.class);
+                var data = new Bundle();
+                data.putInt(BlogActivity.KEY_BID,Integer.parseInt(ottohubTarget));
+                intent.putExtras(data);
+                getContext().startActivity(intent);
+                return;
+            }else if (ottohubOperation.contains("v")){
+                Intent intent = new Intent(getContext(), VideoPlayerActivity.class);
+                var data = new Bundle();
+                data.putInt(VideoPlayerActivity.KEY_VID,Integer.parseInt(ottohubTarget));
+                intent.putExtras(data);
+                getContext().startActivity(intent);
+                return;
+            }else if (ottohubOperation.contains("u")){
+                Intent intent = new Intent(getContext(), ProfileActivity.class);
+                var data = new Bundle();
+                data.putInt(ProfileActivity.KEY_UID,Integer.parseInt(ottohubTarget));
+                intent.putExtras(data);
+                getContext().startActivity(intent);
+                return;
+            }
+        }
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        getContext().startActivity(intent);
+    }
     public class CustomWebChromeClient extends WebChromeClient {
         @Override
         public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
@@ -83,8 +123,7 @@ public class CustomWebView extends WebView {
                     @Override
                     public void onPageStarted(WebView view, String url, android.graphics.Bitmap favicon) {
                         // 一旦开始加载，立即用默认浏览器打开
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                        view.getContext().startActivity(intent);
+                        openUrl(url);
                     }
                 });
 
@@ -98,8 +137,7 @@ public class CustomWebView extends WebView {
             if (url != null) {
                 if (url.startsWith(internal)) return false;
                 // 打开外部浏览器
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                view.getContext().startActivity(intent);
+                openUrl(url);
             }
 
             return false; // 不创建 WebView 的新窗口

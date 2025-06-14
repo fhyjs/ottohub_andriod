@@ -17,6 +17,7 @@ import org.eu.hanana.reimu.ottohub_andriod.ui.blog.BlogListFragment;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.Executors;
 
 public class BlogViewModel extends ViewModel {
@@ -90,6 +91,9 @@ public class BlogViewModel extends ViewModel {
                 listResult = MyApp.getInstance().getOttohubApi().getBlogApi().user_blog_list(blogListFragment.uid, blogListFragment.currentPage * 12, 12);
             }else {
                 listResult = MyApp.getInstance().getOttohubApi().getBlogApi().search_blog_list(blogListFragment.data, 36);
+                if (blogListFragment.data.toLowerCase(Locale.ROOT).startsWith("ob")) {
+                    listResult.blog_list.addAll(0,MyApp.getInstance().getOttohubApi().getBlogApi().id_blog_list(Integer.parseInt(blogListFragment.data.substring(2))).blog_list);
+                }
             }
         }
         //username用于存储额外信息.
