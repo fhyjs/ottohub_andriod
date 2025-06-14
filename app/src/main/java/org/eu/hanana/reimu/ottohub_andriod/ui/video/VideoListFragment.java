@@ -1,8 +1,11 @@
 package org.eu.hanana.reimu.ottohub_andriod.ui.video;
 
+import static org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase.ARG_TYPE;
+import static org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase.TYPE_VIDEO;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.user.ProfileFragment.Arg_Uid;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
@@ -39,6 +42,7 @@ import com.google.android.material.snackbar.Snackbar;
 import org.eu.hanana.reimu.ottohub_andriod.MainActivity;
 import org.eu.hanana.reimu.ottohub_andriod.MyApp;
 import org.eu.hanana.reimu.ottohub_andriod.R;
+import org.eu.hanana.reimu.ottohub_andriod.activity.SearchActivity;
 import org.eu.hanana.reimu.ottohub_andriod.data.video.VideoCard;
 import org.eu.hanana.reimu.ottohub_andriod.data.video.VideoViewModel;
 import org.eu.hanana.reimu.ottohub_andriod.util.InfiniteScrollListener;
@@ -60,8 +64,12 @@ public class VideoListFragment extends Fragment {
     private View view;
     @Nullable
     public Integer uid;
+    @Nullable
+    public String data;
     public static final String ARG_ACTION = "action";
+    public static final String ARG_DATA = "data";
     public static final String ACTION_BY_USER = "byuser";
+    public static final String ACTION_SEARCH = "search";
     public static final String ACTION_HISTORY = "history";
     public String action=ACTION_BY_USER;
 
@@ -83,6 +91,9 @@ public class VideoListFragment extends Fragment {
         }
         if (getArguments() != null && getArguments().containsKey(ARG_ACTION)) {
             action = getArguments().getString(ARG_ACTION);
+        }
+        if (getArguments() != null && getArguments().containsKey(ARG_DATA)) {
+            data = getArguments().getString(ARG_DATA);
         }
         viewModel = new ViewModelProvider(this).get(VideoViewModel.class);
 
@@ -168,7 +179,7 @@ public class VideoListFragment extends Fragment {
                 selectedButton=button;
             }
         }
-        if (uid!=null){
+        if (uid!=null||action.equals(ACTION_SEARCH)){
             button_area.removeAllViews();
         }
         return inflate;
@@ -253,6 +264,9 @@ public class VideoListFragment extends Fragment {
 
         @Override
         public void onPrepareMenu(@NonNull Menu menu) {
+            if (getActivity().getClass()!=MainActivity.class){
+                menu.clear();
+            }
             // 动态调整菜单项（替代旧的 onPrepareOptionsMenu）
             MenuItem item = menu.findItem(R.id.action_refresh_button);
             if (item != null) {
@@ -267,6 +281,17 @@ public class VideoListFragment extends Fragment {
             int id = menuItem.getItemId();
             if (id == R.id.action_refresh_button) {
                 refresh();
+                return true;
+            }
+            if (id == R.id.action_search_button) {
+                // 创建 Intent
+                Intent intent = new Intent(getActivity(), SearchActivity.class);
+
+                // 添加额外数据（可选）
+                intent.putExtra(ARG_TYPE, TYPE_VIDEO);
+
+                // 启动 Activity
+                startActivity(intent); // 简单启动
                 return true;
             }
             return false;

@@ -81,7 +81,6 @@ public abstract class ListFragmentBase<T extends CardAdapterBase<E,N>,N extends 
             adapter.notifyItemRangeInserted(oldSize, data.size());
         }
     }
-
     private void showError(String message) {
         error=true;
         // 检查 Fragment 是否已附加到 Activity
@@ -144,10 +143,15 @@ public abstract class ListFragmentBase<T extends CardAdapterBase<E,N>,N extends 
             }
         });
         // 注册 MenuProvider
-        requireActivity().addMenuProvider(refreshMenuProvider=new MyMenuProvider(), getViewLifecycleOwner());
+        registerMenuProviders();
 
         refresh();
     }
+
+    protected void registerMenuProviders() {
+        requireActivity().addMenuProvider(refreshMenuProvider=new MyMenuProvider(), getViewLifecycleOwner());
+    }
+
     // 定义 MenuProvider
     private class MyMenuProvider implements MenuProvider {
         @Override

@@ -19,22 +19,25 @@
         android:theme="@style/Theme.Ottohub_andriod"
         tools:targetApi="35">
         <activity
+            android:name=".activity.SearchActivity"
+            android:exported="true" />
+        <activity
             android:name=".activity.AboutActivity"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".activity.ProfileActivity"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".activity.LoginActivity"
             android:exported="false"
             android:label="@string/title_activity_login" />
         <activity
             android:name=".activity.BlogActivity"
-            android:exported="false"
+            android:exported="true"
             android:hardwareAccelerated="true" />
         <activity
             android:name=".activity.VideoPlayerActivity"
-            android:exported="false"
+            android:exported="true"
             android:hardwareAccelerated="true" />
 
         <uses-library
@@ -54,7 +57,10 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
+        </activity> <!-- 添加快捷方式 -->
+        <meta-data
+            android:name="android.app.shortcuts"
+            android:resource="@xml/shortcuts" />
     </application>
 
 </manifest>

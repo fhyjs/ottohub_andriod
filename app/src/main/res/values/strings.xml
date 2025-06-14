@@ -79,5 +79,6 @@
     <string name="version">version</string>
     <string name="package_name">package name</string>
     <string name="build_time">build time</string>
-    <string translatable="false" name="ottohub">OTTOhub─=≡Σ((( つ•̀ω•́)つ衝刺～</string>
+    <string name="ottohub" translatable="false">OTTOhub─=≡Σ((( つ•̀ω•́)つ衝刺～</string>
+    <string name="search">Search</string>
 </resources>

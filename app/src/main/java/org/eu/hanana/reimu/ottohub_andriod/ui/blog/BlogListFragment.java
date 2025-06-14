@@ -1,8 +1,13 @@
 package org.eu.hanana.reimu.ottohub_andriod.ui.blog;
 
+import static org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase.ARG_TYPE;
+import static org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase.TYPE_BLOG;
+import static org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase.TYPE_VIDEO;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.user.ProfileFragment.Arg_Uid;
+import static org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment.ARG_DATA;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -29,8 +34,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.eu.hanana.reimu.lib.ottohub.api.blog.BlogResult;
+import org.eu.hanana.reimu.ottohub_andriod.MainActivity;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 
+import org.eu.hanana.reimu.ottohub_andriod.activity.SearchActivity;
 import org.eu.hanana.reimu.ottohub_andriod.data.blog.BlogViewModel;
 import org.eu.hanana.reimu.ottohub_andriod.util.InfiniteScrollListener;
 
@@ -45,7 +52,8 @@ import java.util.List;
 public class BlogListFragment extends Fragment {
     @Nullable
     public Integer uid;
-
+    @Nullable
+    public String data;
     public BlogListFragment() {
         // Required empty public constructor
     }
@@ -74,6 +82,8 @@ public class BlogListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null && getArguments().containsKey(Arg_Uid)) {
             uid = getArguments().getInt(Arg_Uid);
+        } if (getArguments() != null && getArguments().containsKey(ARG_DATA)) {
+            data = getArguments().getString(ARG_DATA);
         }
         viewModel = new ViewModelProvider(this).get(BlogViewModel.class);
 
@@ -159,7 +169,7 @@ public class BlogListFragment extends Fragment {
                 selectedButton=button;
             }
         }
-        if (uid!=null){
+        if (uid!=null||data!=null){
             button_area.removeAllViews();
         }
         return inflate;
@@ -244,6 +254,9 @@ public class BlogListFragment extends Fragment {
 
         @Override
         public void onPrepareMenu(@NonNull Menu menu) {
+            if (getActivity().getClass()!= MainActivity.class){
+                menu.clear();
+            }
             // 动态调整菜单项（替代旧的 onPrepareOptionsMenu）
             MenuItem item = menu.findItem(R.id.action_refresh_button);
             if (item != null) {
@@ -258,6 +271,17 @@ public class BlogListFragment extends Fragment {
             int id = menuItem.getItemId();
             if (id == R.id.action_refresh_button) {
                 refresh();
+                return true;
+            }
+            if (id == R.id.action_search_button) {
+                // 创建 Intent
+                Intent intent = new Intent(getActivity(), SearchActivity.class);
+
+                // 添加额外数据（可选）
+                intent.putExtra(ARG_TYPE, TYPE_BLOG);
+
+                // 启动 Activity
+                startActivity(intent); // 简单启动
                 return true;
             }
             return false;

@@ -6,4 +6,9 @@
         android:icon="@drawable/refresh_48px"
         android:title="Refresh"
         app:showAsAction="ifRoom" />
+    <item
+        android:icon="@drawable/search_24dp"
+        android:id="@+id/action_search_button"
+        android:title="Search"
+        app:showAsAction="ifRoom"/>
 </menu>

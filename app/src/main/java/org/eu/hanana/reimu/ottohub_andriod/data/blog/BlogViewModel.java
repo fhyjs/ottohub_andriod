@@ -73,7 +73,7 @@ public class BlogViewModel extends ViewModel {
 
     private List<BlogResult> fetchFromNetwork(BlogListFragment blogListFragment) throws IOException {
         BlogListResult listResult = null;
-        if (blogListFragment.uid==null) {
+        if (blogListFragment.uid==null&&blogListFragment.data==null) {
             if (blogListFragment.selectedButton.getTag().equals(blogListFragment.buttonLabels[0])) {
                 listResult = MyApp.getInstance().getOttohubApi().getBlogApi().random_blog_list(12);
             } else if (blogListFragment.selectedButton.getTag().equals(blogListFragment.buttonLabels[1])) {
@@ -86,7 +86,11 @@ public class BlogViewModel extends ViewModel {
                 listResult = MyApp.getInstance().getOttohubApi().getBlogApi().popular_blog_list(90, blogListFragment.currentPage * 12, 12);
             }
         }else {
-            listResult = MyApp.getInstance().getOttohubApi().getBlogApi().user_blog_list(blogListFragment.uid,blogListFragment.currentPage * 12, 12);
+            if(blogListFragment.uid!=null) {
+                listResult = MyApp.getInstance().getOttohubApi().getBlogApi().user_blog_list(blogListFragment.uid, blogListFragment.currentPage * 12, 12);
+            }else {
+                listResult = MyApp.getInstance().getOttohubApi().getBlogApi().search_blog_list(blogListFragment.data, 36);
+            }
         }
         //username用于存储额外信息.
         for (BlogResult blogResult : listResult.blog_list) {

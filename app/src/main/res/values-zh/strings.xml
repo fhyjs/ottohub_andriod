@@ -66,4 +66,5 @@
     <string name="version">版本</string>
     <string name="package_name">包名</string>
     <string name="build_time">打包时间</string>
+    <string name="search">搜索</string>
 </resources>

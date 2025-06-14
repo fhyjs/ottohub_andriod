@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="user"
+        android:enabled="true"
+        android:icon="@drawable/account_circle_48px"
+        android:shortcutShortLabel="@string/user"
+        android:shortcutLongLabel="@string/user">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="org.eu.hanana.reimu.ottohub_andriod.activity"
+            android:targetClass="org.eu.hanana.reimu.ottohub_andriod.activity.ProfileActivity" />
+        <!-- 可选：添加额外数据 -->
+        <extra android:name="source" android:value="shortcut" />
+    </shortcut>
+
+    <!-- 添加更多快捷方式 -->
+</shortcuts>

@@ -100,8 +100,14 @@ public class CommentFragmentBase extends ListFragmentBase<CommentCardAdapter, Co
         // 添加回调到生命周期
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
         if (parent!=0){
-            requireActivity().removeMenuProvider(refreshMenuProvider);
+            if (refreshMenuProvider!=null)
+                requireActivity().removeMenuProvider(refreshMenuProvider);
         }
+    }
+
+    @Override
+    protected void registerMenuProviders() {
+
     }
 
     @Nullable

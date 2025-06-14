@@ -13,7 +13,8 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <ImageView
+        <ImageButton
+            android:scaleType="fitCenter"
             android:id="@+id/imageView"
             android:layout_width="match_parent"
             android:layout_height="200dp"
@@ -97,5 +98,13 @@
             android:textSize="25sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
+
+        <TextView
+            android:textSize="25sp"
+            android:autoLink="all"
+            android:textColor="@color/teal_700"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="https://github.com/fhyjs/ottohub_andriod" />
     </LinearLayout>
 </ScrollView>
