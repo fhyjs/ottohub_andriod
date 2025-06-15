@@ -76,4 +76,5 @@
     <string name="unread_msg">未读</string>
     <string name="sent_msg">已发</string>
     <string name="send_msg">发送</string>
+    <string name="message_title">%s 致 %s 的消息</string>
 </resources>

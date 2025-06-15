@@ -217,11 +217,16 @@ public class ProfileFragment extends Fragment {
     private void addMenu() {
         getActivity().addMenuProvider(new MenuProvider() {
             @Override
+            public void onMenuClosed(@NonNull Menu menu) {
+                MenuProvider.super.onMenuClosed(menu);
+            }
+
+            @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
                 if (isSelf()){
                     Drawable drawable = AppCompatResources.getDrawable(getContext(), R.drawable.mail_24dp);
                     drawable.setTintList(ContextCompat.getColorStateList(getContext(),R.color.black));
-                    menu.add(Menu.NONE,10,Menu.NONE,getString(R.string.mail)).setIcon(drawable).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+                    menu.add(Menu.NONE,10,Menu.NONE,getString(R.string.mail)).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
                 }
             }
 
@@ -234,7 +239,9 @@ public class ProfileFragment extends Fragment {
                     FrameLayout actionView = (FrameLayout) getLayoutInflater().inflate(R.layout.menu_item_badge, null, false);
 
                     menuItem.setActionView(actionView);
-                    actionView.getRootView().setOnClickListener(v -> onMenuItemSelected(menuItem));
+                    actionView.setOnClickListener(v -> {
+                        onMenuItemSelected(menuItem);
+                    });
                     // 更新角标数字
                     TextView badgeTextView = actionView.findViewById(R.id.badge_text_view);
                     badgeTextView.setText(String.valueOf(ApiUtil.getNewMegCount()));   // 角标数字

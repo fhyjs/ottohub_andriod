@@ -12,7 +12,7 @@
         android:id="@+id/progressBar"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:indeterminateTint="@color/design_default_color_primary" />
+        android:indeterminateTint="@color/teal_200" />
 
     <!-- 提示文本 -->
     <TextView
@@ -22,6 +22,6 @@
         android:layout_marginTop="8dp"
         android:text="正在加载更多..."
         android:textColor="#666666"
-        android:textSize="14sp" />
+        android:textSize="17sp" />
 
 </LinearLayout>

@@ -90,4 +90,5 @@
     <string name="unread_msg">unread</string>
     <string name="sent_msg">sent</string>
     <string name="send_msg">send</string>
+    <string name="message_title">Message from %s to %s</string>
 </resources>
