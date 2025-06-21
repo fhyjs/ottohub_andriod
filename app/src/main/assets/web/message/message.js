@@ -30,6 +30,9 @@ function loadBlog() {
 
   }
 
+  content=replaceAll( content,"(UID:","(UID");
+  content=replaceAll( content,"(VID:","(ov");
+  content=replaceAll( content,"(BID:","(ob");
   $("#content").html(content);
   $("#title").html(blog.getTitle());
   //$("#subtitle").html(blog_data.time);

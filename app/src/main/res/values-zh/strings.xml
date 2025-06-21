@@ -77,4 +77,10 @@
     <string name="sent_msg">已发</string>
     <string name="send_msg">发送</string>
     <string name="message_title">%s 致 %s 的消息</string>
+    <string name="receiver_uid">收件人uid</string>
+    <string name="content_222">不超过222字 ...</string>
+    <string name="noContent">你倒是说话啊!</string>
+    <string name="too_many_content">话密了啊</string>
+    <string name="navigation_drawer_open">打开功能列表</string>
+    <string name="navigation_drawer_close">关闭功能列表</string>
 </resources>

@@ -3,6 +3,7 @@ package org.eu.hanana.reimu.ottohub_andriod.ui.video;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase.ARG_TYPE;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase.TYPE_VIDEO;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.user.ProfileFragment.Arg_Uid;
+import static org.eu.hanana.reimu.ottohub_andriod.util.UiUtil.dpToPx;
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -18,6 +19,7 @@ import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
@@ -50,6 +52,7 @@ import org.eu.hanana.reimu.ottohub_andriod.ui.user.ProfileFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.InfiniteScrollListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class VideoListFragment extends Fragment {
@@ -130,7 +133,6 @@ public class VideoListFragment extends Fragment {
             adapter.notifyItemRangeInserted(oldSize, data.size());
         }
     }
-
     private void showError(String message) {
         error=true;
         // 检查 Fragment 是否已附加到 Activity
@@ -239,6 +241,46 @@ public class VideoListFragment extends Fragment {
         // 初始化适配器
         adapter = new VideoCardAdapter(videoList);
         recyclerView.setAdapter(adapter);
+
+        View llTopContainer = view.findViewById(R.id.llTopContainer);
+
+        boolean[] isHidden = {false}; // 用数组方便匿名类修改
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState==RecyclerView.SCREEN_STATE_OFF){
+                    if (recyclerView.canScrollVertically(-1)) {
+                        // RecyclerView 不在顶部，要隐藏 llTopContainer
+                        if (!isHidden[0]) {
+                            isHidden[0] = true;
+                            llTopContainer.animate()
+                                    .translationY(-llTopContainer.getHeight())
+                                    .alpha(0f)
+                                    .setDuration(200)
+                                    .withEndAction(() -> llTopContainer.setVisibility(View.GONE))
+                                    .start();
+                        }
+                    } else {
+                        // RecyclerView 在顶部，要显示 llTopContainer
+                        if (isHidden[0]) {
+                            recyclerView.scrollTo(0,0);
+                            isHidden[0] = false;
+                            llTopContainer.setVisibility(View.VISIBLE);
+                            llTopContainer.animate()
+                                    .translationY(0)
+                                    .alpha(1f)
+                                    .setDuration(100)
+                                    .start();
+                        }
+                    }
+                }
+                }
+        });
+
+
+
 
 
         // 添加滚动监听

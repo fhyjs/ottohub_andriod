@@ -33,6 +33,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.material.button.MaterialButton;
+
 import org.eu.hanana.reimu.lib.ottohub.api.blog.BlogResult;
 import org.eu.hanana.reimu.ottohub_andriod.MainActivity;
 import org.eu.hanana.reimu.ottohub_andriod.R;
@@ -178,7 +180,7 @@ public class BlogListFragment extends Fragment {
 
     @NonNull
     private Button getTypeBtn(int[] buttonLabels, int i) {
-        Button button = new Button(getContext());
+        Button button = new MaterialButton(getContext());
         // 设置按钮样式
         button.setText(buttonLabels[i]);
         button.setTag(buttonLabels[i]);

@@ -91,4 +91,10 @@
     <string name="sent_msg">sent</string>
     <string name="send_msg">send</string>
     <string name="message_title">Message from %s to %s</string>
+    <string name="receiver_uid">reciver\'s uid</string>
+    <string name="content_222">No more than 222 words...</string>
+    <string name="noContent">Please enter something!</string>
+    <string name="too_many_content">Too much words!</string>
+    <string name="navigation_drawer_open">Open drawer</string>
+    <string name="navigation_drawer_close">Close drawer</string>
 </resources>

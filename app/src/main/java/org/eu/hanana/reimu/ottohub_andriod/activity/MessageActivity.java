@@ -15,6 +15,7 @@ import com.google.android.material.tabs.TabLayout;
 
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.ui.message.MessageListFragment;
+import org.eu.hanana.reimu.ottohub_andriod.ui.message.SendMessageFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 
 public class MessageActivity extends AppCompatActivity {
@@ -58,6 +59,8 @@ public class MessageActivity extends AppCompatActivity {
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, MessageListFragment.newInstance(MessageListFragment.TYPE_READ)).commit();
                 }else if (tab.getPosition()==2){
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, MessageListFragment.newInstance(MessageListFragment.TYPE_SENT)).commit();
+                }else if (tab.getPosition()==3){
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, SendMessageFragment.newInstance()).commit();
                 }
             }
 

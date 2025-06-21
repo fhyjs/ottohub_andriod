@@ -14,16 +14,22 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
+import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
@@ -32,10 +38,12 @@ import com.google.android.material.badge.BadgeUtils;
 import com.google.android.material.badge.ExperimentalBadgeUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.android.material.navigation.NavigationView;
 
 import org.eu.hanana.reimu.lib.ottohub.api.auth.LoginResult;
 import org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.LoginActivity;
+import org.eu.hanana.reimu.ottohub_andriod.activity.MessageActivity;
 import org.eu.hanana.reimu.ottohub_andriod.ui.blog.BlogListFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.user.ProfileFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment;
@@ -43,6 +51,7 @@ import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.SharedPreferencesKeys;
 import org.eu.hanana.reimu.ottohub_andriod.util.ThemeUtil;
+import org.eu.hanana.reimu.ottohub_andriod.util.UiUtil;
 
 public class MainActivity extends AppCompatActivity {
     private final Handler handler = new Handler(Looper.getMainLooper());
@@ -60,11 +69,17 @@ public class MainActivity extends AppCompatActivity {
             handler.postDelayed(this, 2000); // 5秒后再执行
         }
     };
+    private ActionBarDrawerToggle toggle;
+    private DrawerLayout drawerLayout;
     private BottomNavigationView bottomNavigationView;
+    private NavigationView navView;
+    private Insets systemBars;
+    private ViewGroup navHeader;
+
     @Override
     protected void onResume() {
         super.onResume();
-        handler.postDelayed(fetchMsgCountRunnable, 5000);  // 启动定时任务，延迟5秒执行
+        handler.post(fetchMsgCountRunnable);  // 启动定时任务
     }
 
     @Override
@@ -78,11 +93,13 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.fragment_container), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right,0);
             return insets;
         });
 
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navView = findViewById(R.id.nav_view);
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnItemSelectedListener(navListener);
 
@@ -94,6 +111,62 @@ public class MainActivity extends AppCompatActivity {
             autoLogin();
         }else {
             Toast.makeText(this,R.string.auto_login_off,LENGTH_SHORT).show();
+        }
+
+        // 创建汉堡菜单按钮
+        toggle = new ActionBarDrawerToggle(
+                this, drawerLayout,
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+
+        // 显示左上角图标
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        // 菜单点击事件
+        navView.setNavigationItemSelectedListener(item -> {
+            onNavViewClick(item);
+            drawerLayout.closeDrawer(GravityCompat.START);
+            return true;
+        });
+
+        navHeader = (ViewGroup) getLayoutInflater().inflate(R.layout.nav_header, null, false);
+        navView.addHeaderView(navHeader);
+        prepareNavHeader(navHeader);
+    }
+
+    private void prepareNavHeader(ViewGroup navHeader) {
+        if (ApiUtil.isLogin()){
+            UiUtil.loadImgToImageView(navHeader.findViewById(R.id.ivUserBackground),ApiUtil.getAppApi().getLoginResult().cover_url);
+        }
+    }
+
+    private void onNavViewClick(MenuItem item) {
+        if (item.getItemId()==R.id.action_message_button){
+            if (ApiUtil.isLogin()){
+                Intent intent = new Intent(this, MessageActivity.class);
+                startActivity(intent);
+            }else {
+                tipNoLogin();
+            }
+        }
+    }
+
+    // 响应菜单图标点击事件（包括汉堡按钮）
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (toggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
         }
     }
     private void autoLogin() {
@@ -137,6 +210,7 @@ public class MainActivity extends AppCompatActivity {
         // 设置位置（可选，默认右上角）
         badgeDrawable.setHorizontalOffset(6); // 调整水平偏移
         badgeDrawable.setVerticalOffset(-6);   // 调整垂直偏移
+        prepareNavHeader(navHeader);
 
     }
 
@@ -151,18 +225,7 @@ public class MainActivity extends AppCompatActivity {
                     selectedFragment = BlogListFragment.newInstance();
                 } else if (itemId == R.id.nav_user) {
                     if (MyApp.getInstance().getOttohubApi().getLoginToken()==null){
-                        AlertUtil.showYesNo(this, getString(R.string.not_login), getString(R.string.login_in_now), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                                startActivity(intent);
-                            }
-                        }, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        }).show();
+                        tipNoLogin();
                         return false;
                     }else {
                         selectedFragment = ProfileFragment.newInstance(null);
@@ -183,4 +246,10 @@ public class MainActivity extends AppCompatActivity {
                 }
                 return true;
             };
+    public void tipNoLogin(){
+        AlertUtil.showYesNo(this, getString(R.string.not_login), getString(R.string.login_in_now), (dialog, which) -> {
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+        }, (dialog, which) -> dialog.dismiss()).show();
+    }
 }

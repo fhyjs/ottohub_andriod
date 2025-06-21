@@ -44,6 +44,12 @@ public class MessageListFragment extends ListFragmentBase<MessageCardAdapter,Mes
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        refresh();
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle arguments = getArguments();

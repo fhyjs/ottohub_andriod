@@ -56,6 +56,7 @@ android {
 }
 
 dependencies {
+    implementation libs.drawerlayout
     implementation libs.preference.v120
     implementation libs.viewpager2
     // Media3 核心播放器组件
