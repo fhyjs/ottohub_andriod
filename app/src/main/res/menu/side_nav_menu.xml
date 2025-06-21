@@ -6,4 +6,9 @@
         android:icon="@drawable/mail_24dp"
         android:title="@string/message"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_switch_account_button"
+        android:icon="@drawable/account_circle_48px"
+        android:title="@string/switch_account"
+        app:showAsAction="ifRoom" />
 </menu>

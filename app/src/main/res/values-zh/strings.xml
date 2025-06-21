@@ -83,4 +83,5 @@
     <string name="too_many_content">话密了啊</string>
     <string name="navigation_drawer_open">打开功能列表</string>
     <string name="navigation_drawer_close">关闭功能列表</string>
+    <string name="switch_account">切换账号</string>
 </resources>

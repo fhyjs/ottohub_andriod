@@ -97,4 +97,5 @@
     <string name="too_many_content">Too much words!</string>
     <string name="navigation_drawer_open">Open drawer</string>
     <string name="navigation_drawer_close">Close drawer</string>
+    <string name="switch_account">switch_account</string>
 </resources>

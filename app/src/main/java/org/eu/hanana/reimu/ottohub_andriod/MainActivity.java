@@ -41,6 +41,7 @@ import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
 
 import org.eu.hanana.reimu.lib.ottohub.api.auth.LoginResult;
+import org.eu.hanana.reimu.ottohub_andriod.activity.AccountListActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.LoginActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.MessageActivity;
@@ -150,6 +151,9 @@ public class MainActivity extends AppCompatActivity {
             }else {
                 tipNoLogin();
             }
+        } else if (item.getItemId()==R.id.action_switch_account_button){
+            Intent intent = new Intent(this, AccountListActivity.class);
+            startActivity(intent);
         }
     }
 
