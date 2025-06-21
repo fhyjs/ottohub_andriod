@@ -1,5 +1,6 @@
 package org.eu.hanana.reimu.ottohub_andriod.service;
 
+import android.Manifest;
 import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -7,15 +8,19 @@ import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
 
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import org.eu.hanana.reimu.ottohub_andriod.R;
+import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 
 import java.util.List;
@@ -50,7 +55,19 @@ public class UpdateMessageCountBackgroundService extends Service {
     private void fetchUnreadMailCount() {
         Log.d("UpdateMessageCount", "Fetching unread mail count...");
         // 这里放你的网络请求代码，比如调用 ApiUtil.fetchMsgCount() 等
-        new Thread(ApiUtil::fetchMsgCount).start();
+        Thread thread = new Thread(ApiUtil::fetchMsgCount);
+        thread.setUncaughtExceptionHandler((t, e) -> {
+            Notification error = new NotificationCompat.Builder(this, "error")
+                    .setContentTitle(getString(R.string.ottohub))
+                    .setContentText(getString(R.string.error) + e)
+                    .setSmallIcon(R.drawable.ottoicon)
+                    .build();
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+                notificationManager.notify(1, error);
+            }
+        });
+        thread.start();
         if (isAppForeground(this)){
             INTERVAL=INTERVAL_FOREGROUND;
 

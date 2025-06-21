@@ -84,4 +84,6 @@
     <string name="navigation_drawer_open">打开功能列表</string>
     <string name="navigation_drawer_close">关闭功能列表</string>
     <string name="switch_account">切换账号</string>
+    <string name="logout">退出登录</string>
+    <string name="current">当前</string>
 </resources>

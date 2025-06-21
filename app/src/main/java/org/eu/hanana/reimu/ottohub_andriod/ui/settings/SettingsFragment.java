@@ -17,6 +17,7 @@ import androidx.preference.SwitchPreferenceCompat;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.activity.AboutActivity;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
+import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.CacheUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.LocaleHelper;
 
@@ -39,6 +40,16 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     alertDialog.dismiss();
                 });
                 alertDialog.show();
+                return true;
+            });
+        }
+        Preference logout = findPreference("logout");
+        if (logout != null) {
+            logout.setOnPreferenceClickListener(preference -> {
+                ApiUtil.logout();
+                Intent intent = getActivity().getIntent();
+                getActivity().finish();             // 结束当前 Activity
+                startActivity(intent); // 用原始 Intent 重启
                 return true;
             });
         }

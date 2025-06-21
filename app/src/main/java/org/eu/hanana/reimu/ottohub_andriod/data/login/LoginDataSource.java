@@ -8,6 +8,7 @@ import org.eu.hanana.reimu.lib.ottohub.api.auth.LoginResult;
 import org.eu.hanana.reimu.ottohub_andriod.MyApp;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.data.login.model.LoggedInUser;
+import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.SharedPreferencesKeys;
 
 import java.io.IOException;
@@ -20,7 +21,7 @@ public class LoginDataSource {
     public Result<LoggedInUser> login(String username, String password) {
 
         try {
-            LoginResult login = MyApp.getInstance().getOttohubApi().getAuthApi().login(username, password);
+            LoginResult login = ApiUtil.login(username, password);
             if (!login.isSuccess()){
                 var msg = login.getMessage();
                 if (msg.contains("error_password")){
@@ -32,11 +33,6 @@ public class LoginDataSource {
                     new LoggedInUser(
                             Integer.parseInt(login.uid),
                             login.uid);
-            SharedPreferences sharedPreferences = MyApp.getInstance().getSharedPreferences(SharedPreferencesKeys.Perf_Auth, MODE_PRIVATE);
-            SharedPreferences.Editor edit = sharedPreferences.edit();
-            edit.putString(SharedPreferencesKeys.Key_Username,username);
-            edit.putString(SharedPreferencesKeys.Key_Passwd,password);
-            edit.apply();
             //throw new IOException();
             return new Result.Success<>(fakeUser);
         } catch (Exception e) {

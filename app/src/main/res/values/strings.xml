@@ -98,4 +98,6 @@
     <string name="navigation_drawer_open">Open drawer</string>
     <string name="navigation_drawer_close">Close drawer</string>
     <string name="switch_account">switch_account</string>
+    <string name="logout">logout</string>
+    <string name="current">Current</string>
 </resources>

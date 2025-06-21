@@ -6,6 +6,11 @@
         android:key="auto_login"
         android:title="@string/auto_login" />
     <Preference
+        android:icon="@drawable/logout_24dp"
+        android:key="logout"
+        android:title="@string/logout"
+        android:summary="Click to logout account" />
+    <Preference
         android:icon="@drawable/cleaning_services_24dp"
         android:key="clear_cache"
         android:title="@string/clear_cache"

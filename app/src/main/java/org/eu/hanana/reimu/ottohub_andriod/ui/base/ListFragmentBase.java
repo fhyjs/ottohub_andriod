@@ -105,16 +105,24 @@ public abstract class ListFragmentBase<T extends CardAdapterBase<E,N>,N extends 
         Window window = dialog.getWindow();
         if (window != null) {
             window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            window.setLayout(
-                    (int)(getResources().getDisplayMetrics().widthPixels * 0.8),
-                    WindowManager.LayoutParams.WRAP_CONTENT
-            );
         }
 
         // 确认按钮点击
         btnOk.setOnClickListener(v -> dialog.dismiss());
 
-        dialog.show();
+        try {
+            dialog.show();
+            // 此时设置布局
+            if (window != null) {
+                window.setLayout(
+                        (int)(getContext().getResources().getDisplayMetrics().widthPixels * 0.8),
+                        WindowManager.LayoutParams.WRAP_CONTENT
+                );
+            }
+        } catch (WindowManager.BadTokenException e) {
+            // 捕获非法窗口异常（防御性编程）
+            Log.e("showError", "尝试显示 Dialog 时发生错误: " + e.getMessage());
+        }
     }
     public abstract int getSpanCount();
     public abstract RecyclerView findRecyclerView(View view);

@@ -5,6 +5,7 @@ import static androidx.core.content.ContextCompat.startActivity;
 
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +45,7 @@ import com.google.android.material.navigation.NavigationView;
 import org.eu.hanana.reimu.lib.ottohub.api.auth.LoginResult;
 import org.eu.hanana.reimu.ottohub_andriod.activity.AccountListActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity;
+import org.eu.hanana.reimu.ottohub_andriod.activity.LauncherActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.LoginActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.MessageActivity;
 import org.eu.hanana.reimu.ottohub_andriod.ui.blog.BlogListFragment;
@@ -59,12 +62,14 @@ public class MainActivity extends AppCompatActivity {
     private Runnable fetchMsgCountRunnable = new Runnable() {
         @Override
         public void run() {
-            // 这里写你要定时执行的代码
-            BadgeDrawable badgeDrawable = bottomNavigationView.getOrCreateBadge(R.id.nav_user);
+            if (bottomNavigationView!=null) {
+                // 这里写你要定时执行的代码
+                BadgeDrawable badgeDrawable = bottomNavigationView.getOrCreateBadge(R.id.nav_user);
 
-            // 设置数字
-            badgeDrawable.setNumber(ApiUtil.getNewMegCount()); // 角标数字
-            badgeDrawable.setVisible(ApiUtil.getNewMegCount()>0);
+                // 设置数字
+                badgeDrawable.setNumber(ApiUtil.getNewMegCount()); // 角标数字
+                badgeDrawable.setVisible(ApiUtil.getNewMegCount() > 0);
+            }
 
             // 继续循环执行
             handler.postDelayed(this, 2000); // 5秒后再执行
@@ -82,6 +87,11 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         handler.post(fetchMsgCountRunnable);  // 启动定时任务
         prepareNavHeader(navHeader);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.drawer_layout), (v, insets) -> {
+            systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right,0);
+            return insets;
+        });
     }
 
     @Override
@@ -92,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.fragment_container), (v, insets) -> {
@@ -99,6 +110,12 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right,0);
             return insets;
         });
+
+        if (!checkLauncher()) {
+            startActivity(new Intent(this, LauncherActivity.class));
+            finish();
+            return;
+        }
 
         drawerLayout = findViewById(R.id.drawer_layout);
         navView = findViewById(R.id.nav_view);
@@ -135,6 +152,18 @@ public class MainActivity extends AppCompatActivity {
         navHeader = (ViewGroup) getLayoutInflater().inflate(R.layout.nav_header, null, false);
         navView.addHeaderView(navHeader);
         prepareNavHeader(navHeader);
+    }
+
+    private boolean checkLauncher() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            if (getReferrer()!=null&&getReferrer().getHost()!=null&&getReferrer().getHost().equals(BuildConfig.APPLICATION_ID)) {
+                return true;
+            }else {
+                return false;
+            }
+        }else {
+            return getIntent().getBooleanExtra("from_launcher",false);
+        }
     }
 
     private void prepareNavHeader(ViewGroup navHeader) {
