@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         handler.post(fetchMsgCountRunnable);  // 启动定时任务
+        prepareNavHeader(navHeader);
     }
 
     @Override
