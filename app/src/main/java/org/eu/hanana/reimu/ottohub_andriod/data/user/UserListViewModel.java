@@ -46,6 +46,7 @@ public class UserListViewModel extends ListViewModelBase<UserCard> {
                     return res;
                 }).toList();
                 frag.hasMoreData = true;
+
             }else {
                 frag.hasMoreData=false;
                 userListResult.user_list = List.of();

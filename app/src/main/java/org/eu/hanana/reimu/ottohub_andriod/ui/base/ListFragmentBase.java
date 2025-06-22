@@ -63,6 +63,8 @@ public abstract class ListFragmentBase<T extends CardAdapterBase<E,N>,N extends 
                     scrollListener.setLoadingComplete();
                     Log.d("page", "loadNextPage: "+currentPage);
                     currentPage++;
+                    if (hasMoreData)
+                        loadNextPage();
                     break;
                 case ERROR:
                     adapter.hideLoading();

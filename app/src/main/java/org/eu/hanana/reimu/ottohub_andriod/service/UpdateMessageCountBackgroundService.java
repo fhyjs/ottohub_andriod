@@ -98,6 +98,10 @@ public class UpdateMessageCountBackgroundService extends Service {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("force_background",true)) {
                 startForeground(1, buildNotification());
+            }else {
+                startForeground(1, buildNotification());
+                stopSelf();
+                return START_NOT_STICKY; // 这里返回不重启服务
             }
         } else {
             // Android 8.0 以下，可启动前台服务后移除通知（实现“静默”）

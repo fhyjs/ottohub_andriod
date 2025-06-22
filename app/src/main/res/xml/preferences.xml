@@ -13,7 +13,7 @@
         android:title="@string/remove_account" />
     <SwitchPreference
         android:icon="@drawable/tab_inactive_24dp"
-        android:defaultValue="false"
+        android:defaultValue="true"
         android:key="force_background"
         android:summary="@string/show_message"
         android:title="@string/force_service_running" />

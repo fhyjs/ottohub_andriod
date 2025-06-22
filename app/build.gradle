@@ -19,8 +19,8 @@ android {
         minSdk 21
         multiDexEnabled true
         targetSdk 35
-        versionCode 11
-        versionName "2.0-patch1"
+        versionCode 12
+        versionName "2.0-patch2"
         resConfigs "en", "zh" // Example: Support English and Spanish
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "BUILD_TIME", "\"${new Date().format("yyyy-MM-dd HH:mm:ss")}\""
