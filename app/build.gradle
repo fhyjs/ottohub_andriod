@@ -19,11 +19,24 @@ android {
         minSdk 21
         multiDexEnabled true
         targetSdk 35
-        versionCode 10
-        versionName "2.0"
+        versionCode 11
+        versionName "2.0-patch1"
         resConfigs "en", "zh" // Example: Support English and Spanish
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "BUILD_TIME", "\"${new Date().format("yyyy-MM-dd HH:mm:ss")}\""
+        def gitCommit = "unknown"
+        try {
+            def stdout = new ByteArrayOutputStream()
+            exec {
+                commandLine 'git', 'rev-parse', '--short', 'HEAD'
+                standardOutput = stdout
+            }
+            gitCommit = stdout.toString().trim()
+        } catch (Exception e) {
+            // ignore，没git时使用默认值
+        }
+
+        buildConfigField "String", "GIT_COMMIT", "\"${gitCommit}\""
     }
     buildTypes {
         release {

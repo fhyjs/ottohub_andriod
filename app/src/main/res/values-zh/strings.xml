@@ -97,4 +97,5 @@
     <string name="show_message">这会显示一条通知</string>
     <string name="skip">跳过</string>
     <string name="permissionCheck">权限检测</string>
+    <string name="git_comment">git提交</string>
 </resources>

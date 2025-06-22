@@ -185,7 +185,7 @@ public class VideoListFragment extends Fragment {
                 selectedButton=button;
             }
         }
-        if (uid!=null||!action.equals(ACTION_DEFAULT)||(getParentFragment()!=null&&getParentFragment().getClass()== ProfileFragment.class)){
+        if (uid!=null||!action.equals(ACTION_DEFAULT)||(getParentFragment()!=null&&(getParentFragment().getClass()== ProfileFragment.class||getParentFragment().getClass()== VideoDescribeFragment.class))){
             button_area.removeAllViews();
         }
         return inflate;

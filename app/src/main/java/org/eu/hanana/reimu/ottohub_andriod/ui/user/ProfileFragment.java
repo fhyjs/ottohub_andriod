@@ -1,5 +1,8 @@
 package org.eu.hanana.reimu.ottohub_andriod.ui.user;
 
+import static org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment.ACTION_BY_USER;
+import static org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment.ARG_ACTION;
+
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -297,6 +300,7 @@ public class ProfileFragment extends Fragment {
         if (buttonClicked.getText().equals(getString(R.string.videos))){
             var listFragment = VideoListFragment.newInstance();
             listFragment.getArguments().putInt(Arg_Uid,uid);
+            listFragment.getArguments().putString(ARG_ACTION,ACTION_BY_USER);
             getChildFragmentManager().beginTransaction().replace(R.id.fragment_container, listFragment).commit();
         }else if (buttonClicked.getText().equals(getString(R.string.blogs))){
             var listFragment = BlogListFragment.newInstance();
@@ -305,7 +309,7 @@ public class ProfileFragment extends Fragment {
         }else if (buttonClicked.getText().equals(getString(R.string.history))){
             var listFragment = VideoListFragment.newInstance();
             listFragment.getArguments().putInt(Arg_Uid,uid);
-            listFragment.getArguments().putString(VideoListFragment.ARG_ACTION,VideoListFragment.ACTION_HISTORY);
+            listFragment.getArguments().putString(ARG_ACTION,VideoListFragment.ACTION_HISTORY);
             getChildFragmentManager().beginTransaction().replace(R.id.fragment_container, listFragment).commit();
         }else if (buttonClicked.getText().equals(getString(R.string.settings))){
             var fragment = new SettingsFragment();

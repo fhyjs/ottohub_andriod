@@ -54,6 +54,7 @@ public class AboutActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.tvVersion)).setText(AppVersionUtil.getVersionName(this)+"("+AppVersionUtil.getVersionCode(this)+")");
         ((TextView) findViewById(R.id.tvPackage)).setText(AppVersionUtil.getPackageName(this));
         ((TextView) findViewById(R.id.tvTime)).setText(BuildConfig.BUILD_TIME);
+        ((TextView) findViewById(R.id.tvGit)).setText(BuildConfig.GIT_COMMIT);
         findViewById(R.id.imageView).setOnClickListener(v -> {
             clickTimes++;
             if (clickTimes>=4) {
