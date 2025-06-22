@@ -1,6 +1,8 @@
 package org.eu.hanana.reimu.ottohub_andriod.util;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.content.pm.PermissionInfo;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -16,6 +18,25 @@ import org.eu.hanana.reimu.ottohub_andriod.R;
 import java.net.URL;
 
 public class UiUtil {
+    public static String getPermissionDescription(Context ctx,String permission) {
+        try {
+            PermissionInfo info = ctx.getPackageManager().getPermissionInfo(permission, 0);
+            CharSequence desc = info.loadDescription(ctx.getPackageManager());
+            return desc != null ? desc.toString() : "无描述";
+        } catch (PackageManager.NameNotFoundException e) {
+            return "无描述";
+        }
+    }
+    public static String getPermissionLabel(Context ctx,String permission) {
+        try {
+            PermissionInfo info = ctx.getPackageManager().getPermissionInfo(permission, 0);
+            CharSequence label = info.loadLabel(ctx.getPackageManager());
+            return label.toString();
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            return permission; // 返回原始权限字符串
+        }
+    }
     @Px
     public static int dpToPx(Context context,int dp){
         // 你想设置的 dp 值

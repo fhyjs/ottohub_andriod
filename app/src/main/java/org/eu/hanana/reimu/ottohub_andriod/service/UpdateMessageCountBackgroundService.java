@@ -18,6 +18,7 @@ import android.util.Log;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.preference.PreferenceManager;
 
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
@@ -95,10 +96,20 @@ public class UpdateMessageCountBackgroundService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         // 显示前台通知（必须）
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForeground(1, buildNotification());
+            if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("force_background",true)) {
+                startForeground(1, buildNotification());
+            }
         } else {
-            // 8.0 以下，如果不想显示通知可以不调用
-            // 但建议调用提高服务优先级
+            // Android 8.0 以下，可启动前台服务后移除通知（实现“静默”）
+            Notification notification = buildNotification();
+            startForeground(1, notification);
+
+            // 延迟几毫秒取消通知达到静默效果
+            new Handler().postDelayed(() -> {
+                NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                manager.cancel(1); // 取消通知
+                stopForeground(false); // 保留服务状态，不再是“前台服务”
+            }, 500); // 可根据设备调整
         }
 
         return START_STICKY;
@@ -107,7 +118,10 @@ public class UpdateMessageCountBackgroundService extends Service {
         String channelId = "sync_channel";
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
-                    channelId, "同步任务", NotificationManager.IMPORTANCE_LOW);
+                    channelId, "同步任务", NotificationManager.IMPORTANCE_MIN);
+            channel.setSound(null, null);
+            channel.enableVibration(false);
+            channel.enableLights(false);
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(channel);
         }

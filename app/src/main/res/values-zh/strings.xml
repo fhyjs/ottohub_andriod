@@ -91,4 +91,10 @@
     <string name="under_development">抱歉,该功能开发中!</string>
     <string name="remove_account">退出登录时移除账号</string>
     <string name="remove_account_from_list">退出登录时从账号列表中移除记录</string>
+    <string name="launcher">启动器</string>
+    <string name="grantPermissonsTip">请授权这些权限保证应用正常运行</string>
+    <string name="force_service_running">保持服务运行</string>
+    <string name="show_message">这会显示一条通知</string>
+    <string name="skip">跳过</string>
+    <string name="permissionCheck">权限检测</string>
 </resources>

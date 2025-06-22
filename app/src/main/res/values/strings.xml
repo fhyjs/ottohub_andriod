@@ -105,4 +105,10 @@
     <string name="under_development">Sorry,under development!</string>
     <string name="remove_account">Remove account</string>
     <string name="remove_account_from_list">Remove account from account list when logout.</string>
+    <string name="launcher">App Launcher</string>
+    <string name="grantPermissonsTip">Please authorize these permissions to ensure the normal operation of the application.</string>
+    <string name="force_service_running">Keep services running</string>
+    <string name="show_message">By showing a message</string>
+    <string name="skip">Skip</string>
+    <string name="permissionCheck">Permission Check</string>
 </resources>
