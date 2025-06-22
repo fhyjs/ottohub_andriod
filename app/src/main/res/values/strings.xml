@@ -100,4 +100,6 @@
     <string name="switch_account">switch_account</string>
     <string name="logout">logout</string>
     <string name="current">Current</string>
+    <string name="add">Add</string>
+    <string name="audit_button">Aduit</string>
 </resources>

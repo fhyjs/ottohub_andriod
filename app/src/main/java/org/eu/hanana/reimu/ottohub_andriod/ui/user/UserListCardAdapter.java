@@ -9,6 +9,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.content.res.AppCompatResources;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
@@ -62,7 +65,9 @@ public class UserListCardAdapter extends CardAdapterBase<UserCard, UserCardViewH
                     if (!loginResult.isSuccess()){
                         AlertUtil.showError(ctx,loginResult.getMessage()).show();
                     }else{
-                        AlertUtil.showMsg(ctx,ctx.getString(R.string.ok),ctx.getString(R.string.welcome)).show();
+                        AlertDialog alertDialog = AlertUtil.showMsg(ctx, ctx.getString(R.string.ok), ctx.getString(R.string.welcome));
+                        alertDialog.setOnDismissListener(dialog -> userListFragment.getActivity().finish());
+                        alertDialog.show();
                     }
                 });
             }
@@ -70,7 +75,10 @@ public class UserListCardAdapter extends CardAdapterBase<UserCard, UserCardViewH
         if (userListFragment.type.equals(UserListFragment.TYPE_SWITCH_ACCOUNT)){
            if (ApiUtil.isLogin()){
                if (Integer.parseInt(ApiUtil.getAppApi().getLoginResult().uid)==object.uid) {
-                   holder.info.setText(String.format(Locale.getDefault(),"%s🌟 %s",ctx.getString(R.string.current),object.info));
+                   holder.info.setText(String.format(Locale.getDefault(),"%s🌟 | %s",ctx.getString(R.string.current),object.info));
+                   holder.itemView.setBackgroundTintList(AppCompatResources.getColorStateList(ctx,R.color.teal_200));
+               }else {
+                   holder.itemView.setBackgroundTintList(null);
                }
            }
         }

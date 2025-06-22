@@ -38,12 +38,14 @@ import java.util.Objects;
 
 public class SearchActivity extends AppCompatActivity {
     private static final String TAG = "SearchActivity";
-    private static final String TYPE_USER = "user";
+    public static final String TYPE_USER = "user";
+    public static final String ARG_DATA = VideoListFragment.ARG_DATA;
     private EditText searchEditText;
     private MaterialButton searchButton;
 
     @NonNull
     public String type = TYPE_VIDEO;
+    public String data = null;
     private TabLayout searchType;
 
     @Override
@@ -62,6 +64,9 @@ public class SearchActivity extends AppCompatActivity {
         });
         if (getIntent().hasExtra(ARG_TYPE)) {
             type= Objects.requireNonNull(getIntent().getStringExtra(ARG_TYPE));
+        }
+        if (getIntent().hasExtra(ARG_DATA)) {
+            data= Objects.requireNonNull(getIntent().getStringExtra(ARG_DATA));
         }
         setTitle(R.string.search);
 
@@ -109,6 +114,10 @@ public class SearchActivity extends AppCompatActivity {
 
             }
         });
+        if (data!=null){
+            searchEditText.setText(data);
+            searchButton.performClick();
+        }
     }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {

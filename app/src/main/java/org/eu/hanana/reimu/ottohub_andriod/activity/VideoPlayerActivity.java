@@ -131,10 +131,10 @@ public class VideoPlayerActivity extends AppCompatActivity {
         setDanmakuEnable(true);
         init();
     }
-
+    protected boolean lastPlayStatus;
     @Override
     protected void onPause() {
-
+        lastPlayStatus=mediaPlayer.isPlaying();
         mediaPlayer.pause();
         super.onPause();
     }
@@ -158,7 +158,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
         outState.putString(KEY_NET_DATA,gson.toJson(netData));
         outState.putString(KEY_DANMAKU_DATA,gson.toJson(danmakuData));
         if (mediaPlayer!=null){
-            outState.putBoolean(KEY_PLAYER_PLAYING,mediaPlayer.isPlaying());
+            outState.putBoolean(KEY_PLAYER_PLAYING,mediaPlayer.isPlaying()||lastPlayStatus);
             outState.putLong(KEY_PLAYER_TIME,mediaPlayer.getCurrentPosition());
         }
     }
@@ -265,7 +265,9 @@ public class VideoPlayerActivity extends AppCompatActivity {
                     danmakuPlayer.seekTo(mediaPlayer.getCurrentPosition());
                     //updateVideoScaling(videoSurface.getWidth(),videoSurface.getHeight());
                 }else {
-                    danmakuPlayer.pause();
+                    if (danmakuPlayer!=null) {
+                        danmakuPlayer.pause();
+                    }
                 }
             }
 

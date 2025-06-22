@@ -11,4 +11,14 @@
         android:icon="@drawable/account_circle_48px"
         android:title="@string/switch_account"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_favourite"
+        android:icon="@drawable/kitchen_24dp"
+        android:title="@string/favourite"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_audit"
+        android:icon="@drawable/balance_24dp"
+        android:title="@string/audit_button"
+        app:showAsAction="ifRoom" />
 </menu>

@@ -72,12 +72,26 @@
                 layout="@layout/action_bar_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+            <HorizontalScrollView
+                android:id="@+id/scrollView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/action_bar">
+                <LinearLayout
+                    android:id="@+id/llTagsArea"
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </HorizontalScrollView>
             <FrameLayout
                 android:id="@+id/fragment_container"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                app:layout_constraintTop_toBottomOf="@id/action_bar"
-                android:layout_weight="1" />
+                app:layout_constraintTop_toBottomOf="@id/scrollView"
+                android:layout_weight="1" >
+
+            </FrameLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>

@@ -55,6 +55,7 @@ public class ApiUtil {
 
     public static void logout() {
         if (!isLogin()) return;
+        MyApp.getInstance().getSharedPreferences(SharedPreferencesKeys.Perf_Account_List, MODE_PRIVATE).edit().remove(getAppApi().getLoginResult().uid).apply();
         getAppApi().logout();
         MyApp.getInstance().getSharedPreferences(SharedPreferencesKeys.Perf_Auth, MODE_PRIVATE).edit().remove(SharedPreferencesKeys.Key_Username).remove(SharedPreferencesKeys.Key_Passwd).apply();
     }
@@ -77,7 +78,7 @@ public class ApiUtil {
             throw new RuntimeException(e);
         }
         copy.token=password;
-        sharedPreferences.edit().putString(username,gson.toJson(copy)).apply();
+        sharedPreferences.edit().putString(result.uid,gson.toJson(copy)).apply();
         return result;
     }
     public static Map<String,LoginResult> getAccounts(){

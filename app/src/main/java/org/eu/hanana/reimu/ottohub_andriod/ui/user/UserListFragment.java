@@ -2,18 +2,25 @@ package org.eu.hanana.reimu.ottohub_andriod.ui.user;
 
 import static org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment.ARG_ACTION;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import org.eu.hanana.reimu.ottohub_andriod.R;
+import org.eu.hanana.reimu.ottohub_andriod.activity.LoginActivity;
+import org.eu.hanana.reimu.ottohub_andriod.activity.ProfileActivity;
 import org.eu.hanana.reimu.ottohub_andriod.data.user.UserListViewModel;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.ListFragmentBase;
 import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment;
@@ -41,7 +48,9 @@ public class UserListFragment extends ListFragmentBase<UserListCardAdapter,UserC
 
     @Override
     protected void registerMenuProviders() {
-
+        if (type.equals(TYPE_SWITCH_ACCOUNT)){
+            requireActivity().addMenuProvider(new AddMenuProvider(), getViewLifecycleOwner());
+        }
     }
 
     @Override
@@ -85,6 +94,11 @@ public class UserListFragment extends ListFragmentBase<UserListCardAdapter,UserC
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
     public RecyclerView findRecyclerView(View view) {
         return view.findViewById(R.id.recyclerView);
     }
@@ -92,5 +106,24 @@ public class UserListFragment extends ListFragmentBase<UserListCardAdapter,UserC
     @Override
     public UserListCardAdapter createAdapter(List<UserCard> list) {
         return new UserListCardAdapter(list,this);
+    }
+    protected class AddMenuProvider implements MenuProvider{
+
+        @Override
+        public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+            menuInflater.inflate(R.menu.add_menu,menu);
+        }
+
+        @Override
+        public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+            if (menuItem.getItemId()==R.id.action_menu_add){
+                Intent intent = new Intent(getContext(), LoginActivity.class);
+                // 启动 Activity
+                startActivity(intent); // 简单启动
+                getActivity().finish();
+                return true;
+            }
+            return false;
+        }
     }
 }

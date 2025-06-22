@@ -1,5 +1,8 @@
 package org.eu.hanana.reimu.ottohub_andriod.ui.video;
 
+import static org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase.ARG_TYPE;
+import static org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase.TYPE_VIDEO;
+
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -29,9 +33,11 @@ import org.eu.hanana.reimu.ottohub_andriod.MyApp;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.ProfileActivity;
+import org.eu.hanana.reimu.ottohub_andriod.activity.SearchActivity;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 
+import java.util.Arrays;
 import java.util.Locale;
 
 /**
@@ -147,6 +153,28 @@ public class VideoDescribeFragment extends androidx.fragment.app.Fragment {
             });
             thread.setUncaughtExceptionHandler(new AlertUtil.ThreadAlert(getActivity()));
             AlertUtil.showYesNo(getContext(), getString(R.string.report), getString(R.string.issure), (dialog, which) -> thread.start(),null).show();
+        });
+        LinearLayout tagsArea = view.findViewById(R.id.llTagsArea);
+        Arrays.stream(vData.tag.split("#")).skip(1).forEach(tag -> {
+           var btn = new MaterialButton(getContext());
+           btn.setText(tag);
+            // 添加间距
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+            );
+            params.setMargins(16, 0, 16, 0);
+            btn.setLayoutParams(params);
+            btn.setOnClickListener(v -> {
+                    // 创建 Intent
+                    Intent intent = new Intent(getActivity(), SearchActivity.class);
+                    // 添加额外数据（可选）
+                    intent.putExtra(ARG_TYPE, TYPE_VIDEO);
+                    intent.putExtra(SearchActivity.ARG_DATA, tag);
+                    // 启动 Activity
+                    startActivity(intent); // 简单启动
+            });
+           tagsArea.addView(btn);
         });
     }
     private void updateActionBtns() {

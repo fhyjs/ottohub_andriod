@@ -302,7 +302,7 @@ public class VideoListFragment extends Fragment {
     private class MyMenuProvider implements MenuProvider {
         @Override
         public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
-            if (getActivity().getClass()!=MainActivity.class||(getParentFragment()!=null&&getParentFragment().getClass()== ProfileFragment.class))
+            if ((getActivity()!=null&&getActivity().getClass()!=MainActivity.class)||(getParentFragment()!=null&&getParentFragment().getClass()== ProfileFragment.class))
                 return;
             // 加载菜单布局
             menuInflater.inflate(R.menu.video_list_menu, menu);
