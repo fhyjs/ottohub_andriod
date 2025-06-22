@@ -24,6 +24,9 @@
         android:theme="@style/Theme.Ottohub_andriod"
         tools:targetApi="35">
         <activity
+            android:name=".activity.FavouriteActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.LauncherActivity"
             android:exported="false" />
         <activity

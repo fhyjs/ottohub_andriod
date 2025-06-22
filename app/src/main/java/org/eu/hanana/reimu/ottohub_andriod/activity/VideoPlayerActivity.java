@@ -1,5 +1,6 @@
 package org.eu.hanana.reimu.ottohub_andriod.activity;
 
+import static android.view.View.GONE;
 import static com.kuaishou.akdanmaku.data.DanmakuItemData.DANMAKU_MODE_CENTER_BOTTOM;
 import static com.kuaishou.akdanmaku.data.DanmakuItemData.DANMAKU_MODE_CENTER_TOP;
 import static com.kuaishou.akdanmaku.data.DanmakuItemData.DANMAKU_MODE_ROLLING;
@@ -10,16 +11,23 @@ import static com.kuaishou.akdanmaku.data.DanmakuItemData.MERGED_TYPE_NORMAL;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.content.res.Configuration;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PersistableBundle;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Display;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowInsets;
 import android.view.WindowManager;
+import android.view.WindowMetrics;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -231,7 +239,32 @@ public class VideoPlayerActivity extends AppCompatActivity {
     }
 
     private void preinit() {
+        runOnUiThread(()->{
+            Point size = new Point();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                WindowMetrics metrics = getWindowManager().getCurrentWindowMetrics();
+                android.graphics.Insets insets = metrics.getWindowInsets()
+                        .getInsetsIgnoringVisibility(WindowInsets.Type.systemBars());
+                int width = metrics.getBounds().width() - insets.left - insets.right;
+                int height = metrics.getBounds().height() - insets.top - insets.bottom;
+                size.set(width, height);
+            } else {
+                Display display = getWindowManager().getDefaultDisplay();
+                display.getSize(size);  // 这是 Point(width, height)
+            }
 
+            int orientation = getResources().getConfiguration().orientation;
+
+            if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                findViewById(R.id.fragment_container).setVisibility(GONE);
+                findViewById(R.id.horizontalScrollView).setVisibility(GONE);
+                View fullscreenView = findViewById(R.id.video_view_wrapper);
+                ViewGroup.LayoutParams params = fullscreenView.getLayoutParams();
+                params.width = size.x;
+                params.height = size.y-getSupportActionBar().getHeight();
+                fullscreenView.setLayoutParams(params);
+            }
+        });
     }
 
     public void  destroy(){

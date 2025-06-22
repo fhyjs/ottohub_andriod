@@ -88,4 +88,7 @@
     <string name="current">当前</string>
     <string name="add">添加</string>
     <string name="audit_button">大法庭</string>
+    <string name="under_development">抱歉,该功能开发中!</string>
+    <string name="remove_account">退出登录时移除账号</string>
+    <string name="remove_account_from_list">退出登录时从账号列表中移除记录</string>
 </resources>

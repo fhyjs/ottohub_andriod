@@ -16,6 +16,7 @@ import android.widget.Toolbar;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
@@ -127,6 +128,7 @@ public class CommentFragmentBase extends ListFragmentBase<CommentCardAdapter, Co
         View inflate = inflater.inflate(R.layout.fragment_video_comment, container, false);
         // 1. 假设这是你的根布局，确保它是 FrameLayout 或者支持悬浮的容器
         ViewGroup rootView = (ViewGroup) inflate; // 或者你自己的容器，比如 FrameLayout
+        FloatingActionButton fab = new FloatingActionButton(getContext());
         if (parent!=0&&parentData!=null) {
             Toolbar toolbar  = new Toolbar(getContext());
             toolbar.setLayoutParams(new Toolbar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -143,12 +145,26 @@ public class CommentFragmentBase extends ListFragmentBase<CommentCardAdapter, Co
             toolbar.setNavigationOnClickListener(v -> {
                 getParentFragmentManager().popBackStack();
             });
+            toolbar.post(()->{
+                ViewGroup.LayoutParams lp = fab.getLayoutParams();
+
+                if (lp instanceof FrameLayout.LayoutParams) {
+                    FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) lp;
+                    params.gravity = Gravity.TOP | Gravity.END;
+                    params.setMargins(0, 16+toolbar.getHeight(), 16, 0);  // left, top, right, bottom
+                    fab.setLayoutParams(params);
+                } else if (lp instanceof CoordinatorLayout.LayoutParams) {
+                    CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) lp;
+                    params.gravity = Gravity.TOP | Gravity.END;
+                    params.setMargins(0, 16+toolbar.getHeight(), 16, 0);
+                    fab.setLayoutParams(params);
+                }
+            });
             ((LinearLayout) rootView.getChildAt(rootView.getChildCount() - 1)).addView(toolbar, 0);
         }
 
-
 // 4. 创建悬浮按钮
-        FloatingActionButton fab = new FloatingActionButton(getContext());
+
         // 设置返回按钮图标和颜色
         Drawable navIcon = ContextCompat.getDrawable(inflate.getContext(), R.drawable.edit_24dp);
         if (navIcon != null) {
@@ -194,7 +210,19 @@ public class CommentFragmentBase extends ListFragmentBase<CommentCardAdapter, Co
                 thread.start();
             }).show();
         });
+        ViewGroup.LayoutParams lp = fab.getLayoutParams();
 
+        if (lp instanceof FrameLayout.LayoutParams) {
+            FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) lp;
+            params.gravity = Gravity.TOP | Gravity.END;
+            params.setMargins(0, 16, 16, 0);  // left, top, right, bottom
+            fab.setLayoutParams(params);
+        } else if (lp instanceof CoordinatorLayout.LayoutParams) {
+            CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) lp;
+            params.gravity = Gravity.TOP | Gravity.END;
+            params.setMargins(0, 16, 16, 0);
+            fab.setLayoutParams(params);
+        }
 // 7. 添加悬浮按钮到根布局
         rootView.addView(fab,0);
         return inflate;

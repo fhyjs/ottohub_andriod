@@ -5,6 +5,12 @@
         android:defaultValue="true"
         android:key="auto_login"
         android:title="@string/auto_login" />
+    <SwitchPreference
+        android:icon="@drawable/account_circle_off"
+        android:defaultValue="true"
+        android:key="remove_account"
+        android:summary="@string/remove_account_from_list"
+        android:title="@string/remove_account" />
     <Preference
         android:icon="@drawable/logout_24dp"
         android:key="logout"

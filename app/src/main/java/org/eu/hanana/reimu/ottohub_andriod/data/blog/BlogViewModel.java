@@ -1,5 +1,7 @@
 package org.eu.hanana.reimu.ottohub_andriod.data.blog;
 
+import static org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment.ACTION_FAVOURITE;
+
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -74,7 +76,7 @@ public class BlogViewModel extends ViewModel {
 
     private List<BlogResult> fetchFromNetwork(BlogListFragment blogListFragment) throws IOException {
         BlogListResult listResult = null;
-        if (blogListFragment.uid==null&&blogListFragment.data==null) {
+        if (blogListFragment.uid==null&&blogListFragment.data==null&&blogListFragment.action==null) {
             if (blogListFragment.selectedButton.getTag().equals(blogListFragment.buttonLabels[0])) {
                 listResult = MyApp.getInstance().getOttohubApi().getBlogApi().random_blog_list(12);
             } else if (blogListFragment.selectedButton.getTag().equals(blogListFragment.buttonLabels[1])) {
@@ -89,11 +91,14 @@ public class BlogViewModel extends ViewModel {
         }else {
             if(blogListFragment.uid!=null) {
                 listResult = MyApp.getInstance().getOttohubApi().getBlogApi().user_blog_list(blogListFragment.uid, blogListFragment.currentPage * 12, 12);
-            }else {
+            }else if(blogListFragment.action==null){
                 listResult = MyApp.getInstance().getOttohubApi().getBlogApi().search_blog_list(blogListFragment.data, 36);
                 if (blogListFragment.data.toLowerCase(Locale.ROOT).startsWith("ob")) {
                     listResult.blog_list.addAll(0,MyApp.getInstance().getOttohubApi().getBlogApi().id_blog_list(Integer.parseInt(blogListFragment.data.substring(2))).blog_list);
                 }
+            }else if(blogListFragment.action.equals(ACTION_FAVOURITE)){
+                listResult = MyApp.getInstance().getOttohubApi().getProfileApi().favorite_blog_list(blogListFragment.currentPage*12, 12);
+                if (listResult.blog_list.isEmpty()) blogListFragment.hasMoreData=false;
             }
         }
         //username用于存储额外信息.

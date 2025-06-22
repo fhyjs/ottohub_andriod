@@ -4,6 +4,8 @@ import static org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase
 import static org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase.TYPE_BLOG;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase.TYPE_VIDEO;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.user.ProfileFragment.Arg_Uid;
+import static org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment.ACTION_SEARCH;
+import static org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment.ARG_ACTION;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment.ARG_DATA;
 
 import android.app.AlertDialog;
@@ -57,6 +59,8 @@ public class BlogListFragment extends Fragment {
     public Integer uid;
     @Nullable
     public String data;
+    @Nullable
+    public String action=null;
     public BlogListFragment() {
         // Required empty public constructor
     }
@@ -73,7 +77,7 @@ public class BlogListFragment extends Fragment {
     private BlogCardAdapter adapter;
     private final List<BlogResult> videoList = new ArrayList<>();
     public int currentPage = 0;
-    private boolean hasMoreData = true;
+    public boolean hasMoreData = true;
     private BlogViewModel viewModel;
     private InfiniteScrollListener scrollListener;
     public Button selectedButton;
@@ -85,8 +89,12 @@ public class BlogListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null && getArguments().containsKey(Arg_Uid)) {
             uid = getArguments().getInt(Arg_Uid);
-        } if (getArguments() != null && getArguments().containsKey(ARG_DATA)) {
+        }
+        if (getArguments() != null && getArguments().containsKey(ARG_DATA)) {
             data = getArguments().getString(ARG_DATA);
+        }
+        if (getArguments() != null && getArguments().containsKey(ARG_ACTION)) {
+            action = getArguments().getString(ARG_ACTION);
         }
         viewModel = new ViewModelProvider(this).get(BlogViewModel.class);
 
@@ -172,7 +180,7 @@ public class BlogListFragment extends Fragment {
                 selectedButton=button;
             }
         }
-        if (uid!=null||data!=null||(getParentFragment()!=null&&getParentFragment().getClass()== ProfileFragment.class)){
+        if (action!=null||uid!=null||data!=null||(getParentFragment()!=null&&getParentFragment().getClass()== ProfileFragment.class)){
             button_area.removeAllViews();
         }
         return inflate;

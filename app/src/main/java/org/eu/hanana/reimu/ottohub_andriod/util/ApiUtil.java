@@ -10,6 +10,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.preference.PreferenceManager;
 
 import com.google.gson.Gson;
 
@@ -55,7 +56,9 @@ public class ApiUtil {
 
     public static void logout() {
         if (!isLogin()) return;
-        MyApp.getInstance().getSharedPreferences(SharedPreferencesKeys.Perf_Account_List, MODE_PRIVATE).edit().remove(getAppApi().getLoginResult().uid).apply();
+        if (PreferenceManager.getDefaultSharedPreferences(MyApp.getInstance().getApplicationContext()).getBoolean("remove_account",true)) {
+            MyApp.getInstance().getSharedPreferences(SharedPreferencesKeys.Perf_Account_List, MODE_PRIVATE).edit().remove(getAppApi().getLoginResult().uid).apply();
+        }
         getAppApi().logout();
         MyApp.getInstance().getSharedPreferences(SharedPreferencesKeys.Perf_Auth, MODE_PRIVATE).edit().remove(SharedPreferencesKeys.Key_Username).remove(SharedPreferencesKeys.Key_Passwd).apply();
     }

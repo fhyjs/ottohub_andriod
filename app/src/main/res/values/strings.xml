@@ -102,4 +102,7 @@
     <string name="current">Current</string>
     <string name="add">Add</string>
     <string name="audit_button">Aduit</string>
+    <string name="under_development">Sorry,under development!</string>
+    <string name="remove_account">Remove account</string>
+    <string name="remove_account_from_list">Remove account from account list when logout.</string>
 </resources>

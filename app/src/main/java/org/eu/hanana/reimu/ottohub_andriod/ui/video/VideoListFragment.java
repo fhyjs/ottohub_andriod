@@ -60,7 +60,7 @@ public class VideoListFragment extends Fragment {
     private VideoCardAdapter adapter;
     private final List<VideoCard> videoList = new ArrayList<>();
     public int currentPage = 0;
-    private boolean hasMoreData = true;
+    public boolean hasMoreData = true;
     private VideoViewModel viewModel;
     private InfiniteScrollListener scrollListener;
     public Button selectedButton;
@@ -74,9 +74,11 @@ public class VideoListFragment extends Fragment {
     public static final String ARG_ACTION = "action";
     public static final String ARG_DATA = "data";
     public static final String ACTION_BY_USER = "byuser";
+    public static final String ACTION_DEFAULT = "def";
     public static final String ACTION_SEARCH = "search";
+    public static final String ACTION_FAVOURITE = "fav";
     public static final String ACTION_HISTORY = "history";
-    public String action=ACTION_BY_USER;
+    public String action=ACTION_DEFAULT;
 
     public VideoListFragment() {
         // Required empty public constructor
@@ -183,7 +185,7 @@ public class VideoListFragment extends Fragment {
                 selectedButton=button;
             }
         }
-        if (uid!=null||action.equals(ACTION_SEARCH)||(getParentFragment()!=null&&getParentFragment().getClass()== ProfileFragment.class)){
+        if (uid!=null||!action.equals(ACTION_DEFAULT)||(getParentFragment()!=null&&getParentFragment().getClass()== ProfileFragment.class)){
             button_area.removeAllViews();
         }
         return inflate;

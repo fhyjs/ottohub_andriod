@@ -79,7 +79,7 @@ public class VideoViewModel extends ViewModel {
     private List<VideoCard> fetchFromNetwork(VideoListFragment videoListFragment) throws IOException {
         ArrayList<VideoCard> objects = new ArrayList<>();
         VideoListResult videoListResult = null;
-        if (videoListFragment.uid==null&&videoListFragment.data==null) {
+        if (videoListFragment.action.equals(VideoListFragment.ACTION_DEFAULT)) {
             if (videoListFragment.selectedButton.getTag().equals(videoListFragment.buttonLabels[0])) {
                 videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().random_video_list(12);
             } else if (videoListFragment.selectedButton.getTag().equals(videoListFragment.buttonLabels[1])) {
@@ -129,6 +129,9 @@ public class VideoViewModel extends ViewModel {
                     videoListResult.status="success";
                     videoListResult.video_list=List.of();
                 }
+            }else if (videoListFragment.action.equals(VideoListFragment.ACTION_FAVOURITE)){
+                videoListResult = MyApp.getInstance().getOttohubApi().getProfileApi().favorite_video_list(videoListFragment.currentPage*12, 12);
+                if (videoListResult.video_list.isEmpty()) videoListFragment.hasMoreData=false;
             }
         }
         if (videoListResult.video_list != null) {
