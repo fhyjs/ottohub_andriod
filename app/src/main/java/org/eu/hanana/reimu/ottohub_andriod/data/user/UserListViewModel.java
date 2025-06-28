@@ -51,6 +51,12 @@ public class UserListViewModel extends ListViewModelBase<UserCard> {
                 frag.hasMoreData=false;
                 userListResult.user_list = List.of();
             }
+        } else if (frag.type.equals(UserListFragment.TYPE_FOLLOWING)) {
+            userListResult= ApiUtil.getAppApi().getFollowingApi().following_list(Integer.parseInt(frag.data),frag.currentPage*12,12);
+            if (userListResult.user_list!=null&&userListResult.user_list.isEmpty()) frag.hasMoreData = false;
+        } else if (frag.type.equals(UserListFragment.TYPE_FOLLOWER)) {
+            userListResult= ApiUtil.getAppApi().getFollowingApi().fan_list(Integer.parseInt(frag.data),frag.currentPage*12,12);
+            if (userListResult.user_list!=null&&userListResult.user_list.isEmpty()) frag.hasMoreData = false;
         }
         var result = new ArrayList<UserCard>();
         if (userListResult==null){

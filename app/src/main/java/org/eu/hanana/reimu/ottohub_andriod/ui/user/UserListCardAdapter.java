@@ -52,7 +52,7 @@ public class UserListCardAdapter extends CardAdapterBase<UserCard, UserCardViewH
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC) // 缓存策略
                 .into(holder.avatar);
         holder.itemView.setOnClickListener(v -> {
-            if (userListFragment.type.equals(UserListFragment.TYPE_SEARCH)){
+            if (userListFragment.type.equals(UserListFragment.TYPE_SEARCH)||userListFragment.type.equals(UserListFragment.TYPE_FOLLOWER)||userListFragment.type.equals(UserListFragment.TYPE_FOLLOWING)){
                 // 创建 Intent
                 Intent intent = new Intent(ctx, ProfileActivity.class);
                 Bundle bundle = new Bundle();

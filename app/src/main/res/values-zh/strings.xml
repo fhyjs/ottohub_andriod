@@ -98,4 +98,5 @@
     <string name="skip">跳过</string>
     <string name="permissionCheck">权限检测</string>
     <string name="git_comment">git提交</string>
+    <string name="reach_end">再往下就是白银了</string>
 </resources>

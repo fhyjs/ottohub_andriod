@@ -35,7 +35,9 @@ public class UserListFragment extends ListFragmentBase<UserListCardAdapter,UserC
     public static final String ARG_ACTION = VideoListFragment.ARG_ACTION;
     public static final String ARG_DATA = VideoListFragment.ARG_DATA;
     public static final String TYPE_SEARCH = "search";
+    public static final String TYPE_FOLLOWING = "fi";
     public static final String TYPE_SWITCH_ACCOUNT = "swa";
+    public static final String TYPE_FOLLOWER = "fe";
 
 
     // TODO: Rename and change types of parameters

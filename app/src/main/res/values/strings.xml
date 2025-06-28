@@ -112,4 +112,5 @@
     <string name="skip">Skip</string>
     <string name="permissionCheck">Permission Check</string>
     <string name="git_comment">Git Comment</string>
+    <string name="reach_end">End of scroll. Go outside and say hi to a tree 🌳</string>
 </resources>

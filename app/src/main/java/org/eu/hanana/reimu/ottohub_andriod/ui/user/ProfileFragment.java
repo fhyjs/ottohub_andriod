@@ -41,6 +41,7 @@ import org.eu.hanana.reimu.lib.ottohub.api.user.UserResult;
 import org.eu.hanana.reimu.ottohub_andriod.MyApp;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity;
+import org.eu.hanana.reimu.ottohub_andriod.activity.FragActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.MessageActivity;
 import org.eu.hanana.reimu.ottohub_andriod.ui.blog.BlogListFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.settings.SettingsFragment;
@@ -215,6 +216,31 @@ public class ProfileFragment extends Fragment {
         tvIntro.setText(userResult.intro);
         tvDetail.setText(String.format(Locale.getDefault(),"%s:%s %s:%s",getString(R.string.sex),userResult.sex,getString(R.string.register_time),userResult.time));
         addMenu();
+
+        tvFollower.setOnClickListener(v -> {
+            var intent = new Intent(getContext(), FragActivity.class);
+            var data = new Bundle();
+            data.putString(FragActivity.ARG_FRAG_CLASS, UserListFragment.class.getName());
+            data.putString(FragActivity.ARG_TITLE, getString(R.string.followers));
+            var fragData = new Bundle();
+            fragData.putString(UserListFragment.ARG_ACTION,UserListFragment.TYPE_FOLLOWER);
+            fragData.putString(UserListFragment.ARG_DATA, String.valueOf(uid));
+            data.putBundle(FragActivity.ARG_DATA,fragData);
+            intent.putExtras(data);
+            startActivity(intent);
+        });
+        tvFollowing.setOnClickListener(v -> {
+            var intent = new Intent(getContext(), FragActivity.class);
+            var data = new Bundle();
+            data.putString(FragActivity.ARG_FRAG_CLASS, UserListFragment.class.getName());
+            data.putString(FragActivity.ARG_TITLE, getString(R.string.followings));
+            var fragData = new Bundle();
+            fragData.putString(UserListFragment.ARG_ACTION,UserListFragment.TYPE_FOLLOWING);
+            fragData.putString(UserListFragment.ARG_DATA, String.valueOf(uid));
+            data.putBundle(FragActivity.ARG_DATA,fragData);
+            intent.putExtras(data);
+            startActivity(intent);
+        });
     }
 
     private void addMenu() {
