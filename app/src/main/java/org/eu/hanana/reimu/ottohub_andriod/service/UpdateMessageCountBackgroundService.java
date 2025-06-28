@@ -99,8 +99,8 @@ public class UpdateMessageCountBackgroundService extends Service {
             if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("force_background",true)) {
                 startForeground(1, buildNotification());
             }else {
-                startForeground(1, buildNotification());
-                stopSelf();
+                //startForeground(1, buildNotification());
+                //stopForeground(true);
                 return START_NOT_STICKY; // 这里返回不重启服务
             }
         } else {

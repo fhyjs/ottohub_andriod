@@ -4,7 +4,7 @@ plugins {
 android {
     signingConfigs {
         debug {
-            storeFile file('C:\\Users\\a\\hanana.jks')
+            storeFile file('hanana.jks')
             storePassword '12345678q'
             keyPassword '12345678q'
             keyAlias 'hananaapps'
@@ -19,8 +19,8 @@ android {
         minSdk 21
         multiDexEnabled true
         targetSdk 35
-        versionCode 12
-        versionName "2.0-patch2"
+        versionCode 13
+        versionName "2.0-patch3"
         resConfigs "en", "zh" // Example: Support English and Spanish
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "BUILD_TIME", "\"${new Date().format("yyyy-MM-dd HH:mm:ss")}\""

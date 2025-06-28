@@ -63,8 +63,16 @@ public abstract class ListFragmentBase<T extends CardAdapterBase<E,N>,N extends 
                     scrollListener.setLoadingComplete();
                     Log.d("page", "loadNextPage: "+currentPage);
                     currentPage++;
-                    if (hasMoreData)
-                        loadNextPage();
+
+                    if (hasMoreData) {
+                        // ✅ 如果没有填满屏幕，则继续加载下一页
+                        recyclerView.post(() -> {
+                            boolean canScrollMore = recyclerView.canScrollVertically(1);
+                            if (!canScrollMore) {
+                                loadNextPage();
+                            }
+                        });
+                    }
                     break;
                 case ERROR:
                     adapter.hideLoading();
