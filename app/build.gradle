@@ -8,6 +8,20 @@ android {
             storePassword '12345678q'
             keyPassword '12345678q'
             keyAlias 'hananaapps'
+            enableV3Signing true
+            enableV3Signing true
+            enableV3Signing true
+            enableV4Signing true
+        }
+        release {
+            storeFile file('hanana.jks')
+            storePassword '12345678q'
+            keyPassword '12345678q'
+            keyAlias 'hananaapps'
+            enableV3Signing true
+            enableV3Signing true
+            enableV3Signing true
+            enableV4Signing true
         }
     }
     namespace 'org.eu.hanana.reimu.ottohub_andriod'
@@ -65,6 +79,12 @@ android {
     }
     androidResources{
         generateLocaleConfig true
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+        }
     }
 }
 
