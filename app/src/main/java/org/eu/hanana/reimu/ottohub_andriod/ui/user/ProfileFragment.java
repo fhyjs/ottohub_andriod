@@ -3,7 +3,11 @@ package org.eu.hanana.reimu.ottohub_andriod.ui.user;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment.ACTION_BY_USER;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment.ARG_ACTION;
 
+import android.animation.ValueAnimator;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
@@ -19,7 +23,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.TextureView;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -29,19 +33,20 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.MultiTransformation;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.google.android.material.badge.BadgeDrawable;
-import com.google.android.material.badge.BadgeUtils;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.android.material.button.MaterialButton;
 
-import org.eu.hanana.reimu.lib.ottohub.api.OttohubApi;
 import org.eu.hanana.reimu.lib.ottohub.api.following.FollowStatusResult;
 import org.eu.hanana.reimu.lib.ottohub.api.profile.ProfileResult;
 import org.eu.hanana.reimu.lib.ottohub.api.user.UserResult;
 import org.eu.hanana.reimu.ottohub_andriod.MyApp;
 import org.eu.hanana.reimu.ottohub_andriod.R;
-import org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.FragActivity;
+import org.eu.hanana.reimu.ottohub_andriod.activity.ImageViewActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.MessageActivity;
 import org.eu.hanana.reimu.ottohub_andriod.ui.blog.BlogListFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.settings.SettingsFragment;
@@ -50,8 +55,12 @@ import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ClassUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ProfileUtil;
+import org.eu.hanana.reimu.ottohub_andriod.util.TouchInterceptFrameLayout;
+import org.eu.hanana.reimu.ottohub_andriod.util.UiUtil;
+import org.eu.hanana.reimu.ottohub_andriod.util.ui.BlurTransformation;
+import org.eu.hanana.reimu.ottohub_andriod.util.ui.ColorOverlayTransformation;
+import org.eu.hanana.reimu.ottohub_andriod.util.ui.HardwareToSoftwareTransformation;
 
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Locale;
 
@@ -66,7 +75,7 @@ public class ProfileFragment extends Fragment {
     protected ProfileResult userResult;
     protected UserResult userDataResult;
     protected LinearLayout llButtonPanel;
-    protected FrameLayout frameLayout;
+    protected TouchInterceptFrameLayout frameLayout;
     protected Button btnFollow,btnVid,btnBlog;
     @Getter
     protected int uid;
@@ -77,6 +86,7 @@ public class ProfileFragment extends Fragment {
     protected LinearLayout pageBtnArea;
     protected TextView tvIntro;
     protected TextView tvDetail;
+    private View view;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -128,6 +138,7 @@ public class ProfileFragment extends Fragment {
         pageBtnArea=view.findViewById(R.id.video_type_button_area);
         tvIntro=view.findViewById(R.id.tvIntro);
         tvDetail=view.findViewById(R.id.tvDetail);
+        this.view=view;
 
         Thread thread = new Thread(()->{
             init();
@@ -186,6 +197,7 @@ public class ProfileFragment extends Fragment {
                 .placeholder(R.drawable.ic_launcher_background)  // 占位图
                 .error(R.drawable.error_48px)        // 错误图
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC) // 缓存策略
+                .circleCrop()
                 .into(ivAvatar);
         tvUsername.setText(userResult.username);
         var exp = ProfileUtil.exp_show(userResult.experience);
@@ -241,8 +253,94 @@ public class ProfileFragment extends Fragment {
             intent.putExtras(data);
             startActivity(intent);
         });
-    }
+        //将封面作为卡片背景
+        Glide.with(this)
+                .load(isSelf()?MyApp.getInstance().getOttohubApi().getLoginResult().cover_url:userDataResult.cover_url)
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC) // 缓存策略
+                .apply(RequestOptions.bitmapTransform( new MultiTransformation<>(
+                        new HardwareToSoftwareTransformation(),
+                        new BlurTransformation(getContext(), 10),
+                        new HardwareToSoftwareTransformation(),
+                        new ColorOverlayTransformation(0x6cffffff)
+                )))
+                .into(new CustomTarget<Drawable>() {
+                    @Override
+                    public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                        View topArea = view.findViewById(R.id.profile_top_area);
+                        int width = topArea.getWidth();
+                        int height = topArea.getHeight();
 
+                        if (resource instanceof BitmapDrawable && width > 0 && height > 0) {
+                            Bitmap srcBitmap = ((BitmapDrawable) resource).getBitmap();
+                            Bitmap scaled = Bitmap.createScaledBitmap(srcBitmap, width, height, true);
+                            topArea.setBackground(new BitmapDrawable(topArea.getResources(), scaled));
+                        } else {
+                            // fallback 原图
+                            topArea.setBackground(resource);
+                        }
+
+                        view.findViewById(R.id.card_profile_top).setBackgroundColor(Color.TRANSPARENT);
+                    }
+
+                    @Override
+                    public void onLoadCleared(@Nullable Drawable placeholder) {}
+                });
+        //滑动控制
+        TouchInterceptFrameLayout.OnTouchListener onTouchListener = new TouchInterceptFrameLayout.OnTouchListener() {
+            private final View pta = view.findViewById(R.id.profile_top_area);
+            private int originalHeight = 0;
+            private float downY = 0;
+            private final int minHeight = 0; // px，可以换成 dp 转换
+            private int maxHeight = 0; // 可设置上限避免爆炸拉伸
+            private final int touchSlop = 8;   // 忽略小于8px的滑动
+            @Override
+            public void onTouch(MotionEvent ev) {
+                ViewGroup.LayoutParams lp = pta.getLayoutParams();
+
+                switch (ev.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        downY = ev.getY();
+                        originalHeight = pta.getHeight();
+                        // 动态获取最大高度（只获取一次）
+                        if (maxHeight == 0 || maxHeight < originalHeight) {
+                            maxHeight = originalHeight;
+                        }
+                        break;
+
+                    case MotionEvent.ACTION_MOVE:
+                        float deltaY = ev.getY() - downY;
+
+                        // 滑动小于 touchSlop 忽略（防止抖动）
+                        if (Math.abs(deltaY) < touchSlop) return;
+
+                        int newHeight = (int) (originalHeight + deltaY);
+
+                        // 限制高度范围
+                        newHeight = Math.max(minHeight, Math.min(maxHeight, newHeight));
+
+                        // 只有变化时才设置，减少 requestLayout 触发
+                        if (newHeight != lp.height && Math.abs(newHeight - lp.height) > 1) {
+                            lp.height = newHeight;
+                            pta.setLayoutParams(lp);
+                        }
+                        if (newHeight<=minHeight){
+                            pta.setVisibility(View.GONE);
+                            frameLayout.setInterceptMove(false);
+                        }else {
+                            pta.setVisibility(View.VISIBLE);
+                            frameLayout.setInterceptMove(true);
+                            if (newHeight>=maxHeight){
+                                frameLayout.setInterceptMove(false);
+                            }
+                        }
+                        break;
+                }
+            }
+        };
+        frameLayout.setInterceptMove(true);
+        frameLayout.setTouchListener(onTouchListener);
+        frameLayout.setInterceptTouchListener(onTouchListener);
+    }
     private void addMenu() {
         getActivity().addMenuProvider(new MenuProvider() {
             @Override
@@ -257,6 +355,7 @@ public class ProfileFragment extends Fragment {
                     drawable.setTintList(ContextCompat.getColorStateList(getContext(),R.color.black));
                     menu.add(Menu.NONE,10,Menu.NONE,getString(R.string.mail)).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
                 }
+                menuInflater.inflate(R.menu.menu_action_profile,menu);
             }
 
             @Override
@@ -265,7 +364,7 @@ public class ProfileFragment extends Fragment {
                 MenuItem menuItem = menu.findItem(10);
                 if (menuItem!=null) {
                     // 创建自定义的角标视图
-                    FrameLayout actionView = (FrameLayout) getLayoutInflater().inflate(R.layout.menu_item_badge, null, false);
+                    FrameLayout actionView = (FrameLayout) getLayoutInflater().inflate(R.layout.menu_item_badge, (ViewGroup) view.getRootView(), false);
 
                     menuItem.setActionView(actionView);
                     actionView.setOnClickListener(v -> {
@@ -284,6 +383,20 @@ public class ProfileFragment extends Fragment {
                     Intent intent = new Intent(getContext(), MessageActivity.class);
                     startActivity(intent);
                     return true;
+                }else if (menuItem.getItemId() == R.id.action_toggle) {
+                    var isExpanded = view.findViewById(R.id.profile_top_area).getVisibility()==View.VISIBLE;
+                    if (isExpanded){
+                        menuItem.setIcon(R.drawable.arrow_downward_24dp);
+                        UiUtil.slideUp(view.findViewById(R.id.profile_top_area));
+                    }else {
+                        menuItem.setIcon(R.drawable.arrow_upward_24dp);
+                        UiUtil.slideDown(view.findViewById(R.id.profile_top_area));
+                    }
+                    return true;
+                } else if (menuItem.getItemId() == R.id.btn_view_avatar) {
+                    ImageViewActivity.start(getContext(),isSelf()?MyApp.getInstance().getOttohubApi().getLoginResult().avatar_url:userDataResult.avatar_url);
+                } else if (menuItem.getItemId() == R.id.btn_view_cover) {
+                    ImageViewActivity.start(getContext(),isSelf()?MyApp.getInstance().getOttohubApi().getLoginResult().cover_url:userDataResult.cover_url);
                 }
                 return false;
             }
@@ -377,4 +490,5 @@ public class ProfileFragment extends Fragment {
             });
         }
     }
+
 }

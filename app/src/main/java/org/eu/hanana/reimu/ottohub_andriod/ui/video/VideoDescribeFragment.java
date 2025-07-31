@@ -4,11 +4,14 @@ import static org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase
 import static org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase.TYPE_VIDEO;
 
 import android.app.Fragment;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 
 
-
+import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +37,7 @@ import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.ProfileActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.SearchActivity;
+import org.eu.hanana.reimu.ottohub_andriod.service.DownloadVideoForegroundService;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 
@@ -57,8 +61,6 @@ public class VideoDescribeFragment extends androidx.fragment.app.Fragment {
     public VideoDescribeFragment() {
         // Required empty public constructor
     }
-
-
     public static VideoDescribeFragment newInstance(VideoResult data) {
         VideoDescribeFragment fragment = new VideoDescribeFragment();
         Bundle args = new Bundle();
@@ -92,6 +94,7 @@ public class VideoDescribeFragment extends androidx.fragment.app.Fragment {
                 .placeholder(R.drawable.ic_launcher_background)  // 占位图
                 .error(R.drawable.error_48px)        // 错误图
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC) // 缓存策略
+                .circleCrop()
                 .into((ImageView) view.findViewById(R.id.ivAvatar));
         view.findViewById(R.id.clAuthorInfo).setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), ProfileActivity.class);
@@ -153,6 +156,9 @@ public class VideoDescribeFragment extends androidx.fragment.app.Fragment {
             });
             thread.setUncaughtExceptionHandler(new AlertUtil.ThreadAlert(getActivity()));
             AlertUtil.showYesNo(getContext(), getString(R.string.report), getString(R.string.issure), (dialog, which) -> thread.start(),null).show();
+        });
+        view.findViewById(R.id.btn_download).setOnClickListener(v -> {
+            getActivity().startService(DownloadVideoForegroundService.createIntent(vData.vid,getContext()));
         });
         LinearLayout tagsArea = view.findViewById(R.id.llTagsArea);
         Arrays.stream(vData.tag.split("#")).skip(1).forEach(tag -> {

@@ -4,15 +4,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_height="match_parent">
-    <include
-        android:layout_marginBottom="4dp"
-        layout="@layout/card_profile_top"
+    <LinearLayout
+        android:id="@+id/profile_top_area"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-    <include
-        layout="@layout/card_profile_counts"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <include
+            android:layout_marginBottom="4dp"
+            layout="@layout/card_profile_top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <include
+            layout="@layout/card_profile_counts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -46,7 +52,7 @@
             </LinearLayout>
         </HorizontalScrollView>
     </com.google.android.material.card.MaterialCardView>
-    <FrameLayout
+    <org.eu.hanana.reimu.ottohub_andriod.util.TouchInterceptFrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

@@ -99,4 +99,18 @@
     <string name="permissionCheck">权限检测</string>
     <string name="git_comment">git提交</string>
     <string name="reach_end">再往下就是白银了</string>
+    <string name="download">缓存</string>
+    <string name="downloading">下载中...</string>
+    <string name="audit_title">大法庭</string>
+    <string name="avatar">头像</string>
+    <string name="cover">封面</string>
+    <string name="audit">审核</string>
+    <string name="view_avatar">查看头像</string>
+    <string name="image_viewer">图片查看器</string>
+    <string name="image_viewer_tip">长按保存到相册</string>
+    <string name="image_viewer_save_tip">保存图片？</string>
+    <string name="conform">确定</string>
+    <string name="cancel">取消</string>
+    <string name="no_permission">需要一个权限来完成本次操作</string>
+    <string name="view_cover">查看封面</string>
 </resources>

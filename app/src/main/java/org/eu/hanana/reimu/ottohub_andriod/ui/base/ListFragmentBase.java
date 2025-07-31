@@ -200,6 +200,8 @@ public abstract class ListFragmentBase<T extends CardAdapterBase<E,N>,N extends 
         }
     }
     public void refresh(){
+        if(adapter==null) return;
+        if (adapter.isLoading) return;
         hasMoreData=true;
         error=false;
         currentPage=0;

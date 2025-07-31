@@ -141,6 +141,7 @@ public class BlogActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.tvAuthor)).setText(blogResult.username);
         Glide.with(this)
                 .load(blogResult.avatar_url)
+                .circleCrop()
                 .placeholder(R.drawable.ic_launcher_background)  // 占位图
                 .error(R.drawable.error_48px)        // 错误图
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC) // 缓存策略

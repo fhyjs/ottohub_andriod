@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="@string/view_avatar"
+        android:id="@+id/btn_view_avatar"/>
+    <item android:title="@string/view_cover"
+        android:id="@+id/btn_view_cover"/>
+</menu>

@@ -45,6 +45,16 @@
                 android:textSize="20sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_download"
+                style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+                android:text="@string/download"
+                app:icon="@drawable/download_2_24dp"
+                app:iconGravity="textTop"
+                app:iconPadding="2dp"
+                android:textSize="20sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
         </LinearLayout>
     </HorizontalScrollView>
 </com.google.android.material.card.MaterialCardView>

@@ -13,6 +13,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.preference.PreferenceManager;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import org.eu.hanana.reimu.lib.ottohub.api.ApiResultBase;
 import org.eu.hanana.reimu.lib.ottohub.api.OttohubApi;
@@ -21,20 +24,32 @@ import org.eu.hanana.reimu.lib.ottohub.api.im.NewMessageNumResult;
 import org.eu.hanana.reimu.ottohub_andriod.MyApp;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import lombok.Getter;
+import lombok.SneakyThrows;
 
 public class ApiUtil {
     private static final String TAG = "APIUtil";
     @Getter
     private static int newMegCount;
-
+    private static Map<String,String> apiExceptionMessage = null;
     public static void throwApiError(ApiResultBase resultBase){
         if (!resultBase.isSuccess()) {
-            ApiException apiException = new ApiException(resultBase.getMessage());
+            String message = resultBase.getMessage();
+            checkErrorMessages(null);
+            if (apiExceptionMessage!=null&&apiExceptionMessage.containsKey(message)) message=String.format(Locale.ROOT,"%s (%s)",apiExceptionMessage.get(message),message);
+            ApiException apiException = new ApiException(message);
             Log.e(TAG, "throwApiError: ", apiException);
             throw apiException;
         }
@@ -46,7 +61,34 @@ public class ApiUtil {
     public static boolean isLogin() {
         return getAppApi().getLoginToken()!=null;
     }
-
+    protected static void checkErrorMessages(@Nullable String c){
+        if (apiExceptionMessage==null) {
+            String country = Locale.getDefault().getCountry().toLowerCase(Locale.ROOT);
+            if (c!=null) country=c;
+            InputStream resourceAsStream = null;
+            try {
+                resourceAsStream = MyApp.getInstance().getAssets().open("message/api_exception_message_" + country + ".json");
+            } catch (IOException e) {}
+            if (resourceAsStream != null) {
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))) {
+                    String json = reader.lines().collect(Collectors.joining("\n"));
+                    System.out.println(json);
+                    JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
+                    apiExceptionMessage=new HashMap<>();
+                    for (String s : jsonObject.keySet()) {
+                        apiExceptionMessage.put(s,jsonObject.get(s).getAsString());
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                System.err.println("资源文件未找到！"+"message/api_exception_message_" + country + ".json");
+                if (c==null){
+                    checkErrorMessages("en");
+                }
+            }
+        }
+    }
     public static void fetchMsgCount() {
         if (!isLogin()) return;
         NewMessageNumResult newMessageNumResult = getAppApi().getMessageApi().new_message_num();

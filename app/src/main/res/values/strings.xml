@@ -113,4 +113,18 @@
     <string name="permissionCheck">Permission Check</string>
     <string name="git_comment">Git Comment</string>
     <string name="reach_end">End of scroll. Go outside and say hi to a tree 🌳</string>
+    <string name="download">Download</string>
+    <string name="downloading">Downloading...</string>
+    <string name="audit_title">Audit</string>
+    <string name="avatar">"Avatar "</string>
+    <string name="cover">Cover</string>
+    <string name="audit">Aduit</string>
+    <string name="view_avatar">Show avatar</string>
+    <string name="image_viewer">Image Viewer</string>
+    <string name="image_viewer_tip">Long press to save image</string>
+    <string name="image_viewer_save_tip">Save to storage?</string>
+    <string name="conform">Conform</string>
+    <string name="cancel">Cancel</string>
+    <string name="no_permission">A permission is required to finish this operation!</string>
+    <string name="view_cover">view cover</string>
 </resources>

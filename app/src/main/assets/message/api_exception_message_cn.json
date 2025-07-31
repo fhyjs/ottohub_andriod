@@ -1,0 +1,5 @@
+{
+  "missing_argument": "缺少参数",
+  "not_reviewer": "你不是超管",
+  "system_error": "服务端返回未知故障"
+}

@@ -80,28 +80,31 @@ public class CustomWebView extends WebView {
             var ottohubUrl = url.split("/");
             var ottohubOperation = ottohubUrl[ottohubUrl.length-2];
             var ottohubTarget = ottohubUrl[ottohubUrl.length-1];
-            if (ottohubOperation.contains("b")){
-                Intent intent = new Intent(getContext(), BlogActivity.class);
-                var data = new Bundle();
-                data.putInt(BlogActivity.KEY_BID,Integer.parseInt(ottohubTarget));
-                intent.putExtras(data);
-                getContext().startActivity(intent);
-                return;
-            }else if (ottohubOperation.contains("v")){
-                Intent intent = new Intent(getContext(), VideoPlayerActivity.class);
-                var data = new Bundle();
-                data.putInt(VideoPlayerActivity.KEY_VID,Integer.parseInt(ottohubTarget));
-                intent.putExtras(data);
-                getContext().startActivity(intent);
-                return;
-            }else if (ottohubOperation.contains("u")){
-                Intent intent = new Intent(getContext(), ProfileActivity.class);
-                var data = new Bundle();
-                data.putInt(ProfileActivity.KEY_UID,Integer.parseInt(ottohubTarget));
-                intent.putExtras(data);
-                getContext().startActivity(intent);
-                return;
-            }
+            try {
+                if (ottohubOperation.contains("b")){
+                    Intent intent = new Intent(getContext(), BlogActivity.class);
+                    var data = new Bundle();
+                    data.putInt(BlogActivity.KEY_BID,Integer.parseInt(ottohubTarget));
+                    intent.putExtras(data);
+                    getContext().startActivity(intent);
+                    return;
+                }else if (ottohubOperation.contains("v")){
+                    Intent intent = new Intent(getContext(), VideoPlayerActivity.class);
+                    var data = new Bundle();
+                    data.putInt(VideoPlayerActivity.KEY_VID,Integer.parseInt(ottohubTarget));
+                    intent.putExtras(data);
+                    getContext().startActivity(intent);
+                    return;
+                }else if (ottohubOperation.contains("u")){
+                    Intent intent = new Intent(getContext(), ProfileActivity.class);
+                    var data = new Bundle();
+                    data.putInt(ProfileActivity.KEY_UID,Integer.parseInt(ottohubTarget));
+                    intent.putExtras(data);
+                    getContext().startActivity(intent);
+                    return;
+                }
+            }catch (Exception ignored){}
+
         }
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         getContext().startActivity(intent);

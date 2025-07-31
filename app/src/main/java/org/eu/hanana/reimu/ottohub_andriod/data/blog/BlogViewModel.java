@@ -1,6 +1,7 @@
 package org.eu.hanana.reimu.ottohub_andriod.data.blog;
 
 import static org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment.ACTION_FAVOURITE;
+import static org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment.ACTION_SEARCH;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -91,7 +92,7 @@ public class BlogViewModel extends ViewModel {
         }else {
             if(blogListFragment.uid!=null) {
                 listResult = MyApp.getInstance().getOttohubApi().getBlogApi().user_blog_list(blogListFragment.uid, blogListFragment.currentPage * 12, 12);
-            }else if(blogListFragment.action==null){
+            }else if(ACTION_SEARCH.equals(blogListFragment.action)){
                 listResult = MyApp.getInstance().getOttohubApi().getBlogApi().search_blog_list(blogListFragment.data, 36);
                 if (blogListFragment.data.toLowerCase(Locale.ROOT).startsWith("ob")) {
                     listResult.blog_list.addAll(0,MyApp.getInstance().getOttohubApi().getBlogApi().id_blog_list(Integer.parseInt(blogListFragment.data.substring(2))).blog_list);

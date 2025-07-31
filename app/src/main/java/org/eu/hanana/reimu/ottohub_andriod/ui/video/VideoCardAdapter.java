@@ -3,7 +3,9 @@ package org.eu.hanana.reimu.ottohub_andriod.ui.video;
 import static androidx.core.content.ContextCompat.startActivity;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,12 +13,18 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
 import androidx.media3.common.util.UnstableApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.activity.VideoPlayerActivity;
@@ -28,6 +36,7 @@ import java.util.List;
 public class VideoCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int TYPE_ITEM = 0;
     private static final int TYPE_LOADING = 1;
+    private static final String TAG = "VideoCardAdapter";
 
     private List<VideoCard> videoList;
     boolean isLoading = false;
@@ -94,6 +103,18 @@ public class VideoCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     .placeholder(R.drawable.ic_launcher_background)  // 占位图
                     .error(R.drawable.error_48px)        // 错误图
                     .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC) // 缓存策略
+                    .addListener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, @Nullable Object model, @NonNull Target<Drawable> target, boolean isFirstResource) {
+                            Log.e(TAG, "onImageLoadFailed: "+video.getPic_url(), e);
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(@NonNull Drawable resource, @NonNull Object model, Target<Drawable> target, @NonNull DataSource dataSource, boolean isFirstResource) {
+                            return false;
+                        }
+                    })
                     .into(vcvHolder.ivThumbnail);
             Glide.with(vcvHolder.ivAvatar.getContext())
                     .load(video.getUser_url())

@@ -44,6 +44,7 @@ import com.google.android.material.navigation.NavigationView;
 
 import org.eu.hanana.reimu.lib.ottohub.api.auth.LoginResult;
 import org.eu.hanana.reimu.ottohub_andriod.activity.AccountListActivity;
+import org.eu.hanana.reimu.ottohub_andriod.activity.AuditActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.FavouriteActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.LauncherActivity;
@@ -194,7 +195,9 @@ public class MainActivity extends AppCompatActivity {
             }
         } else if (item.getItemId()==R.id.action_audit){
             if (ApiUtil.isLogin()){
-                Toast.makeText(this,R.string.under_development,LENGTH_SHORT).show();
+                //Toast.makeText(this,R.string.under_development,LENGTH_SHORT).show();
+                Intent intent = new Intent(this, AuditActivity.class);
+                startActivity(intent);
             }else {
                 tipNoLogin();
             }

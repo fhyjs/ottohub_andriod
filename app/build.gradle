@@ -33,8 +33,8 @@ android {
         minSdk 21
         multiDexEnabled true
         targetSdk 35
-        versionCode 210
-        versionName "2.1_Code.Marisa"
+        versionCode 230
+        versionName "2.3_Code.Remilia"
         resConfigs "en", "zh" // Example: Support English and Spanish
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "BUILD_TIME", "\"${new Date().format("yyyy-MM-dd HH:mm:ss")}\""
@@ -49,7 +49,7 @@ android {
         } catch (Exception e) {
             // ignore，没git时使用默认值
         }
-
+        versionName=versionName+"_Git.gitCommit"
         buildConfigField "String", "GIT_COMMIT", "\"${gitCommit}\""
     }
     buildTypes {
@@ -89,6 +89,8 @@ android {
 }
 
 dependencies {
+    implementation libs.photoview
+    implementation(libs.okhttp3.integration)
     implementation libs.drawerlayout
     implementation libs.preference.v120
     implementation libs.viewpager2
@@ -103,7 +105,8 @@ dependencies {
     }
     //implementation libs.libvlc.all
     implementation libs.akdanmaku
-    implementation libs.gson // 最新版本
+    implementation libs.gson
+    implementation libs.ui.android.stubs// 最新版本
     annotationProcessor libs.glide.compiler
     implementation libs.glide
     implementation libs.annotation

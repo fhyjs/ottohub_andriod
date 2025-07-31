@@ -6,6 +6,7 @@ import android.content.pm.PermissionInfo;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.view.View;
 import android.widget.ImageView;
 
 import androidx.annotation.Px;
@@ -18,6 +19,26 @@ import org.eu.hanana.reimu.ottohub_andriod.R;
 import java.net.URL;
 
 public class UiUtil {
+    public static void slideUp(final View view) {
+        view.animate()
+                .translationY(-view.getHeight())
+                .alpha(0f)
+                .setDuration(300)
+                .withEndAction(() -> view.setVisibility(View.GONE))
+                .start();
+    }
+
+    public static void slideDown(final View view) {
+        view.setVisibility(View.VISIBLE);
+        view.setAlpha(0f);
+        view.setTranslationY(-view.getHeight());
+
+        view.animate()
+                .translationY(0)
+                .alpha(1f)
+                .setDuration(300)
+                .start();
+    }
     public static String getPermissionDescription(Context ctx,String permission) {
         try {
             PermissionInfo info = ctx.getPackageManager().getPermissionInfo(permission, 0);
