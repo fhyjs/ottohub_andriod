@@ -49,7 +49,7 @@ android {
         } catch (Exception e) {
             // ignore，没git时使用默认值
         }
-        versionName=versionName+"_Git.gitCommit"
+        versionName=versionName+"_Git."+gitCommit
         buildConfigField "String", "GIT_COMMIT", "\"${gitCommit}\""
     }
     buildTypes {
