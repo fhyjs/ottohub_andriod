@@ -25,14 +25,14 @@ android {
         }
     }
     namespace 'org.eu.hanana.reimu.ottohub_andriod'
-    compileSdk 35
+    compileSdk 36
 
     defaultConfig {
         android.buildFeatures.buildConfig = true
         applicationId "org.eu.hanana.reimu.ottohub_andriod"
         minSdk 21
         multiDexEnabled true
-        targetSdk 35
+        targetSdk 36
         versionCode 230
         versionName "2.3_Code.Remilia"
         resConfigs "en", "zh" // Example: Support English and Spanish

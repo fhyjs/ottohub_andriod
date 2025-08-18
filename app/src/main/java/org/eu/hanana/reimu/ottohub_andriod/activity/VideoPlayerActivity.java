@@ -193,7 +193,9 @@ public class VideoPlayerActivity extends AppCompatActivity {
         new Thread(()->{
             preinit();
             initPlayer();
+            if (mediaPlayer==null) return;;
             loadData(false);
+            if (mediaPlayer==null) return;;
             postinit();
         }).start();
     }
@@ -408,6 +410,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
             System.out.println(netData.title);
             setTitle(netData.title);
             // 默认加载第一个 Fragment
+            if (mediaPlayer==null) return;;
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, VideoDescribeFragment.newInstance(netData))
                     .commit();
@@ -471,6 +474,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
         // 使用 MediaSource 时注入 DataSource
         MediaSource mediaSource = new ProgressiveMediaSource.Factory(httpDataSourceFactory)
                 .createMediaSource(mediaItem);
+        if (mediaPlayer==null) return;
         mediaPlayer.setMediaSource(mediaSource);
     }
     private void initDanmaku() {

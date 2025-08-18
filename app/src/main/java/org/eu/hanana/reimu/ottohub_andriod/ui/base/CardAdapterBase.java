@@ -3,6 +3,7 @@ package org.eu.hanana.reimu.ottohub_andriod.ui.base;
 import static android.view.View.GONE;
 import static androidx.core.content.ContextCompat.startActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;

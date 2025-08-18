@@ -1,5 +1,9 @@
 $(document).ready(function () {
   console.log("start");
+  $.cookie('token', blog.getToken());
+  $.cookie('uid', blog.getUid());
+  $.cookie('password', blog.getPassWd());
+
 
   var intervalId = setInterval(function () {
     var data = blog.getData();

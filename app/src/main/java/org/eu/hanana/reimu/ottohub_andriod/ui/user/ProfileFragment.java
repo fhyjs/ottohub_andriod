@@ -3,6 +3,8 @@ package org.eu.hanana.reimu.ottohub_andriod.ui.user;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment.ACTION_BY_USER;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment.ARG_ACTION;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -333,6 +335,34 @@ public class ProfileFragment extends Fragment {
                                 frameLayout.setInterceptMove(false);
                             }
                         }
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        pta.setVisibility(View.VISIBLE);
+                        ValueAnimator animator;
+                        if (lp.height<maxHeight*0.5) {
+                            animator = ValueAnimator.ofInt(lp.height, 0);
+                        }else {
+                            animator = ValueAnimator.ofInt(lp.height, maxHeight);
+                        }
+                        animator.setDuration(300); // 动画时长 1 秒
+                        animator.addUpdateListener(animation -> {
+                            int value = (int) animation.getAnimatedValue();
+                            lp.height= value;
+                            pta.setLayoutParams(lp);
+                        });
+                        animator.addListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                if (lp.height<maxHeight*0.5) {
+                                    pta.setVisibility(View.GONE);
+                                    frameLayout.setInterceptMove(false);
+                                }else {
+                                    frameLayout.setInterceptMove(true);
+                                }
+                            }
+                        });
+                        animator.start();
+
                         break;
                 }
             }

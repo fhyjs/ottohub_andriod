@@ -20,7 +20,7 @@ import java.util.List;
 
 public class TextCardAdapter extends CardAdapterBase<TextCard, TextCardViewHolder> {
     private static final String TAG = "TextCardAdapter";
-    private final TextListFragmentBase frag;
+    protected final TextListFragmentBase frag;
 
     public TextCardAdapter(List<TextCard> messageList, TextListFragmentBase textListFragmentBase) {
         super(messageList);

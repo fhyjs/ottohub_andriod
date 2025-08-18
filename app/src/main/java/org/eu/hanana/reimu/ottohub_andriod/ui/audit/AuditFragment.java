@@ -10,7 +10,11 @@ import androidx.annotation.Nullable;
 
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.data.audit.AuditTextViewModel;
+import org.eu.hanana.reimu.ottohub_andriod.data.base.text.TextCard;
+import org.eu.hanana.reimu.ottohub_andriod.ui.base.list.TextCardAdapter;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.list.TextListFragmentBase;
+
+import java.util.List;
 
 public class AuditFragment extends TextListFragmentBase<AuditTextViewModel> {
     public final static String TYPE = "type";
@@ -19,7 +23,7 @@ public class AuditFragment extends TextListFragmentBase<AuditTextViewModel> {
     public final static String TYPE_VIDEO = "v";
     public final static String TYPE_BLOG = "b";
     public final static String TYPE_COMMENT = "comment";
-    public String type;
+    public String type="u";
     public static AuditFragment newInstance(String type) {
         var frag = new AuditFragment();
         var data = new Bundle();
@@ -34,6 +38,17 @@ public class AuditFragment extends TextListFragmentBase<AuditTextViewModel> {
         if (getArguments() != null) {
             type = getArguments().getString(TYPE);
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        refresh();
+    }
+
+    @Override
+    public TextCardAdapter createAdapter(List<TextCard> list) {
+        return new AuditAdapter(list,this);
     }
 
     @Override

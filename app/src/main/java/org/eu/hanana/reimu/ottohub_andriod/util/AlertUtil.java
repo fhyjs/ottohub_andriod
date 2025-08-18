@@ -30,8 +30,8 @@ public class AlertUtil {
         return new MaterialAlertDialogBuilder(context)
                 .setTitle(title)
                 .setMessage(msg)
-                .setPositiveButton(R.string.ok,yes)
-                .setNegativeButton(R.string.no,no)
+                .setPositiveButton(R.string.conform,yes)
+                .setNegativeButton(R.string.cancel,no)
                 .create();
     }
     public static androidx.appcompat.app.AlertDialog showMsg(Context context, String title, String msg) {

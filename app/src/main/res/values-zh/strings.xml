@@ -113,4 +113,7 @@
     <string name="cancel">取消</string>
     <string name="no_permission">需要一个权限来完成本次操作</string>
     <string name="view_cover">查看封面</string>
+    <string name="delete">删除</string>
+    <string name="approve">通过</string>
+    <string name="reject">退回</string>
 </resources>

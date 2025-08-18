@@ -127,4 +127,7 @@
     <string name="cancel">Cancel</string>
     <string name="no_permission">A permission is required to finish this operation!</string>
     <string name="view_cover">view cover</string>
+    <string name="delete">Delete</string>
+    <string name="approve">Approve</string>
+    <string name="reject">Reject</string>
 </resources>

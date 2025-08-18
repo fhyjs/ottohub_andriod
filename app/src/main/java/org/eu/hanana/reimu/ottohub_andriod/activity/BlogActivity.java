@@ -1,11 +1,20 @@
 package org.eu.hanana.reimu.ottohub_andriod.activity;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static androidx.core.content.ContextCompat.startActivity;
+
+import static org.eu.hanana.reimu.ottohub_andriod.activity.FragActivity.ARG_DATA;
+import static org.eu.hanana.reimu.ottohub_andriod.ui.audit.AuditAdapter.ARG_RESULT;
+import static org.eu.hanana.reimu.ottohub_andriod.ui.audit.AuditAdapter.ARG_TARGET;
+import static org.eu.hanana.reimu.ottohub_andriod.ui.audit.AuditFragment.TYPE_BLOG;
+import static org.eu.hanana.reimu.ottohub_andriod.ui.message.MessageListFragment.ARG_TYPE;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -34,6 +43,7 @@ import android.widget.Toolbar;
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.WindowDecorActionBar;
@@ -71,11 +81,13 @@ import org.eu.hanana.reimu.lib.ottohub.api.engagement.EngagementResult;
 import org.eu.hanana.reimu.ottohub_andriod.MainActivity;
 import org.eu.hanana.reimu.ottohub_andriod.MyApp;
 import org.eu.hanana.reimu.ottohub_andriod.R;
+import org.eu.hanana.reimu.ottohub_andriod.ui.audit.AuditAdapter;
 import org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase;
 import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.CustomWebView;
+import org.eu.hanana.reimu.ottohub_andriod.util.SharedPreferencesKeys;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -83,6 +95,10 @@ import java.util.Locale;
 
 public class BlogActivity extends AppCompatActivity {
     public static final String KEY_BID="bid";
+    public static final String KEY_TYPE= ARG_TYPE;
+    public static final String KEY_DATA= ARG_DATA;
+    public static final String TYPE_VIEW="v";
+    public static final String TYPE_AUDIT="a";
     public int bid;
     private WebView webView;
     protected String blogPage = CustomWebView.internal+"web/blog/index.html";
@@ -90,6 +106,9 @@ public class BlogActivity extends AppCompatActivity {
     protected boolean inited=false;
     private View currentPage;
     private ViewGroup page1, page2;
+    public String type = TYPE_VIEW;
+    @Nullable
+    public String data = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,6 +122,12 @@ public class BlogActivity extends AppCompatActivity {
         // 启用返回按钮
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+        if (getIntent().getExtras().containsKey(KEY_DATA)){
+            data=getIntent().getExtras().getString(KEY_DATA);
+        }
+        if (getIntent().getExtras().containsKey(KEY_TYPE)){
+            type=getIntent().getExtras().getString(KEY_TYPE);
         }
         setTitle("loading...");
 
@@ -118,7 +143,11 @@ public class BlogActivity extends AppCompatActivity {
     public void init(){
         inited=true;
         Thread thread = new Thread(() -> {
-            blogResult=MyApp.getInstance().getOttohubApi().getBlogApi().get_blog_detail(bid);
+            if (TYPE_VIEW.equals(type)) {
+                blogResult = MyApp.getInstance().getOttohubApi().getBlogApi().get_blog_detail(bid);
+            }else if (TYPE_AUDIT.equals(type)) {
+                blogResult = new Gson().fromJson(data,BlogResult.class);
+            }
             runOnUiThread(this::initUI);
         });
         thread.setUncaughtExceptionHandler((t, e) -> runOnUiThread(()-> AlertUtil.showError(BlogActivity.this,"ERROR: "+e)));
@@ -231,6 +260,34 @@ public class BlogActivity extends AppCompatActivity {
                 }
             }
         });
+        findViewById(R.id.btn_approve).setOnClickListener(v -> {
+            AlertUtil.showYesNo(this,getString(R.string.approve),getString(R.string.issure),(dialog, which) -> {
+                Intent intent = new Intent();
+                intent.putExtra(ARG_RESULT, true);
+                intent.putExtra(AuditAdapter.ARG_TYPE, TYPE_BLOG);
+                intent.putExtra(ARG_TARGET, bid);
+                setResult(RESULT_OK, intent);
+                finish();
+            },null).show();
+        });
+        findViewById(R.id.btn_reject).setOnClickListener(v -> {
+            AlertUtil.showYesNo(this,getString(R.string.reject),getString(R.string.issure),(dialog, which) -> {
+                Intent intent = new Intent();
+                intent.putExtra(ARG_RESULT, false);
+                intent.putExtra(AuditAdapter.ARG_TYPE, TYPE_BLOG);
+                intent.putExtra(ARG_TARGET, bid);
+                setResult(RESULT_OK, intent);
+                finish();
+            },null).show();
+        });
+        if (TYPE_AUDIT.equals(type)) {
+            btn_comment.setVisibility(GONE);
+            setTitle(String.format(Locale.getDefault(),"%s - %s",getString(R.string.audit_title),getTitle()));
+            findViewById(R.id.clAuthorInfo).setVisibility(GONE);
+            btn_blog.setVisibility(GONE);
+            findViewById(R.id.group_user).setVisibility(GONE);
+            findViewById(R.id.group_audit).setVisibility(VISIBLE);
+        }
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -324,7 +381,20 @@ public class BlogActivity extends AppCompatActivity {
         public void showToast(String message) {
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
         }
-
+        @JavascriptInterface
+        public String getToken() {
+            return ApiUtil.getAppApi().getLoginToken();
+        }
+        @JavascriptInterface
+        public String getUid() {
+            SharedPreferences sharedPreferences = MyApp.getInstance().getSharedPreferences(SharedPreferencesKeys.Perf_Auth, MODE_PRIVATE);
+            return sharedPreferences.getString(SharedPreferencesKeys.Key_Username,"");
+        }
+        @JavascriptInterface
+        public String getPassWd() {
+            SharedPreferences sharedPreferences = MyApp.getInstance().getSharedPreferences(SharedPreferencesKeys.Perf_Auth, MODE_PRIVATE);
+            return sharedPreferences.getString(SharedPreferencesKeys.Key_Passwd,"");
+        }
         @JavascriptInterface
         public String getData() {
             if (blogResult==null){
@@ -350,7 +420,7 @@ public class BlogActivity extends AppCompatActivity {
 
         // 设置目标页起始位置
         nextPage.setTranslationX(toFromX);
-        nextPage.setVisibility(View.VISIBLE);
+        nextPage.setVisibility(VISIBLE);
 
         // 动画：当前页滑出，目标页滑入
         ViewPropertyAnimator hideAnim = currentPage.animate().translationX(fromToX).setDuration(300);
@@ -358,7 +428,7 @@ public class BlogActivity extends AppCompatActivity {
 
         // 动画结束后隐藏当前页
         hideAnim.withEndAction(() -> {
-            currentPage.setVisibility(View.GONE);
+            currentPage.setVisibility(GONE);
             currentPage = nextPage;
         });
     }

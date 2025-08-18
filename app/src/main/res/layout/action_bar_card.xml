@@ -15,6 +15,10 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="horizontal">
+            <LinearLayout
+                android:id="@+id/group_user"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_like"
                 style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
@@ -55,6 +59,34 @@
                 android:textSize="20sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
+            </LinearLayout>
+            <LinearLayout
+                android:visibility="gone"
+                android:id="@+id/group_audit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_approve"
+                    style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+                    android:text="@string/approve"
+                    app:icon="@drawable/order_approve_24dp"
+                    app:iconGravity="textTop"
+                    app:iconPadding="2dp"
+                    android:textSize="20sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_reject"
+                    style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+                    android:text="@string/reject"
+                    app:icon="@drawable/contract_delete_24dp"
+                    app:iconGravity="textTop"
+                    app:iconPadding="2dp"
+                    android:textSize="20sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
         </LinearLayout>
     </HorizontalScrollView>
 </com.google.android.material.card.MaterialCardView>
