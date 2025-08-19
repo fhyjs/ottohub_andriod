@@ -116,5 +116,17 @@
     <string name="delete">删除</string>
     <string name="approve">通过</string>
     <string name="reject">退回</string>
+    <string name="placeholder">占位符</string>
     <string name="audit_video_desc">[标题] %s\n[简介] %s\n\n[标签] %s</string>
+    <string name="upload_blog">发布动态</string>
+    <string name="upload_video">发布视频</string>
+    <string name="title">标题</string>
+    <string name="content_8888">不超过8888字...</string>
+    <string name="image_url">图片链接</string>
+    <string name="post">冲刺~</string>
+    <string name="preview">预览</string>
+    <string name="save_draft">保存草稿</string>
+    <string name="upload_image">上传本地图片</string>
+    <string name="markdown_java">Markdown兼容模式</string>
+    <string name="markdown_java_summary">[不推荐]优先使用java作为md解析器而不是js</string>
 </resources>

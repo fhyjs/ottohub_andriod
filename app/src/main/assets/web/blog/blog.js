@@ -23,9 +23,13 @@ function loadBlog() {
     content = blog.markdown(blog_data.content);
     content=replaceAll( content,"\n","<br/>");
   } else {
-    // 兼容旧版 marked，使用函数调用而不是 marked.parse
+    // 兼容旧版 marked，使用 marked.parse
     try{
+        if(blog.isJavaMd()){
+            throw new DOMException();
+        }
         content = marked.parse(blog_data.content);
+        content=replaceAll( content,"\n","<br/>");
     }catch(e){
         //由java后端处理
         content = blog.markdown(blog_data.content);

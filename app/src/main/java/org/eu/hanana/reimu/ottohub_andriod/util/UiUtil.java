@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import androidx.annotation.Px;
@@ -19,6 +20,12 @@ import org.eu.hanana.reimu.ottohub_andriod.R;
 import java.net.URL;
 
 public class UiUtil {
+    public static void insertTextAtCursor(EditText et, String text) {
+        int start = Math.max(et.getSelectionStart(), 0);
+        int end = Math.max(et.getSelectionEnd(), 0);
+        et.getText().replace(Math.min(start, end), Math.max(start, end), text, 0, text.length());
+    }
+
     public static void slideUp(final View view) {
         view.animate()
                 .translationY(-view.getHeight())

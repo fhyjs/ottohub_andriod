@@ -9,8 +9,10 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
+
     <application
         android:name=".MyApp"
         android:allowBackup="true"
@@ -25,6 +27,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Ottohub_andriod"
         tools:targetApi="35">
+        <activity
+            android:name=".activity.UploadBlogActivity"
+            android:exported="false" />
         <activity
             android:name=".activity.ImageViewActivity"
             android:exported="false" />

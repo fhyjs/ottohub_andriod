@@ -50,6 +50,7 @@ import org.eu.hanana.reimu.ottohub_andriod.activity.FavouriteActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.LauncherActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.LoginActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.MessageActivity;
+import org.eu.hanana.reimu.ottohub_andriod.activity.UploadBlogActivity;
 import org.eu.hanana.reimu.ottohub_andriod.ui.blog.BlogListFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.user.ProfileFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment;
@@ -197,6 +198,14 @@ public class MainActivity extends AppCompatActivity {
             if (ApiUtil.isLogin()){
                 //Toast.makeText(this,R.string.under_development,LENGTH_SHORT).show();
                 Intent intent = new Intent(this, AuditActivity.class);
+                startActivity(intent);
+            }else {
+                tipNoLogin();
+            }
+        } else if (item.getItemId()==R.id.action_upload_blog){
+            if (ApiUtil.isLogin()){
+                //Toast.makeText(this,R.string.under_development,LENGTH_SHORT).show();
+                Intent intent = new Intent(this, UploadBlogActivity.class);
                 startActivity(intent);
             }else {
                 tipNoLogin();

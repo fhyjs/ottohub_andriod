@@ -132,4 +132,15 @@
     <string name="reject">Reject</string>
     <string name="placeholder">Placeholder</string>
     <string name="audit_video_desc">[Title] %s [Describe] %s  [Tags] %s</string>
+    <string name="upload_blog">Post Blog</string>
+    <string name="upload_video">Post Video</string>
+    <string name="title">Title</string>
+    <string name="content_8888">No longer than 8888...</string>
+    <string name="image_url">Image URL</string>
+    <string name="post">Post</string>
+    <string name="preview">Preview</string>
+    <string name="save_draft">Save Draft</string>
+    <string name="upload_image">Upload Image</string>
+    <string name="markdown_java">Compatible Markdown</string>
+    <string name="markdown_java_summary">[Not Recommend]Priority use Java md interpreter.</string>
 </resources>

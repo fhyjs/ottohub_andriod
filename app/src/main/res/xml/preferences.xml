@@ -23,6 +23,12 @@
         android:key="permission_check"
         android:title="@string/permissionCheck"
         android:summary="Check permissions before start" />
+    <SwitchPreference
+        android:icon="@drawable/markdown_24dp"
+        android:defaultValue="false"
+        android:key="java_md"
+        android:title="@string/markdown_java"
+        android:summary="@string/markdown_java_summary" />
     <Preference
         android:icon="@drawable/logout_24dp"
         android:key="logout"

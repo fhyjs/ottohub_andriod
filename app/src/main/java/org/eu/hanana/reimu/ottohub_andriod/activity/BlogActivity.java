@@ -53,6 +53,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.MenuProvider;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.preference.PreferenceManager;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -99,6 +100,7 @@ public class BlogActivity extends AppCompatActivity {
     public static final String KEY_DATA= ARG_DATA;
     public static final String TYPE_VIEW="v";
     public static final String TYPE_AUDIT="a";
+    public static final String TYPE_PREVIEW="p";
     public int bid;
     private WebView webView;
     protected String blogPage = CustomWebView.internal+"web/blog/index.html";
@@ -145,7 +147,7 @@ public class BlogActivity extends AppCompatActivity {
         Thread thread = new Thread(() -> {
             if (TYPE_VIEW.equals(type)) {
                 blogResult = MyApp.getInstance().getOttohubApi().getBlogApi().get_blog_detail(bid);
-            }else if (TYPE_AUDIT.equals(type)) {
+            }else if (TYPE_AUDIT.equals(type)|TYPE_PREVIEW.equals(type)) {
                 blogResult = new Gson().fromJson(data,BlogResult.class);
             }
             runOnUiThread(this::initUI);
@@ -287,6 +289,10 @@ public class BlogActivity extends AppCompatActivity {
             btn_blog.setVisibility(GONE);
             findViewById(R.id.group_user).setVisibility(GONE);
             findViewById(R.id.group_audit).setVisibility(VISIBLE);
+        }else if (TYPE_PREVIEW.equals(type)) {
+            btn_comment.setVisibility(GONE);
+            btn_blog.setVisibility(GONE);
+            findViewById(R.id.ll_actionBar).setVisibility(GONE);
         }
     }
     @Override
@@ -376,7 +382,10 @@ public class BlogActivity extends AppCompatActivity {
             renderer = HtmlRenderer.builder(options)
                     .build();
         }
-
+        @JavascriptInterface
+        public boolean isJavaMd(){
+            return PreferenceManager.getDefaultSharedPreferences(MyApp.getInstance().getApplicationContext()).getBoolean("java_md",false);
+        }
         @JavascriptInterface
         public void showToast(String message) {
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show();

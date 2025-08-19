@@ -21,4 +21,14 @@
         android:icon="@drawable/balance_24dp"
         android:title="@string/audit_button"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_upload_blog"
+        android:icon="@drawable/docs_24dp"
+        android:title="@string/upload_blog"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_upload_video"
+        android:icon="@drawable/video_file_24dp"
+        android:title="@string/upload_video"
+        app:showAsAction="ifRoom" />
 </menu>
