@@ -11,6 +11,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -45,9 +46,19 @@ public class AlertUtil {
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
         builder.setTitle(title).setCancelable(false); // 禁止返回键取消
 
-        // 创建一个圆形进度条
+        // 自定义布局
+        LinearLayout layout = new LinearLayout(context);
+        layout.setOrientation(LinearLayout.VERTICAL);
         ProgressBar progressBar = new ProgressBar(context);
-        builder.setView(progressBar);
+        layout.addView(progressBar);
+
+        var loadingTextView = new TextView(context);
+        loadingTextView.setText("");
+        loadingTextView.setId(android.R.id.message);
+        layout.addView(loadingTextView);
+
+        builder.setView(layout);
+
 
         var loadingDialog = builder.create();
         loadingDialog.setCanceledOnTouchOutside(false); // 禁止点击外部取消

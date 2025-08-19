@@ -79,12 +79,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"/>
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_localimg"
             android:text="@string/upload_image"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"/>
     </LinearLayout>
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSend"
         android:text="@string/post"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
