@@ -9,6 +9,9 @@ import static com.kuaishou.akdanmaku.data.DanmakuItemData.DANMAKU_STYLE_SELF_SEN
 import static com.kuaishou.akdanmaku.data.DanmakuItemData.MERGED_TYPE_NORMAL;
 
 
+import static org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity.TYPE_AUDIT;
+import static org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity.TYPE_VIEW;
+
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
@@ -64,11 +67,14 @@ import com.kuaishou.akdanmaku.data.DataSource;
 import com.kuaishou.akdanmaku.render.SimpleRenderer;
 import com.kuaishou.akdanmaku.ui.DanmakuPlayer;
 
+import org.eu.hanana.reimu.lib.ottohub.api.ApiBase;
+import org.eu.hanana.reimu.lib.ottohub.api.ApiResultBase;
 import org.eu.hanana.reimu.lib.ottohub.api.common.EmptyResult;
 import org.eu.hanana.reimu.lib.ottohub.api.danmaku.DanmakuListResult;
 import org.eu.hanana.reimu.lib.ottohub.api.video.VideoResult;
 import org.eu.hanana.reimu.ottohub_andriod.MyApp;
 import org.eu.hanana.reimu.ottohub_andriod.R;
+import org.eu.hanana.reimu.ottohub_andriod.ui.audit.AuditVideoFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase;
 import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoDescribeFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
@@ -87,6 +93,8 @@ public class VideoPlayerActivity extends AppCompatActivity {
     public static final String KEY_DANMAKU_DATA="danmakudata";
     public static final String KEY_PLAYER_PLAYING="pplaying";
     public static final String KEY_PLAYER_TIME="ptime";
+    public static final String KEY_TYPE="type";
+    public static final String KEY_DATA="data";
     private static final String TAG = "VideoPlayerActivity";
     private ExoPlayer mediaPlayer;
     private PlayerView videoSurface;
@@ -99,7 +107,9 @@ public class VideoPlayerActivity extends AppCompatActivity {
     private long lastDanmakuUpdate;
     private Runnable updateRunnable;
     private Handler handler;
-
+    public String type = TYPE_VIEW;
+    @Nullable
+    public String data = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -121,6 +131,12 @@ public class VideoPlayerActivity extends AppCompatActivity {
         }
         vid = getIntent().getExtras().getInt(KEY_VID);
         videoSurface = findViewById(R.id.video_view);
+        if (getIntent().getExtras().containsKey(KEY_DATA)){
+            data=getIntent().getExtras().getString(KEY_DATA);
+        }
+        if (getIntent().getExtras().containsKey(KEY_TYPE)){
+            type=getIntent().getExtras().getString(KEY_TYPE);
+        }
         findViewById(R.id.video_desc_btn).setOnClickListener(v -> {
             v.setEnabled(false);
             findViewById(R.id.video_comment_btn).setEnabled(true);
@@ -254,6 +270,17 @@ public class VideoPlayerActivity extends AppCompatActivity {
             bottomSheetDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
             bottomSheetDialog.show();
         });
+
+        if (type.equals(TYPE_AUDIT)) {
+            runOnUiThread(()->{
+                    setDanmakuEnable(false);
+                    findViewById(R.id.horizontalScrollView).setVisibility(GONE);
+                    findViewById(R.id.horizontalScrollView).setVisibility(GONE);
+                    getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, AuditVideoFragment.newInstance(netData))
+                        .commit();
+            });
+        }
     }
 
     private void preinit() {
@@ -381,17 +408,26 @@ public class VideoPlayerActivity extends AppCompatActivity {
             Thread thread = new Thread(() -> {
                 var gson = new Gson();
                 if (!savedInstanceState.containsKey(KEY_NET_DATA)) {
-                    netData = MyApp.getInstance().getOttohubApi().getVideoApi().get_video_detail(vid);
+                    if (type.equals(TYPE_VIEW)) {
+                        netData = MyApp.getInstance().getOttohubApi().getVideoApi().get_video_detail(vid);
+                    } else if (type.equals(TYPE_AUDIT)) {
+                        netData = new Gson().fromJson(data, VideoResult.class);
+                        netData.status= ApiResultBase.SUCCESS;
+                    }
                 }else {
                     netData = gson.fromJson(savedInstanceState.getString(KEY_NET_DATA),VideoResult.class);
                     Log.d(TAG, "loadData: net data from storage");
                 }
                 if (!savedInstanceState.containsKey(KEY_DANMAKU_DATA)) {
                     danmakuData = MyApp.getInstance().getOttohubApi().getDanmakuApi().get_danmaku(vid);
+                    if (type.equals(TYPE_AUDIT)) {
+                        danmakuData.status= ApiResultBase.SUCCESS;
+                    }
                 }else {
                     danmakuData = gson.fromJson(savedInstanceState.getString(KEY_DANMAKU_DATA),DanmakuListResult.class);
                     Log.d(TAG, "loadData: danmaku data from storage");
                 }
+
                 if (!netData.isSuccess() || !danmakuData.isSuccess()) {
                     runOnUiThread(()->{
                         AlertUtil.showError(videoSurface.getContext(), "ERROR" + netData.getMessage());
@@ -410,10 +446,13 @@ public class VideoPlayerActivity extends AppCompatActivity {
             System.out.println(netData.title);
             setTitle(netData.title);
             // 默认加载第一个 Fragment
-            if (mediaPlayer==null) return;;
-            getSupportFragmentManager().beginTransaction()
+            if (mediaPlayer == null) return;
+
+            if (type.equals(TYPE_VIEW)) {
+                getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, VideoDescribeFragment.newInstance(netData))
                     .commit();
+            }
             mediaPlayer.prepare();
             if (savedInstanceState.containsKey(KEY_PLAYER_TIME)){
                 long time = savedInstanceState.getLong(KEY_PLAYER_TIME);

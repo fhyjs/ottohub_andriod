@@ -306,6 +306,7 @@ public class VideoListFragment extends Fragment {
         public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
             if ((getActivity()!=null&&getActivity().getClass()!=MainActivity.class)||(getParentFragment()!=null&&getParentFragment().getClass()== ProfileFragment.class))
                 return;
+            if (getActivity()==null) return;
             // 加载菜单布局
             menuInflater.inflate(R.menu.video_list_menu, menu);
         }

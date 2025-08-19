@@ -130,4 +130,6 @@
     <string name="delete">Delete</string>
     <string name="approve">Approve</string>
     <string name="reject">Reject</string>
+    <string name="placeholder">Placeholder</string>
+    <string name="audit_video_desc">[Title] %s [Describe] %s  [Tags] %s</string>
 </resources>

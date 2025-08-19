@@ -89,7 +89,6 @@ public class AuditActivity extends AppCompatActivity {
         // 将 TabLayout 与 ViewPager2 绑定
         new TabLayoutMediator(tabLayout, viewPager,
                 (tab, position) -> tab.setText(String.format("%s %s",getText(tabTitles[position]),getText(R.string.audit)))).attach();
-        Toast.makeText(this, R.string.under_development, Toast.LENGTH_SHORT).show();
     }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {

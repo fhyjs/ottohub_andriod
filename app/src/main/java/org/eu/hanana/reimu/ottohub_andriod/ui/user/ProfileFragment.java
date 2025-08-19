@@ -194,6 +194,7 @@ public class ProfileFragment extends Fragment {
         }
     }
     protected void initUI() {
+        if (getActivity()==null) return;
         Glide.with(getContext())
                 .load(isSelf()?MyApp.getInstance().getOttohubApi().getLoginResult().avatar_url:userDataResult.avatar_url)
                 .placeholder(R.drawable.ic_launcher_background)  // 占位图

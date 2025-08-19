@@ -56,7 +56,7 @@ public class AuditTextViewModel extends TextViewModel {
                 result.add(tc) ;
             });
         }else if (AuditFragment.TYPE_COMMENT.equals(frag.type)){
-            frag.getActivity().runOnUiThread(()->Toast.makeText(frag.getContext(), R.string.under_development, Toast.LENGTH_SHORT).show());
+
             if (frag.currentPage>20){
                 result.add(new TextCard(frag.getString(R.string.ottohub)));
                 result.add(new TextCard("HANANA\uD83E\uDD70 http://hanana2.link/"));

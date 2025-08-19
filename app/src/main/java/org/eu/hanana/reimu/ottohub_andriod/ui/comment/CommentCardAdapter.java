@@ -120,20 +120,22 @@ public class CommentCardAdapter extends CardAdapterBase<CommentCard, CommentCard
         } else {
             holder.showReply.setVisibility(View.GONE);
         }
-        if (object.parent!=0){
-            holder.reply.setVisibility(GONE);
-        }else {
-            holder.reply.setVisibility(VISIBLE);
-        }
-
         holder.reply.setOnClickListener(v -> {
             AlertUtil.showInput(ctx,input -> {
                 Thread thread = new Thread(() -> {
                     IfGetExpResult ifGetExpResult;
                     if (frag.getType().equals(TYPE_BLOG)){
-                        ifGetExpResult = ApiUtil.getAppApi().getCommentApi().comment_blog(frag.getDataId(), object.cid, input);
+                        if (object.parent!=0) {
+                            ifGetExpResult = ApiUtil.getAppApi().getCommentApi().comment_blog(frag.getDataId(), object.parent, "@"+object.username+" "+input);
+                        }else {
+                            ifGetExpResult = ApiUtil.getAppApi().getCommentApi().comment_blog(frag.getDataId(), object.cid, input);
+                        }
                     }else if (frag.getType().equals(TYPE_VIDEO)){
-                        ifGetExpResult = ApiUtil.getAppApi().getCommentApi().comment_video(frag.getDataId(), object.cid, input);
+                        if (object.parent!=0) {
+                            ifGetExpResult = ApiUtil.getAppApi().getCommentApi().comment_video(frag.getDataId(), object.parent, "@"+object.username+" "+input);
+                        }else {
+                            ifGetExpResult = ApiUtil.getAppApi().getCommentApi().comment_video(frag.getDataId(), object.cid, input);
+                        }
                     } else {
                         ifGetExpResult = null;
                     }

@@ -4,6 +4,7 @@ package org.eu.hanana.reimu.ottohub_andriod.ui.audit;
 
 import static org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity.TYPE_AUDIT;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.audit.AuditFragment.TYPE_BLOG;
+import static org.eu.hanana.reimu.ottohub_andriod.ui.audit.AuditFragment.TYPE_VIDEO;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -11,11 +12,15 @@ import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.OptIn;
+import androidx.media3.common.util.UnstableApi;
 
 import com.google.gson.Gson;
 
 import org.eu.hanana.reimu.lib.ottohub.api.blog.BlogResult;
+import org.eu.hanana.reimu.lib.ottohub.api.video.VideoResult;
 import org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity;
+import org.eu.hanana.reimu.ottohub_andriod.activity.VideoPlayerActivity;
 import org.eu.hanana.reimu.ottohub_andriod.data.base.text.TextCard;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.list.TextCardAdapter;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.list.TextCardViewHolder;
@@ -28,7 +33,7 @@ public class AuditAdapter extends TextCardAdapter {
     public static final String ARG_TYPE = "type";
     public static final String ARG_RESULT = "result";
     public static final String ARG_TARGET = "target";
-    private ActivityResultLauncher<Intent> launcher;
+    private final ActivityResultLauncher<Intent> launcher;
     public AuditAdapter(List<TextCard> messageList, AuditFragment textListFragmentBase) {
         super(messageList, textListFragmentBase);
 
@@ -54,6 +59,12 @@ public class AuditAdapter extends TextCardAdapter {
                 }else {
                     ApiUtil.getAppApi().getModerationApi().reject_blog(id);
                 }
+            }else if (type.equals(TYPE_VIDEO)){
+                if (pass){
+                    ApiUtil.getAppApi().getModerationApi().approve_video(id);
+                }else {
+                    ApiUtil.getAppApi().getModerationApi().reject_video(id);
+                }
             }
             frag.refresh();
         });
@@ -64,6 +75,8 @@ public class AuditAdapter extends TextCardAdapter {
     protected AuditFragment getFrag(){
         return (AuditFragment) frag;
     }
+
+    @OptIn(markerClass = UnstableApi.class)
     @Override
     public void makeCardUi(TextCardViewHolder holder, TextCard object) {
         super.makeCardUi(holder, object);
@@ -76,6 +89,17 @@ public class AuditAdapter extends TextCardAdapter {
                 bundle.putInt(BlogActivity.KEY_BID,extra.bid);
                 bundle.putString(BlogActivity.KEY_DATA,new Gson().toJson(extra));
                 bundle.putString(BlogActivity.KEY_TYPE,TYPE_AUDIT);
+                intent.putExtras(bundle);
+                launcher.launch(intent);
+            });
+        }else if (getFrag().type.equals(TYPE_VIDEO)){
+            var extra = ((VideoResult) object.extra);
+            holder.itemView.setOnClickListener(v -> {
+                Intent intent = new Intent(ctx, VideoPlayerActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putInt(VideoPlayerActivity.KEY_VID,extra.vid);
+                bundle.putString(VideoPlayerActivity.KEY_DATA,new Gson().toJson(extra));
+                bundle.putString(VideoPlayerActivity.KEY_TYPE,TYPE_AUDIT);
                 intent.putExtras(bundle);
                 launcher.launch(intent);
             });

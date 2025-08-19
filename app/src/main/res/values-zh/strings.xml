@@ -116,4 +116,5 @@
     <string name="delete">删除</string>
     <string name="approve">通过</string>
     <string name="reject">退回</string>
+    <string name="audit_video_desc">[标题] %s\n[简介] %s\n\n[标签] %s</string>
 </resources>
