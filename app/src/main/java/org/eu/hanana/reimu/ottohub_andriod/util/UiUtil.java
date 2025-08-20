@@ -6,6 +6,8 @@ import android.content.pm.PermissionInfo;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -17,6 +19,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import org.eu.hanana.reimu.ottohub_andriod.R;
 
+import java.lang.reflect.Method;
 import java.net.URL;
 
 public class UiUtil {
@@ -25,7 +28,67 @@ public class UiUtil {
         int end = Math.max(et.getSelectionEnd(), 0);
         et.getText().replace(Math.min(start, end), Math.max(start, end), text, 0, text.length());
     }
+    public static View clone(View view, View newView){
+        // 保存状态
+        byte[] savedState = saveViewState(view);
 
+
+    // 恢复状态
+        restoreViewState(newView, savedState, View.BaseSavedState.CREATOR);
+        return newView;
+    }
+    /**
+     * 序列化 View 状态为 byte[]
+     */
+    public static byte[] saveViewState(View view) {
+        Parcelable state = saveViewState0(view);
+        if (state == null) return null;
+
+        Parcel parcel = Parcel.obtain();
+        state.writeToParcel(parcel, 0);
+        byte[] bytes = parcel.marshall();
+        parcel.recycle();
+        return bytes;
+    }
+    /**
+     * 通过反射获取 View 的状态
+     */
+    public static Parcelable saveViewState0(View view) {
+        if (view == null) return null;
+
+        try {
+            Method method = View.class.getDeclaredMethod("onSaveInstanceState");
+            method.setAccessible(true);  // 允许访问 protected 方法
+            return (Parcelable) method.invoke(view);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    public static void restoreViewState(View view, Parcelable state) {
+        if (view == null || state == null) return;
+
+        try {
+            Method method = View.class.getDeclaredMethod("onRestoreInstanceState", Parcelable.class);
+            method.setAccessible(true);  // 关键：允许访问 protected 方法
+            method.invoke(view, state);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    /**
+     * 从 byte[] 恢复 View 状态
+     */
+    public static void restoreViewState(View view, byte[] bytes, Parcelable.Creator<?> creator) {
+        if (bytes == null || creator == null) return;
+
+        Parcel parcel = Parcel.obtain();
+        parcel.unmarshall(bytes, 0, bytes.length);
+        parcel.setDataPosition(0);
+        Parcelable state = (Parcelable) creator.createFromParcel(parcel);
+        restoreViewState(view,state);
+        parcel.recycle();
+    }
     public static void slideUp(final View view) {
         view.animate()
                 .translationY(-view.getHeight())

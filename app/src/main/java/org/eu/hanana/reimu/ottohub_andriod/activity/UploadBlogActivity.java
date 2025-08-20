@@ -1,14 +1,9 @@
 package org.eu.hanana.reimu.ottohub_andriod.activity;
 
-import static org.eu.hanana.reimu.lib.ottohub.api.ApiBase.TYPE_IMAGE_JPEG;
-import static org.eu.hanana.reimu.lib.ottohub.api.ApiBase.TYPE_TEXT_PLAIN;
-import static org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity.TYPE_AUDIT;
 import static org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity.TYPE_PREVIEW;
 import static org.eu.hanana.reimu.ottohub_andriod.util.FileUtil.getFileSize;
 
 import android.content.Intent;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -16,7 +11,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -27,12 +21,10 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import org.eu.hanana.reimu.lib.ottohub.api.ApiBase;
-import org.eu.hanana.reimu.lib.ottohub.api.blog.BlogApi;
 import org.eu.hanana.reimu.lib.ottohub.api.blog.BlogResult;
 import org.eu.hanana.reimu.lib.ottohub.api.common.EmptyResult;
 import org.eu.hanana.reimu.lib.ottohub.api.creator.LoadBlogResult;
@@ -44,19 +36,13 @@ import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.UiUtil;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
-import java.text.DateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.Locale;
-import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 
 public class UploadBlogActivity extends AppCompatActivity {
     // 先定义一个 ActivityResultLauncher
@@ -180,28 +166,33 @@ public class UploadBlogActivity extends AppCompatActivity {
             filePickerLauncher.launch("image/*");
         });
         findViewById(R.id.btnSend).setOnClickListener(v -> {
-            AlertDialog alertDialog1 = AlertUtil.showLoading(this, getString(R.string.loading));
-            alertDialog1.show();
-            Thread thread1 = new Thread(() -> {
-                SubmitBlogResult loadBlogResult = ApiUtil.getAppApi().getCreatorApi().submit_blog(((EditText) findViewById(R.id.et_title)).getText().toString(),((EditText) findViewById(R.id.et_content)).getText().toString(), (l, l1, v1) ->runOnUiThread(()-> alertDialog.setTitle(getString(R.string.loading)+(v1*100)+"%")));
-                ApiUtil.throwApiError(loadBlogResult);
-                runOnUiThread(() -> {
-                    alertDialog1.dismiss();
-                    AlertDialog alertDialog2 = AlertUtil.showMsg(this, getString(R.string.ok), loadBlogResult.if_add_experience == 1 ? "exp. +20" : "exp. +0");
-                    alertDialog2.show();
-                    alertDialog2.setOnDismissListener(dialog -> finish());
-                });
-            });
-            thread1.setUncaughtExceptionHandler(new AlertUtil.ThreadAlert(this){
-                @Override
-                public void uncaughtException(Thread thread, Throwable ex) {
-                    super.uncaughtException(thread, ex);
-                    alertDialog1.dismiss();
-                }
-            });
-            thread1.start();
+            AlertUtil.showYesNo(this, getString(R.string.upload_blog), getString(R.string.issure), (dialog, which) -> doUpload(alertDialog), null).show();
         });
     }
+
+    private void doUpload(AlertDialog alertDialog) {
+        AlertDialog alertDialog1 = AlertUtil.showLoading(this, getString(R.string.loading));
+        alertDialog1.show();
+        Thread thread1 = new Thread(() -> {
+            SubmitBlogResult loadBlogResult = ApiUtil.getAppApi().getCreatorApi().submit_blog(((EditText) findViewById(R.id.et_title)).getText().toString(),((EditText) findViewById(R.id.et_content)).getText().toString(), (l, l1, v1) ->runOnUiThread(()-> alertDialog.setTitle(getString(R.string.loading)+(v1*100)+"%")));
+            ApiUtil.throwApiError(loadBlogResult);
+            runOnUiThread(() -> {
+                alertDialog1.dismiss();
+                AlertDialog alertDialog2 = AlertUtil.showMsg(this, getString(R.string.ok), loadBlogResult.if_add_experience == 1 ? "exp. +20" : "exp. +0");
+                alertDialog2.show();
+                alertDialog2.setOnDismissListener(dialog -> finish());
+            });
+        });
+        thread1.setUncaughtExceptionHandler(new AlertUtil.ThreadAlert(this){
+            @Override
+            public void uncaughtException(Thread thread, Throwable ex) {
+                super.uncaughtException(thread, ex);
+                alertDialog1.dismiss();
+            }
+        });
+        thread1.start();
+    }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home) {

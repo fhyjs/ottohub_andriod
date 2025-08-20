@@ -129,4 +129,21 @@
     <string name="upload_image">上传本地图片</string>
     <string name="markdown_java">Markdown兼容模式</string>
     <string name="markdown_java_summary">[不推荐]优先使用java作为md解析器而不是js</string>
+    <string name="open_url">打开链接</string>
+    <string name="open_url_desc">找不到应用来处理“%s”</string>
+    <string name="til_category">分区</string>
+    <string name="republish">转载</string>
+    <string name="original">原创</string>
+    <string name="til_type">类型</string>
+    <string name="upload_cover">选择封面（小于1MB）</string>
+    <string name="select_video">选择视频（.mp4格式, 小于200MB）</string>
+    <string name="no_cover">未选择封面</string>
+    <string name="empty_title">没写标题</string>
+    <string name="empty_intro">没写简介</string>
+    <string name="empty_type">没选类型</string>
+    <string name="empty_caterogy">没选分区</string>
+    <string name="file_too_big">文件太大了</string>
+    <string name="tag">标签</string>
+    <string name="unallow_char">非法字符, 牢内!</string>
+    <string name="got_trouble">遇到困难？</string>
 </resources>

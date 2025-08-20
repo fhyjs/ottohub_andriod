@@ -11,7 +11,30 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
+        android:maxSdkVersion="32" /> <!-- 允许查询所有 ACTION_VIEW + http/https/自定义协议 -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+
+            <data android:scheme="http" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+
+            <data android:scheme="https" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+
+            <data android:scheme="http" />
+        </intent>
+        <!-- 允许自定义协议（例如 ottohub://）也能被 resolve -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+
+            <data android:scheme="*" />
+        </intent>
+    </queries>
 
     <application
         android:name=".MyApp"
@@ -27,6 +50,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Ottohub_andriod"
         tools:targetApi="35">
+        <activity
+            android:name=".activity.UploadVideoActivity"
+            android:exported="false" />
         <activity
             android:name=".activity.UploadBlogActivity"
             android:exported="false" />
@@ -112,6 +138,20 @@
         <meta-data
             android:name="android.app.shortcuts"
             android:resource="@xml/shortcuts" />
+
+        <activity
+            android:name=".activity.OttoHubDeepLinkActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <!-- 自定义协议 ottohub:// -->
+                <data android:scheme="ottohub" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

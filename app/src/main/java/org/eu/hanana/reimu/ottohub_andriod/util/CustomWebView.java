@@ -21,6 +21,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
 import androidx.media3.common.util.UnstableApi;
 
+import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.ProfileActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.VideoPlayerActivity;
@@ -107,7 +108,11 @@ public class CustomWebView extends WebView {
 
         }
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-        getContext().startActivity(intent);
+        if (intent.resolveActivity(getContext().getPackageManager()) != null) {
+            getContext().startActivity(intent);
+        } else {
+            AlertUtil.showMsg(getContext(),getContext().getString(R.string.open_url),getContext().getString(R.string.open_url_desc,url)).show();
+        }
     }
     public class CustomWebChromeClient extends WebChromeClient {
         @Override

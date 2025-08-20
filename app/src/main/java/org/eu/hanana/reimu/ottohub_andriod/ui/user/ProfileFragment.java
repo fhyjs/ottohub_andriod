@@ -340,6 +340,7 @@ public class ProfileFragment extends Fragment {
                     case MotionEvent.ACTION_UP:
                         pta.setVisibility(View.VISIBLE);
                         ValueAnimator animator;
+                        if(pta.getHeight()==maxHeight||lp.height<0) return;
                         if (lp.height<maxHeight*0.5) {
                             animator = ValueAnimator.ofInt(lp.height, 0);
                         }else {

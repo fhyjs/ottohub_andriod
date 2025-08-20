@@ -143,4 +143,22 @@
     <string name="upload_image">Upload Image</string>
     <string name="markdown_java">Compatible Markdown</string>
     <string name="markdown_java_summary">[Not Recommend]Priority use Java md interpreter.</string>
+    <string name="open_url">Open URL</string>
+    <string name="open_url_desc">Cannot find an app to open for \"%s\".</string>
+    <string name="til_category">Category</string>
+    <string name="republish">Forwarded</string>
+    <string name="original">Original</string>
+    <string name="til_type">Type</string>
+    <string name="upload_cover">Upload Cover (below 1MB)</string>
+    <string name="select_video">Upload Video (.mp4 Format,below 200MB)</string>
+    <string name="no_cover">Cover was not selected</string>
+    <string name="empty_title">Title is empty!</string>
+    <string name="empty_intro">Intro is empty</string>
+    <string name="empty_type">Type is empty!</string>
+    <string name="empty_caterogy">Caterogy is empty!</string>
+    <string name="file_too_big">File too big</string>
+    <string name="tag">Tags</string>
+    <string name="unallow_char">Contains illegal characters</string>
+    <string name="upload_success">Upload Successful!</string>
+    <string name="got_trouble">Has Trouble?</string>
 </resources>
