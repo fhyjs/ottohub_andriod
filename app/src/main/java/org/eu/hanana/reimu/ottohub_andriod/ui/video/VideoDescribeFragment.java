@@ -8,6 +8,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 
@@ -18,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -37,6 +40,7 @@ import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.ProfileActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.SearchActivity;
+import org.eu.hanana.reimu.ottohub_andriod.service.CopyService;
 import org.eu.hanana.reimu.ottohub_andriod.service.DownloadVideoForegroundService;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
@@ -181,6 +185,19 @@ public class VideoDescribeFragment extends androidx.fragment.app.Fragment {
                     startActivity(intent); // 简单启动
             });
            tagsArea.addView(btn);
+        });
+        view.findViewById(R.id.btn_download).setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), CopyService.class);
+            intent.putExtra("uri", Uri.parse("content://org.eu.hanana.reimu.ottohub_andriod.provider.download/video?vid="+vData.vid));
+            intent.putExtra("fileName", "video_"+vData.vid+".zip");
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                // Android 8.0+ 必须用 startForegroundService
+                getContext().startForegroundService(intent);
+            } else {
+                getContext().startService(intent);
+            }
+            Toast.makeText(getContext(),R.string.notise_msg,Toast.LENGTH_SHORT).show();
         });
     }
     private void updateActionBtns() {

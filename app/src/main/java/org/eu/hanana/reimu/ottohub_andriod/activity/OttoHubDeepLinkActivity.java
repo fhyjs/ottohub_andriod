@@ -21,6 +21,7 @@ import com.google.gson.Gson;
 import org.eu.hanana.reimu.ottohub_andriod.BuildConfig;
 import org.eu.hanana.reimu.ottohub_andriod.MainActivity;
 import org.eu.hanana.reimu.ottohub_andriod.R;
+import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 
 import java.util.Objects;
 
@@ -70,11 +71,25 @@ public class OttoHubDeepLinkActivity extends AppCompatActivity {
                     target.putExtras(bundle);
 
                 }
+            } else if ("user".equals(uri.getHost())) {
+                if (uri.getQueryParameter("uid")!=null){
+                    int v = Integer.parseInt(Objects.requireNonNull(uri.getQueryParameter("uid")));
+                    target = new Intent(this, ProfileActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putInt(ProfileActivity.KEY_UID,v);
+                    target.putExtras(bundle);
+
+                }
             }
             if (target!=null) {
                 startActivity(target);
+                finish();
+            }else {
+                AlertUtil.showError(this,"No Launch Target For This URI!").setOnDismissListener(dialog -> {
+                    finish();
+                });
             }
         }
-        finish();
+
     }
 }

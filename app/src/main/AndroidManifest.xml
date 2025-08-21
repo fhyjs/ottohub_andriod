@@ -51,6 +51,25 @@
         android:theme="@style/Theme.Ottohub_andriod"
         tools:targetApi="35">
         <activity
+            android:name=".activity.ImageAuditActivity"
+            android:exported="false" />
+
+        <provider
+            android:name=".provider.OttohubContentProvider"
+            android:authorities="org.eu.hanana.reimu.ottohub_andriod.provider.download"
+            android:exported="true"
+            android:grantUriPermissions="true" />
+
+        <activity
+            android:name=".test.DownloadTestActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".activity.UploadVideoActivity"
             android:exported="false" />
         <activity
@@ -91,6 +110,10 @@
         </receiver>
 
         <service
+            android:name=".service.CopyService"
+            android:exported="true"
+            android:foregroundServiceType="dataSync" />
+        <service
             android:name=".service.UpdateMessageCountBackgroundService"
             android:exported="false"
             android:foregroundServiceType="dataSync" />
@@ -111,7 +134,7 @@
         <activity
             android:name=".activity.BlogActivity"
             android:exported="true"
-            android:hardwareAccelerated="true" />
+            android:hardwareAccelerated="true"></activity>
         <activity
             android:name=".activity.VideoPlayerActivity"
             android:exported="true"

@@ -340,7 +340,27 @@ public class ProfileFragment extends Fragment {
                     case MotionEvent.ACTION_UP:
                         pta.setVisibility(View.VISIBLE);
                         ValueAnimator animator;
-                        if(pta.getHeight()==maxHeight||lp.height<0) return;
+                        if(pta.getHeight()==maxHeight||lp.height<0){
+                            animator = ValueAnimator.ofInt(pta.getHeight(), 0);
+                            animator.setDuration(300); // 动画时长 1 秒
+                            animator.addUpdateListener(animation -> {
+                                lp.height= (int) animation.getAnimatedValue();
+                                pta.setLayoutParams(lp);
+                            });
+                            animator.addListener(new AnimatorListenerAdapter() {
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+                                    if (lp.height<maxHeight*0.5) {
+                                        pta.setVisibility(View.GONE);
+                                        frameLayout.setInterceptMove(false);
+                                    }else {
+                                        frameLayout.setInterceptMove(true);
+                                    }
+                                }
+                            });
+                            animator.start();
+                            return;
+                        }
                         if (lp.height<maxHeight*0.5) {
                             animator = ValueAnimator.ofInt(lp.height, 0);
                         }else {

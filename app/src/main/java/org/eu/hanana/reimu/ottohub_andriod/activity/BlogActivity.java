@@ -11,15 +11,19 @@ import static org.eu.hanana.reimu.ottohub_andriod.ui.audit.AuditFragment.TYPE_BL
 import static org.eu.hanana.reimu.ottohub_andriod.ui.message.MessageListFragment.ARG_TYPE;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -82,6 +86,7 @@ import org.eu.hanana.reimu.lib.ottohub.api.engagement.EngagementResult;
 import org.eu.hanana.reimu.ottohub_andriod.MainActivity;
 import org.eu.hanana.reimu.ottohub_andriod.MyApp;
 import org.eu.hanana.reimu.ottohub_andriod.R;
+import org.eu.hanana.reimu.ottohub_andriod.service.CopyService;
 import org.eu.hanana.reimu.ottohub_andriod.ui.audit.AuditAdapter;
 import org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase;
 import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment;
@@ -157,6 +162,12 @@ public class BlogActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
     }
@@ -170,6 +181,7 @@ public class BlogActivity extends AppCompatActivity {
     public void initUI(){
         setTitle(blogResult.title);
         ((TextView) findViewById(R.id.tvAuthor)).setText(blogResult.username);
+        if (isDestroyed()||isFinishing()) return;
         Glide.with(this)
                 .load(blogResult.avatar_url)
                 .circleCrop()
@@ -294,6 +306,19 @@ public class BlogActivity extends AppCompatActivity {
             btn_blog.setVisibility(GONE);
             findViewById(R.id.ll_actionBar).setVisibility(GONE);
         }
+        findViewById(R.id.btn_download).setOnClickListener(v -> {
+            Intent intent = new Intent(this, CopyService.class);
+            intent.putExtra("uri", Uri.parse("content://org.eu.hanana.reimu.ottohub_andriod.provider.download/blog?bid="+bid));
+            intent.putExtra("fileName", "blog_"+bid+".zip");
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                // Android 8.0+ 必须用 startForegroundService
+                startForegroundService(intent);
+            } else {
+                startService(intent);
+            }
+            Toast.makeText(this,R.string.notise_msg,Toast.LENGTH_SHORT).show();
+        });
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -145,5 +145,8 @@
     <string name="file_too_big">文件太大了</string>
     <string name="tag">标签</string>
     <string name="unallow_char">非法字符, 牢内!</string>
+    <string name="upload_success">上传成功</string>
     <string name="got_trouble">遇到困难？</string>
+    <string name="notise_msg">查看通知栏</string>
+    <string name="click_to_enlarge">点击放大</string>
 </resources>

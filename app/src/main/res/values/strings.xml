@@ -161,4 +161,6 @@
     <string name="unallow_char">Contains illegal characters</string>
     <string name="upload_success">Upload Successful!</string>
     <string name="got_trouble">Has Trouble?</string>
+    <string name="notise_msg">Notice Message Bar</string>
+    <string name="click_to_enlarge">Click to enlarge</string>
 </resources>

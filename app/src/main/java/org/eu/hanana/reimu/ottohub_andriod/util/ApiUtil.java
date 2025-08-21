@@ -38,12 +38,43 @@ import java.util.stream.Collectors;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class ApiUtil {
     private static final String TAG = "APIUtil";
     @Getter
     private static int newMegCount;
     private static Map<String,String> apiExceptionMessage = null;
+    private static final OkHttpClient client = new OkHttpClient();
+
+    /**
+     * 下载指定 URL 的文件，返回字节数组。
+     * @param url 文件 URL
+     * @return 文件内容的 byte[]
+     * @throws Exception 下载过程中产生的任何异常都会抛出
+     */
+    public static byte[] downloadFile(String url) throws Exception {
+        Request request = new Request.Builder()
+                .url(url)
+                .get()
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("请求失败: " + response);
+            }
+
+            ResponseBody body = response.body();
+            if (body == null) {
+                throw new IOException("响应体为空");
+            }
+
+            return body.bytes();
+        }
+    }
     public static void throwApiError(ApiResultBase resultBase){
         if (!resultBase.isSuccess()) {
             String message = resultBase.getMessage();
