@@ -17,6 +17,8 @@ import com.google.gson.Gson;
 
 import org.eu.hanana.reimu.lib.ottohub.api.ApiBase;
 import org.eu.hanana.reimu.lib.ottohub.api.blog.BlogResult;
+import org.eu.hanana.reimu.lib.ottohub.api.danmaku.DanmakuListResult;
+import org.eu.hanana.reimu.lib.ottohub.api.danmaku.DanmakuResult;
 import org.eu.hanana.reimu.lib.ottohub.api.video.VideoResult;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 
@@ -98,11 +100,11 @@ public class OttohubContentProvider extends ContentProvider {
         } else if (path.equals("/blog")) {
             return blog(Integer.parseInt(Objects.requireNonNull(uri.getQueryParameter("bid"))));
         } else if (path.equals("/video")) {
-            return video(Integer.parseInt(Objects.requireNonNull(uri.getQueryParameter("vid"))));
+            return video(Integer.parseInt(Objects.requireNonNull(uri.getQueryParameter("vid"))),uri);
         }
         throw new FileNotFoundException("Unsupported URI: " + uri);
     }
-    private ParcelFileDescriptor video(int vid){
+    private ParcelFileDescriptor video(int vid,Uri uri){
         try {
             ParcelFileDescriptor[] pipe = ParcelFileDescriptor.createPipe();
             ParcelFileDescriptor readSide = pipe[0];
@@ -113,18 +115,23 @@ public class OttohubContentProvider extends ContentProvider {
                      ZipOutputStream zos = new ZipOutputStream(os)) {
 
                     // 动态生成 ZIP 条目
-                    String[] files = {"video.json", "cover.jpg","user_avatar.jpg","video.mp4"}; // 示例，可以从 URI query 获取实际文件
+                    String[] files = {"video.json","danmaku.json", "cover.jpg","user_avatar.jpg","video.mp4"}; // 示例，可以从 URI query 获取实际文件
                     zos.putNextEntry(new ZipEntry("video.json"));
                     VideoResult videoResult = ApiUtil.getAppApi().getVideoApi().get_video_detail(vid);
                     String json = new Gson().toJson(videoResult);
                     zos.write(json.getBytes(StandardCharsets.UTF_8));
+                    zos.closeEntry();
+                    zos.putNextEntry(new ZipEntry("danmaku.json"));
+                    DanmakuListResult danmakuResult = ApiUtil.getAppApi().getDanmakuApi().get_danmaku(vid);
+                    String jsonDan = new Gson().toJson(danmakuResult);
+                    zos.write(jsonDan.getBytes(StandardCharsets.UTF_8));
+                    zos.closeEntry();
                     zos.putNextEntry(new ZipEntry("user_avatar.jpg"));
                     zos.write(ApiUtil.downloadFile(videoResult.avatar_url));
-                    zos.putNextEntry(new ZipEntry("cover.jpg"));
-                    zos.write(ApiUtil.downloadFile(videoResult.cover_url));
-                    zos.putNextEntry(new ZipEntry("video.mp4"));
-                    zos.write(ApiUtil.downloadFile(videoResult.video_url));
-
+                    zos.closeEntry();
+                    ApiUtil.downloadFileToZip(zos,videoResult.cover_url,"cover.jpg");
+                    urlSizes.put(uri.toString(), ApiUtil.getFileSize(videoResult.video_url));
+                    ApiUtil.downloadFileToZip(zos,videoResult.video_url,"video.mp4");
                     zos.flush();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -153,9 +160,10 @@ public class OttohubContentProvider extends ContentProvider {
                     BlogResult blogDetail = ApiUtil.getAppApi().getBlogApi().get_blog_detail(bid);
                     String json = new Gson().toJson(blogDetail);
                     zos.write(json.getBytes(StandardCharsets.UTF_8));
+                    zos.closeEntry();
                     zos.putNextEntry(new ZipEntry("user_avatar.jpg"));
                     zos.write(ApiUtil.downloadFile(blogDetail.avatar_url));
-
+                    zos.closeEntry();
                     zos.flush();
                 } catch (Exception e) {
                     e.printStackTrace();

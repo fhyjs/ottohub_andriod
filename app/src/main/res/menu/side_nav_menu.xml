@@ -31,4 +31,9 @@
         android:icon="@drawable/video_file_24dp"
         android:title="@string/upload_video"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_content_manage"
+        android:icon="@drawable/folder_managed"
+        android:title="@string/content_manage"
+        app:showAsAction="ifRoom" />
 </menu>

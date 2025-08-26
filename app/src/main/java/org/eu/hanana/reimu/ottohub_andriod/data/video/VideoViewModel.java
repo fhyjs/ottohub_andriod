@@ -132,6 +132,9 @@ public class VideoViewModel extends ViewModel {
             }else if (videoListFragment.action.equals(VideoListFragment.ACTION_FAVOURITE)){
                 videoListResult = MyApp.getInstance().getOttohubApi().getProfileApi().favorite_video_list(videoListFragment.currentPage*12, 12);
                 if (videoListResult.video_list.isEmpty()) videoListFragment.hasMoreData=false;
+            }else if (videoListFragment.action.equals(VideoListFragment.ACTION_MINE)){
+                videoListResult = MyApp.getInstance().getOttohubApi().getProfileApi().manage_video_list(videoListFragment.currentPage*12, 12);
+                if (videoListResult.video_list.isEmpty()) videoListFragment.hasMoreData=false;
             }
         }
         if (videoListResult.video_list != null) {
@@ -143,7 +146,8 @@ public class VideoViewModel extends ViewModel {
                         videoResult.time,
                         videoResult.username,
                         videoListFragment.getContext().getString(R.string.video_card_info_short,videoResult.view_count,videoResult.like_count,videoResult.favorite_count),
-                        videoResult.vid
+                        videoResult.vid,
+                        videoResult
                 ));
             }
         }

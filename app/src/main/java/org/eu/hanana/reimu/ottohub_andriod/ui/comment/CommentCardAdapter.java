@@ -80,6 +80,7 @@ public class CommentCardAdapter extends CardAdapterBase<CommentCard, CommentCard
                         ApiUtil.getAppApi().getCommentApi().report_blog_comment(object.cid);
                     }
                 });
+                thread.setUncaughtExceptionHandler(new AlertUtil.ThreadAlert(frag.getActivity()));
                 thread.start();
             },null).show();
         });
@@ -150,6 +151,25 @@ public class CommentCardAdapter extends CardAdapterBase<CommentCard, CommentCard
                 thread.setUncaughtExceptionHandler(new AlertUtil.ThreadAlert(frag.getActivity()));
                 thread.start();
             }).show();
+        });
+        if (object.getCommentResult().isMyComment()) {
+            holder.delete.setVisibility(View.VISIBLE);
+        } else {
+            holder.delete.setVisibility(View.GONE);
+        }
+        holder.delete.setOnClickListener(v -> {
+            AlertUtil.showYesNo(ctx,ctx.getString(R.string.delete),ctx.getString(R.string.issure),(dialog, which) -> {
+                Thread thread = new Thread(() -> {
+                    if (type.equals(TYPE_VIDEO)){
+                        ApiUtil.getAppApi().getCommentApi().delete_video_comment(object.cid);
+                    }else {
+                        ApiUtil.getAppApi().getCommentApi().delete_blog_comment(object.cid);
+                    }
+                    frag.requireActivity().runOnUiThread(frag::refresh);
+                });
+                thread.setUncaughtExceptionHandler(new AlertUtil.ThreadAlert(frag.getActivity()));
+                thread.start();
+            },null).show();
         });
     }
 }

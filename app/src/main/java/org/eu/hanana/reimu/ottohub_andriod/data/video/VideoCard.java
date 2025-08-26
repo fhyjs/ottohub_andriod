@@ -1,7 +1,13 @@
 package org.eu.hanana.reimu.ottohub_andriod.data.video;
 
+import org.eu.hanana.reimu.lib.ottohub.api.video.VideoResult;
+
+import lombok.Getter;
+
 // VideoCard.java
 public class VideoCard {
+    @Getter
+    private final VideoResult raw;
     private String pic_url;
     private String user_url;
     private String title;
@@ -10,7 +16,7 @@ public class VideoCard {
     private String views;
     private int vid;
 
-    public VideoCard(String pic_url, String userUrl, String title, String duration, String author, String views, int vid) {
+    public VideoCard(String pic_url, String userUrl, String title, String duration, String author, String views, int vid, VideoResult videoResult) {
         this.pic_url = pic_url;
         user_url = userUrl;
         this.title = title;
@@ -18,6 +24,7 @@ public class VideoCard {
         this.author = author;
         this.views = views;
         this.vid = vid;
+        this.raw=videoResult;
     }
 
     // Getters

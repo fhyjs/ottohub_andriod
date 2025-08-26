@@ -74,6 +74,7 @@ public class VideoListFragment extends Fragment {
     public static final String ARG_ACTION = "action";
     public static final String ARG_DATA = "data";
     public static final String ACTION_BY_USER = "byuser";
+    public static final String ACTION_MINE = "mine";
     public static final String ACTION_DEFAULT = "def";
     public static final String ACTION_SEARCH = "search";
     public static final String ACTION_FAVOURITE = "fav";
@@ -89,7 +90,13 @@ public class VideoListFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
-
+    public static VideoListFragment newInstance(String action) {
+        VideoListFragment fragment = new VideoListFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_ACTION, action);
+        fragment.setArguments(args);
+        return fragment;
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -242,6 +249,7 @@ public class VideoListFragment extends Fragment {
         recyclerView.setItemAnimator(null);
         // 初始化适配器
         adapter = new VideoCardAdapter(videoList);
+        adapter.setFrag(this);
         recyclerView.setAdapter(adapter);
 
         View llTopContainer = view.findViewById(R.id.llTopContainer);

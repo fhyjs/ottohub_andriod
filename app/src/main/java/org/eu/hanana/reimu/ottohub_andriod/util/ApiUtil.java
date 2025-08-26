@@ -35,6 +35,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -49,7 +51,53 @@ public class ApiUtil {
     private static int newMegCount;
     private static Map<String,String> apiExceptionMessage = null;
     private static final OkHttpClient client = new OkHttpClient();
+    public static void downloadFileToZip(ZipOutputStream zos, String url, String entryName) throws Exception {
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
 
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new RuntimeException("下载失败: " + response);
+            }
+
+            ResponseBody body = response.body();
+            if (body == null) {
+                throw new RuntimeException("响应体为空");
+            }
+
+            // 写入 ZIP 条目
+            zos.putNextEntry(new ZipEntry(entryName));
+
+            try (InputStream in = body.byteStream()) {
+                byte[] buffer = new byte[8192]; // 8KB 缓冲区
+                int len;
+                while ((len = in.read(buffer)) != -1) {
+                    zos.write(buffer, 0, len);
+                }
+            }
+
+            zos.closeEntry();
+        }
+    }
+    public static long getFileSize(String url) throws Exception {
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .head()  // 使用 HEAD 请求，只返回响应头，不传输实体
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (response.isSuccessful()) {
+                String length = response.header("Content-Length");
+                if (length != null) {
+                    return Long.parseLong(length);
+                }
+            }
+        }
+        return -1; // 获取失败
+    }
     /**
      * 下载指定 URL 的文件，返回字节数组。
      * @param url 文件 URL

@@ -163,4 +163,12 @@
     <string name="got_trouble">Has Trouble?</string>
     <string name="notise_msg">Notice Message Bar</string>
     <string name="click_to_enlarge">Click to enlarge</string>
+    <string name="content_manage">Content Manage</string>
+    <string name="share">Share</string>
+    <string name="approved">Approved</string>
+    <string name="under_review">Under review</string>
+    <string name="appeal">Appeal</string>
+    <string name="appeal_content">Contribution has been reject! \nApply for review?</string>
+    <string name="share_content" translatable="false">[%s] - OTTOHUB\n%s</string>
+    <string name="delete_msg">You\'ll lose it forever!(It\'s really been a long time)</string>
 </resources>

@@ -72,6 +72,13 @@ public class BlogListFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
+    public static BlogListFragment newInstance(String action) {
+        BlogListFragment fragment = new BlogListFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_ACTION,action);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     public RecyclerView recyclerView;
     private BlogCardAdapter adapter;
@@ -237,6 +244,7 @@ public class BlogListFragment extends Fragment {
         recyclerView.setItemAnimator(null);
         // 初始化适配器
         adapter = new BlogCardAdapter(videoList);
+        adapter.setFrag(this);
         recyclerView.setAdapter(adapter);
 
 

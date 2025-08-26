@@ -1,7 +1,11 @@
 package org.eu.hanana.reimu.ottohub_andriod.ui.video;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+import static androidx.core.content.ContextCompat.getString;
 import static androidx.core.content.ContextCompat.startActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -9,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -29,8 +34,13 @@ import com.bumptech.glide.request.target.Target;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.activity.VideoPlayerActivity;
 import org.eu.hanana.reimu.ottohub_andriod.data.video.VideoCard;
+import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
+import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
+import org.eu.hanana.reimu.ottohub_andriod.util.ClipboardUtil;
 
 import java.util.List;
+
+import lombok.Setter;
 
 // VideoCardAdapter.java
 public class VideoCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -40,6 +50,9 @@ public class VideoCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     private List<VideoCard> videoList;
     boolean isLoading = false;
+    @Setter
+    private VideoListFragment frag;
+
     public VideoCardAdapter(List<VideoCard> videoList) {
         this.videoList = videoList;
     }
@@ -134,7 +147,63 @@ public class VideoCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 intent.putExtras(bundle);
                 startActivity(holder.itemView.getContext(),intent,null);
             });
+
+            //new
+            if (frag.action.equals(VideoListFragment.ACTION_MINE)){
+                vcvHolder.ivAvatar.setVisibility(GONE);
+                vcvHolder.tvAuthor.setVisibility(GONE);
+                vcvHolder.itemView.findViewById(R.id.group_manage).setVisibility(VISIBLE);
+                Button btnAuditStatus = vcvHolder.itemView.findViewById(R.id.btn_audit_status);
+                if(video.getRaw().audit_status==0){
+                    btnAuditStatus.setText(R.string.under_review);
+                }else if(video.getRaw().audit_status==1){
+                    btnAuditStatus.setText(R.string.approved);
+                }else if(video.getRaw().audit_status==2){
+                    btnAuditStatus.setText(R.string.appeal);
+                    btnAuditStatus.setOnClickListener(v -> {
+                        var ctx = btnAuditStatus.getContext();
+                        AlertUtil.showYesNo(ctx,ctx.getString( R.string.appeal), ctx.getString(R.string.appeal_content),(dialog, which) -> {
+                            Thread thread = new Thread(()->{
+                                ApiUtil.getAppApi().getManageApi().appeal_video(video.getVid());
+                                frag.getActivity().runOnUiThread(() -> {
+                                    btnAuditStatus.setText(R.string.under_review);
+                                });
+                            });
+                            thread.setUncaughtExceptionHandler(new AlertUtil.ThreadAlert(frag.getActivity()));
+                            thread.start();
+                        },null).show();
+                    });
+                }else {
+                    btnAuditStatus.setText(R.string.under_development);
+                }
+            }
+            vcvHolder.itemView.findViewById(R.id.btn_share).setOnClickListener(v -> {
+                var txt = v.getContext().getString(R.string.share_content,video.getTitle(),"https://ottohub.cn/v/"+video.getVid());
+                ClipboardUtil.copyToClipboard(v.getContext(),txt);
+                shareText(v.getContext(),txt);
+            });
+            vcvHolder.itemView.findViewById(R.id.btn_delete).setOnClickListener(v -> {
+                AlertUtil.showYesNo(v.getContext(),v.getContext().getString(R.string.delete),v.getContext().getString(R.string.delete_msg),(dialog, which) -> {
+                    Thread thread = new Thread(()->{
+                        ApiUtil.getAppApi().getManageApi().delete_video(video.getVid());
+                        frag.getActivity().runOnUiThread(() -> {
+                            frag.refresh();
+                        });
+                    });
+                    thread.setUncaughtExceptionHandler(new AlertUtil.ThreadAlert(frag.getActivity()));
+                    thread.start();
+                },null).show();
+            });
         }
+    }
+    private void shareText(Context c, String text) {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain"); // 分享纯文本
+        intent.putExtra(Intent.EXTRA_TEXT, text);
+
+        // 弹出系统分享面板
+        Intent chooser = Intent.createChooser(intent, "Send to...");
+        c.startActivity(chooser);
     }
     @Override
     public int getItemCount() {

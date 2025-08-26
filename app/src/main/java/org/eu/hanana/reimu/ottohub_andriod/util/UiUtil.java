@@ -1,6 +1,7 @@
 package org.eu.hanana.reimu.ottohub_andriod.util;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.PermissionInfo;
 import android.graphics.Bitmap;
@@ -36,6 +37,15 @@ public class UiUtil {
     // 恢复状态
         restoreViewState(newView, savedState, View.BaseSavedState.CREATOR);
         return newView;
+    }
+    public static void shareText(Context c, String text) {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain"); // 分享纯文本
+        intent.putExtra(Intent.EXTRA_TEXT, text);
+
+        // 弹出系统分享面板
+        Intent chooser = Intent.createChooser(intent, "Send to...");
+        c.startActivity(chooser);
     }
     /**
      * 序列化 View 状态为 byte[]

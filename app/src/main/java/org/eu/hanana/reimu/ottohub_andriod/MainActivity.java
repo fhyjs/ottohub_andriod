@@ -39,6 +39,7 @@ import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.badge.BadgeUtils;
 import com.google.android.material.badge.ExperimentalBadgeUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.color.MaterialColors;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
 
@@ -46,6 +47,7 @@ import org.eu.hanana.reimu.lib.ottohub.api.auth.LoginResult;
 import org.eu.hanana.reimu.ottohub_andriod.activity.AccountListActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.AuditActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity;
+import org.eu.hanana.reimu.ottohub_andriod.activity.ContentManageActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.FavouriteActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.LauncherActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.LoginActivity;
@@ -102,7 +104,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.fragment_container), (v, insets) -> {
@@ -215,6 +216,14 @@ public class MainActivity extends AppCompatActivity {
             if (ApiUtil.isLogin()){
                 //Toast.makeText(this,R.string.under_development,LENGTH_SHORT).show();
                 Intent intent = new Intent(this, UploadVideoActivity.class);
+                startActivity(intent);
+            }else {
+                tipNoLogin();
+            }
+        } else if (item.getItemId()==R.id.action_content_manage){
+            if (ApiUtil.isLogin()){
+                //Toast.makeText(this,R.string.under_development,LENGTH_SHORT).show();
+                Intent intent = new Intent(this, ContentManageActivity.class);
                 startActivity(intent);
             }else {
                 tipNoLogin();

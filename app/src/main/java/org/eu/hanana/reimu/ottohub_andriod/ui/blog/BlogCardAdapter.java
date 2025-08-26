@@ -1,6 +1,10 @@
 package org.eu.hanana.reimu.ottohub_andriod.ui.blog;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static androidx.core.content.ContextCompat.startActivity;
+
+import static org.eu.hanana.reimu.ottohub_andriod.util.UiUtil.shareText;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +13,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -25,8 +30,14 @@ import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.VideoPlayerActivity;
 import org.eu.hanana.reimu.ottohub_andriod.data.video.VideoCard;
+import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment;
+import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
+import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
+import org.eu.hanana.reimu.ottohub_andriod.util.ClipboardUtil;
 
 import java.util.List;
+
+import lombok.Setter;
 
 public class BlogCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int TYPE_ITEM = 0;
@@ -37,6 +48,8 @@ public class BlogCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public BlogCardAdapter(List<BlogResult> blogList) {
         this.blogList = blogList;
     }
+    @Setter
+    private BlogListFragment frag;
 
     // ViewHolder
     public static class BlogCardViewHolder extends RecyclerView.ViewHolder {
@@ -108,6 +121,52 @@ public class BlogCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 bundle.putInt(BlogActivity.KEY_BID,blogResult.bid);
                 intent.putExtras(bundle);
                 startActivity(holder.itemView.getContext(),intent,null);
+            });
+            //new
+            if (VideoListFragment.ACTION_MINE.equals(frag.action)){
+                vcvHolder.ivAvatar.setVisibility(GONE);
+                vcvHolder.tvAuthor.setVisibility(GONE);
+                vcvHolder.itemView.findViewById(R.id.group_manage).setVisibility(VISIBLE);
+                Button btnAuditStatus = vcvHolder.itemView.findViewById(R.id.btn_audit_status);
+                if(blogResult.audit_status==0){
+                    btnAuditStatus.setText(R.string.under_review);
+                }else if(blogResult.audit_status==1){
+                    btnAuditStatus.setText(R.string.approved);
+                }else if(blogResult.audit_status==2){
+                    btnAuditStatus.setText(R.string.appeal);
+                    btnAuditStatus.setOnClickListener(v -> {
+                        var ctx = btnAuditStatus.getContext();
+                        AlertUtil.showYesNo(ctx,ctx.getString( R.string.appeal), ctx.getString(R.string.appeal_content),(dialog, which) -> {
+                            Thread thread = new Thread(()->{
+                                ApiUtil.getAppApi().getManageApi().appeal_blog(blogResult.bid);
+                                frag.getActivity().runOnUiThread(() -> {
+                                    btnAuditStatus.setText(R.string.under_review);
+                                });
+                            });
+                            thread.setUncaughtExceptionHandler(new AlertUtil.ThreadAlert(frag.getActivity()));
+                            thread.start();
+                        },null).show();
+                    });
+                }else {
+                    btnAuditStatus.setText(R.string.under_development);
+                }
+            }
+            vcvHolder.itemView.findViewById(R.id.btn_share).setOnClickListener(v -> {
+                var txt = v.getContext().getString(R.string.share_content,blogResult.title,"https://ottohub.cn/b/"+blogResult.bid);
+                ClipboardUtil.copyToClipboard(v.getContext(),txt);
+                shareText(v.getContext(),txt);
+            });
+            vcvHolder.itemView.findViewById(R.id.btn_delete).setOnClickListener(v -> {
+                AlertUtil.showYesNo(v.getContext(),v.getContext().getString(R.string.delete),v.getContext().getString(R.string.delete_msg),(dialog, which) -> {
+                    Thread thread = new Thread(()->{
+                        ApiUtil.getAppApi().getManageApi().delete_blog(blogResult.bid);
+                        frag.getActivity().runOnUiThread(() -> {
+                            frag.refresh();
+                        });
+                    });
+                    thread.setUncaughtExceptionHandler(new AlertUtil.ThreadAlert(frag.getActivity()));
+                    thread.start();
+                },null).show();
             });
         }
     }

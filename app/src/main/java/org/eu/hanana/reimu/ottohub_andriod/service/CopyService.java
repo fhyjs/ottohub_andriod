@@ -29,6 +29,8 @@ public class CopyService extends Service {
 
     public static final String ACTION_PROGRESS = "org.eu.hanana.app.ottohub.copy.PROGRESS";
     public static final String ACTION_COMPLETE = "org.eu.hanana.app.ottohub.copy.COMPLETE";
+    public static final String ACTION_FAILED = "org.eu.hanana.app.ottohub.copy.FAILED";
+    public static final String EXTRA_ERROR = "error";
     public static final String EXTRA_PROGRESS = "progress";
     public static final String EXTRA_PATH = "path";
 
@@ -56,7 +58,7 @@ public class CopyService extends Service {
 
         // 启动前台服务（只需第一次启动）
         if (NEXT_NOTIFICATION_ID.get() == 1003) { // 第一个任务
-            NotificationCompat.Builder builder = buildNotification(fileName, 0, true);
+            NotificationCompat.Builder builder = buildNotification(fileName, 0, true, 0);
             startForeground(notificationId, builder.build());
         }
 
@@ -65,29 +67,33 @@ public class CopyService extends Service {
     }
 
     private void copyFile(Uri contentUri, String fileName, int notificationId) {
+        File outFile = null;
         try (InputStream inputStream = getContentResolver().openInputStream(contentUri)) {
             File downloadDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "ottohub");
             if (!downloadDir.exists()) downloadDir.mkdirs();
 
-            File outFile = new File(downloadDir, fileName);
+            outFile = new File(downloadDir, fileName);
             try (OutputStream outputStream = new FileOutputStream(outFile)) {
 
-                byte[] buffer = new byte[8192];
+                byte[] buffer = new byte[1024];
                 long total = 0;
-                long fileSize = getFileSize(contentUri);
+                long fileSize;
 
                 int len;
                 int lastProgress = -1;
                 while ((len = inputStream.read(buffer)) != -1) {
                     outputStream.write(buffer, 0, len);
                     total += len;
-
+                    fileSize = getFileSize(contentUri);
                     if (fileSize > 0) {
                         int progress = (int) (total * 100 / fileSize);
                         if (progress != lastProgress) { // 限制刷新频率
                             sendProgress(progress);
-                            updateNotification(progress, fileName, notificationId);
+                            updateNotification(progress, fileName, notificationId, total);
                             lastProgress = progress;
+                        }
+                        if (progress == 100) {
+                            showCompleteNotification(fileName, notificationId);
                         }
                     }
                 }
@@ -103,6 +109,21 @@ public class CopyService extends Service {
 
         } catch (Exception e) {
             e.printStackTrace();
+
+            // 删除未完成的文件
+            if (outFile != null && outFile.exists()) {
+                boolean deleted = outFile.delete();
+                if (!deleted) {
+                    System.err.println("未完成的文件删除失败: " + outFile.getAbsolutePath());
+                }
+            }
+            // 发送失败广播
+            Intent intent = new Intent(ACTION_FAILED);
+            intent.putExtra(EXTRA_ERROR, e.getMessage());
+            sendBroadcast(intent);
+
+            // 显示失败通知
+            showFailedNotification(fileName, notificationId, e.getMessage());
         }
     }
 
@@ -128,11 +149,18 @@ public class CopyService extends Service {
         sendBroadcast(intent);
     }
 
-    private void updateNotification(int progress, String fileName, int notificationId) {
-        NotificationCompat.Builder builder = buildNotification(fileName, progress, false);
+    private void updateNotification(int progress, String fileName, int notificationId,long bytes) {
+        NotificationCompat.Builder builder = buildNotification(fileName, progress, false,bytes);
         notificationManager.notify(notificationId, builder.build());
     }
-
+    private void showFailedNotification(String fileName, int notificationId, String error) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setContentTitle("复制失败")
+                .setContentText(fileName + " 错误: " + error)
+                .setSmallIcon(R.drawable.download_2_24dp)
+                .setPriority(NotificationCompat.PRIORITY_HIGH);
+        notificationManager.notify(notificationId, builder.build());
+    }
     private void showCompleteNotification(String fileName, int notificationId) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("复制完成")
@@ -140,14 +168,14 @@ public class CopyService extends Service {
                 .setSmallIcon(R.drawable.download_2_24dp)
                 .setProgress(0, 0, false)
                 .setOnlyAlertOnce(true)
-                .setPriority(NotificationCompat.PRIORITY_LOW);
+                .setPriority(NotificationCompat.PRIORITY_HIGH);
         notificationManager.notify(notificationId, builder.build());
     }
 
-    private NotificationCompat.Builder buildNotification(String fileName, int progress, boolean indeterminate) {
+    private NotificationCompat.Builder buildNotification(String fileName, int progress, boolean indeterminate, long bytes) {
         return new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("复制文件")
-                .setContentText(fileName + (progress > 0 ? "  " + progress + "%" : ""))
+                .setContentText(fileName + (progress > 0 ? "  " + progress + "%" : bytes/1000f+"kb"))
                 .setSmallIcon(R.drawable.download_2_24dp)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setOnlyAlertOnce(true)

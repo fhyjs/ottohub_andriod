@@ -149,4 +149,11 @@
     <string name="got_trouble">遇到困难？</string>
     <string name="notise_msg">查看通知栏</string>
     <string name="click_to_enlarge">点击放大</string>
+    <string name="content_manage">内容管理</string>
+    <string name="share">分享</string>
+    <string name="approved">已过审</string>
+    <string name="under_review">审核中</string>
+    <string name="appeal">申诉</string>
+    <string name="appeal_content">稿件被退回了!\n提交复审请求?</string>
+    <string name="delete_msg">你会永久失去它(真的很久!!)</string>
 </resources>

@@ -22,6 +22,7 @@ public class CommentCardViewHolder extends RecyclerView.ViewHolder {
         report=itemView.findViewById(R.id.btn_report);
         userinfo=itemView.findViewById(R.id.ll_userinfo);
         showReply=itemView.findViewById(R.id.btn_show);
+        delete=itemView.findViewById(R.id.btn_delete);
     }
     public final Button showReply;
     public final LinearLayout userinfo;
@@ -31,4 +32,5 @@ public class CommentCardViewHolder extends RecyclerView.ViewHolder {
     public final TextView content;
     public final Button reply;
     public final Button report;
+    public final Button delete;
 }

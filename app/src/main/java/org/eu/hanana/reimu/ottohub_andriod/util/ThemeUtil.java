@@ -1,121 +1,94 @@
 package org.eu.hanana.reimu.ottohub_andriod.util;
 
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
 import androidx.annotation.ColorInt;
+import androidx.annotation.DeprecatedSinceApi;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import org.eu.hanana.reimu.ottohub_andriod.R;
+
+import java.lang.reflect.Field;
+
+@Deprecated
 public class ThemeUtil {
-
-    private static final String PREF_NAME = "theme_pref";
-    private static final String KEY_PRIMARY_COLOR = "primary_color";
-
-    private static final String DEFAULT_COLOR = "#6200EE"; // 默认紫色
-
-    /**
-     * 保存主颜色（Hex 格式，如 "#FF5722"）
-     */
-    public static void savePrimaryColor(@NonNull Context context, @NonNull String colorHex) {
-        SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        prefs.edit().putString(KEY_PRIMARY_COLOR, colorHex).apply();
+    public static Resources.Theme getVTheme(AppCompatActivity activity){
+        Resources.Theme theme = activity.getResources().newTheme();
+        theme.applyStyle(R.style.Theme_Ottohub_andriod, true);
+        TypedValue typedValueColor = new TypedValue();
+        typedValueColor.type=TypedValue.TYPE_INT_COLOR_ARGB8;
+        typedValueColor.data=0xffff0000;
+        setValue(activity,typedValueColor, androidx.appcompat.R.attr.colorPrimary);
+        return theme;
     }
+    public static void setValue(Context context, TypedValue typedValue,int id) {
+        Resources.Theme theme = context.getTheme();
 
-    /**
-     * 获取当前主颜色的字符串（如 "#6200EE"）
-     */
-    @NonNull
-    public static String getPrimaryColorHex(@NonNull Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        return prefs.getString(KEY_PRIMARY_COLOR, DEFAULT_COLOR);
-    }
+        // applyStyle 只能应用资源 id，所以需要间接方式：
+        // 使用 reflection 动态替换 mThemeImpl 中的 colorPrimary
+        try {
+            java.lang.reflect.Field themeImplField = theme.getClass().getDeclaredField("mThemeImpl");
+            themeImplField.setAccessible(true);
+            Object themeImpl = themeImplField.get(theme);
 
-    /**
-     * 获取当前主颜色的 int 值
-     */
-    @ColorInt
-    public static int getPrimaryColorInt(@NonNull Context context) {
-        return Color.parseColor(getPrimaryColorHex(context));
-    }
+            java.lang.reflect.Method applyAttrMethod =
+                    themeImpl.getClass().getDeclaredMethod(
+                            "applyStyleAttribute", int.class, TypedValue.class, boolean.class);
+            applyAttrMethod.setAccessible(true);
 
-    /**
-     * 应用主色到 Toolbar 和状态栏（可选）
-     */
-    public static void applyPrimaryColor(Activity activity) {
-        int color = getPrimaryColorInt(activity);
+            applyAttrMethod.invoke(themeImpl, id, typedValue, true);
 
-        applyPrimaryColorToActionBar(activity);
-
-
-        // 设置状态栏颜色
-        Window window = activity.getWindow();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(darkenColor(color, 0.85f)); // 可选：暗一点
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
-    /**
-     * 应用主色到原生 ActionBar
-     */
-    public static void applyPrimaryColorToActionBar(Activity activity) {
-        int color = getPrimaryColorInt(activity);
-        ActionBar actionBar = activity.getActionBar(); // 原生 ActionBar
-        if (actionBar != null) {
-            actionBar.setBackgroundDrawable(new ColorDrawable(color));
+    public static void applyVTheme(AppCompatActivity activity){
+        Resources.Theme vTheme = getVTheme(activity);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            activity.setTheme(vTheme);
+        }else{
+            applyThemeCompat(activity, vTheme);
         }
-    }
-    /**
-     * 应用颜色到任意 View（如根布局）
-     */
-    public static void applyPrimaryColorToView(View view, Context context) {
-        int color = getPrimaryColorInt(context);
-        view.setBackgroundColor(color);
-    }
 
-    /**
-     * 应用颜色到 TextView 字体
-     */
-    public static void applyPrimaryTextColor(TextView textView, Context context) {
-        int color = getPrimaryColorInt(context);
-        textView.setTextColor(color);
     }
+    @DeprecatedSinceApi(api = 36)
+    public static void applyThemeCompat(Context context, Resources.Theme newTheme) {
+        try {
+            // 找到 ContextThemeWrapper 类（Activity 继承自它）
+            Class<?> clazz = Class.forName("android.view.ContextThemeWrapper");
 
-    /**
-     * 切换颜色并重启当前 Activity 生效
-     */
-    public static void switchPrimaryColor(Activity activity, String colorHex) {
-        savePrimaryColor(activity, colorHex);
-        restartActivity(activity);
-    }
+            // 取到 mTheme 字段
+            @SuppressLint("SoonBlockedPrivateApi") Field themeField = clazz.getDeclaredField("mTheme");
+            themeField.setAccessible(true);
 
-    /**
-     * 重启当前 Activity
-     */
-    public static void restartActivity(Activity activity) {
-        Intent intent = activity.getIntent();
-        activity.finish();
-        activity.startActivity(intent);
-    }
+            // 赋值新的 Theme
+            themeField.set(context, newTheme);
 
-    /**
-     * 颜色变暗（用于状态栏等）
-     */
-    private static int darkenColor(int color, float factor) {
-        int r = Math.round(Color.red(color) * factor);
-        int g = Math.round(Color.green(color) * factor);
-        int b = Math.round(Color.blue(color) * factor);
-        return Color.rgb(r, g, b);
+            // 同时把 mThemeResource 置 0，避免被覆盖
+            Field resField = clazz.getDeclaredField("mThemeResource");
+            resField.setAccessible(true);
+            resField.setInt(context, 0);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
