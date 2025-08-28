@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
+    android:tag="themed|background"
     app:cardCornerRadius="8dp"
     app:cardElevation="4dp">
     <LinearLayout
@@ -29,12 +30,14 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
                 <TextView
+                    android:tag="themed"
                     android:id="@+id/tvAuthor"
                     android:textColor="@color/black"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="USERNAME"/>
                 <TextView
+                    android:tag="themed|second"
                     android:id="@+id/tvInfo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -42,6 +45,7 @@
             </LinearLayout>
         </LinearLayout>
         <TextView
+            android:tag="themed"
             android:id="@+id/tvContent"
             android:text="CONTENT"
             android:textSize="20sp"
@@ -55,6 +59,7 @@
             android:layout_height="wrap_content">
 
             <com.google.android.material.button.MaterialButton
+                android:tag="themed"
                 android:id="@+id/btn_show"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -70,6 +75,7 @@
                 app:icon="@drawable/open_in_new"
                 app:iconPadding="0dp" />
             <com.google.android.material.button.MaterialButton
+                android:tag="themed"
                 android:id="@+id/btn_report"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -85,6 +91,7 @@
                 android:layout_marginEnd="10dp"
                 app:iconPadding="0dp"/>
             <com.google.android.material.button.MaterialButton
+                android:tag="themed"
                 android:id="@+id/btn_reply"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -100,6 +107,7 @@
                 android:layout_marginEnd="4dp"
                 app:iconPadding="0dp"/>
             <com.google.android.material.button.MaterialButton
+                android:tag="themed"
                 android:id="@+id/btn_delete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

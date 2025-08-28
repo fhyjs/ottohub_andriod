@@ -22,6 +22,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.activity.VideoPlayerActivity;
 import org.eu.hanana.reimu.ottohub_andriod.data.video.VideoCard;
+import org.eu.hanana.reimu.ottohub_andriod.util.ThemeUtil;
 
 import java.util.List;
 
@@ -43,6 +44,7 @@ public abstract class CardAdapterBase<E,T extends RecyclerView.ViewHolder> exten
 
         public LoadingViewHolder(View itemView) {
             super(itemView);
+            ThemeUtil.apply(itemView);
             progressBar = itemView.findViewById(R.id.progressBar);
             tvLoading = itemView.findViewById(R.id.tvLoading);
         }
@@ -53,6 +55,7 @@ public abstract class CardAdapterBase<E,T extends RecyclerView.ViewHolder> exten
         ProgressBar progressBar;
         public EmptyViewHolder(View itemView) {
             super(itemView);
+            ThemeUtil.apply(itemView);
             tvLoading = itemView.findViewById(R.id.tvLoading);
             progressBar = itemView.findViewById(R.id.progressBar);
             progressBar.setVisibility(GONE);
@@ -94,6 +97,7 @@ public abstract class CardAdapterBase<E,T extends RecyclerView.ViewHolder> exten
         T vcvHolder = (T) holder;
         E video = videoList.get(position);
         makeCardUi(vcvHolder, video);
+        ThemeUtil.apply(holder.itemView);
     }
 
     public abstract void makeCardUi(T holder, E object);

@@ -42,7 +42,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.Locale;
 
-public class MessageReaderActivity extends AppCompatActivity {
+public class MessageReaderActivity extends BaseActivity {
     protected String webPage = CustomWebView.internal+"web/message/index.html";
     private WebView webView;
     protected boolean finish, inited=false;
@@ -55,11 +55,11 @@ public class MessageReaderActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_message_reader);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        //ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            //Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+           // v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+           // return insets;
+        //});
         // 启用返回按钮
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

@@ -23,7 +23,7 @@ import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.ui.audit.AuditFragment;
 
 
-public class AuditActivity extends AppCompatActivity {
+public class AuditActivity extends BaseActivity {
 
     private ViewPager2 viewPager;
     private TabLayout tabLayout;
@@ -37,11 +37,11 @@ public class AuditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_audit);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        //ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            //Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+           // v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+           // return insets;
+        //});
         // 启用返回按钮
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

@@ -33,7 +33,7 @@ import org.eu.hanana.reimu.ottohub_andriod.ui.login.LoginViewModel;
 import org.eu.hanana.reimu.ottohub_andriod.ui.login.LoginViewModelFactory;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BaseActivity {
 
     private LoginViewModel loginViewModel;
     private ActivityLoginBinding binding;

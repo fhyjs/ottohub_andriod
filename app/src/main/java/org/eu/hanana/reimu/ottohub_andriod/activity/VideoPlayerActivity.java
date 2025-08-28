@@ -87,7 +87,7 @@ import yuku.ambilwarna.AmbilWarnaDialog;
 
 
 @UnstableApi
-public class VideoPlayerActivity extends AppCompatActivity {
+public class VideoPlayerActivity extends BaseActivity {
     public static final String KEY_VID="vid";
     public static final String KEY_NET_DATA="netdata";
     public static final String KEY_DANMAKU_DATA="danmakudata";
@@ -120,11 +120,11 @@ public class VideoPlayerActivity extends AppCompatActivity {
         }
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_video_player);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        //ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            //Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+           // v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+           // return insets;
+        //});
         // 启用返回按钮
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

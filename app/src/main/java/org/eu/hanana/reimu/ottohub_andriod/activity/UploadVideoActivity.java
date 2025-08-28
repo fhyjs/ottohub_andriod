@@ -51,7 +51,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class UploadVideoActivity extends AppCompatActivity {
+public class UploadVideoActivity extends BaseActivity {
     public final char[] punctuationMarks = new char[]{
             '!', '"', '#', '$', '%', '&', '\'', '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~', '—',
             '！', '“', '”', '＃', '￥', '％', '＆', '’', '（', '）', '＊', '＋', '，', '－', '．', '／', '：', '；', '＜', '＝', '＞', '？', '＠', '［', '＼', '］', '＾', '＿', '｀', '｛', '｜', '｝', '～',
@@ -118,11 +118,11 @@ public class UploadVideoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_upload_video);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        //ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            //Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+           // v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+           // return insets;
+        //});
         setTitle(R.string.upload_video);
         // 启用返回按钮
         if (getSupportActionBar() != null) {

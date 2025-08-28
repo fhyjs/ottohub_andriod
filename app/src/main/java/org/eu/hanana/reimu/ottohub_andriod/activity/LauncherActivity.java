@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class LauncherActivity extends AppCompatActivity {
+public class LauncherActivity extends BaseActivity {
     private static final int REQUEST_CODE_PERMISSIONS = 1234;
     private static final String TAG = "LauncherActivity";
     private ViewGroup container;
@@ -58,11 +58,11 @@ public class LauncherActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_launcher);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        //ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            //Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+           // v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+           // return insets;
+        //});
         setTitle(R.string.launcher);
         container = findViewById(R.id.container);
         if (isAllGranted()){

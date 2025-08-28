@@ -5,6 +5,11 @@
         android:defaultValue="true"
         android:key="auto_login"
         android:title="@string/auto_login" />
+    <Preference
+        android:icon="@drawable/palette_24dp"
+        android:key="theme"
+        android:title="@string/theme_color"
+        android:summary="Set the main color of this app" />
     <SwitchPreference
         android:icon="@drawable/account_circle_off"
         android:defaultValue="true"

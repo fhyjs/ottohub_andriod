@@ -15,10 +15,12 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Lifecycle;
 
 import android.view.LayoutInflater;
@@ -47,9 +49,11 @@ import org.eu.hanana.reimu.lib.ottohub.api.profile.ProfileResult;
 import org.eu.hanana.reimu.lib.ottohub.api.user.UserResult;
 import org.eu.hanana.reimu.ottohub_andriod.MyApp;
 import org.eu.hanana.reimu.ottohub_andriod.R;
+import org.eu.hanana.reimu.ottohub_andriod.activity.BaseActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.FragActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.ImageViewActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.MessageActivity;
+import org.eu.hanana.reimu.ottohub_andriod.ui.base.BaseFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.blog.BlogListFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.settings.SettingsFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment;
@@ -57,6 +61,7 @@ import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ClassUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ProfileUtil;
+import org.eu.hanana.reimu.ottohub_andriod.util.ThemeUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.TouchInterceptFrameLayout;
 import org.eu.hanana.reimu.ottohub_andriod.util.UiUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ui.BlurTransformation;
@@ -69,7 +74,7 @@ import java.util.Locale;
 import lombok.Getter;
 
 
-public class ProfileFragment extends Fragment {
+public class ProfileFragment extends BaseFragment {
     public static final String Arg_Uid = "uid";
     protected ImageView ivAvatar;
     protected TextView tvInfo;
@@ -426,6 +431,9 @@ public class ProfileFragment extends Fragment {
                     TextView badgeTextView = actionView.findViewById(R.id.badge_text_view);
                     badgeTextView.setText(String.valueOf(ApiUtil.getNewMegCount()));   // 角标数字
                     badgeTextView.setVisibility(ApiUtil.getNewMegCount()>0?View.VISIBLE:View.GONE);
+                    ThemeUtil.apply(actionView);
+                    actionView.setBackgroundColor(ThemeUtil.getTheme(getContext()).getColorActionBar());
+
                 }
             }
 
@@ -464,7 +472,7 @@ public class ProfileFragment extends Fragment {
     protected MaterialButton makeButton(String text){
         MaterialButton button = new MaterialButton(getContext());
         button.setText(text);
-
+        button.setTag("themed");
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) button.getLayoutParams();
         if (params == null) {
             // 假设父布局是 LinearLayout，可以根据实际替换

@@ -29,12 +29,13 @@ import com.google.gson.Gson;
 import org.eu.hanana.reimu.lib.ottohub.api.video.VideoResult;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.activity.ImageViewActivity;
+import org.eu.hanana.reimu.ottohub_andriod.ui.base.BaseFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoDescribeFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.UiUtil;
 
 
-public class AuditVideoFragment extends Fragment {
+public class AuditVideoFragment extends BaseFragment {
 
     private static final String ARG_VDATA = "param1";
 

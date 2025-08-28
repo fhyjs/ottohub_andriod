@@ -37,6 +37,7 @@ import org.eu.hanana.reimu.ottohub_andriod.data.video.VideoCard;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ClipboardUtil;
+import org.eu.hanana.reimu.ottohub_andriod.util.ThemeUtil;
 
 import java.util.List;
 
@@ -63,6 +64,7 @@ public class VideoCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         TextView tvDuration, tvTitle, tvAuthor, tvViews;
         public VideoCardViewHolder(View itemView) {
             super(itemView);
+            ThemeUtil.apply(itemView);
             ivThumbnail = itemView.findViewById(R.id.ivThumbnail);
             ivAvatar = itemView.findViewById(R.id.ivAvatar);
             ivPlay = itemView.findViewById(R.id.ivPlay);
@@ -79,6 +81,7 @@ public class VideoCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         public LoadingViewHolder(View itemView) {
             super(itemView);
+            ThemeUtil.apply(itemView);
             progressBar = itemView.findViewById(R.id.progressBar);
             tvLoading = itemView.findViewById(R.id.tvLoading);
         }

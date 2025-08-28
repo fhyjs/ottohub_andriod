@@ -34,6 +34,7 @@ import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ClipboardUtil;
+import org.eu.hanana.reimu.ottohub_andriod.util.ThemeUtil;
 
 import java.util.List;
 
@@ -58,6 +59,7 @@ public class BlogCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         Context context;
         public BlogCardViewHolder(View itemView) {
             super(itemView);
+            ThemeUtil.apply(itemView);
             context=itemView.getContext();
             ivAvatar = itemView.findViewById(R.id.ivAvatar);
             tvContent = itemView.findViewById(R.id.tvContent);
@@ -73,6 +75,7 @@ public class BlogCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         public LoadingViewHolder(View itemView) {
             super(itemView);
+            ThemeUtil.apply(itemView);
             progressBar = itemView.findViewById(R.id.progressBar);
             tvLoading = itemView.findViewById(R.id.tvLoading);
         }

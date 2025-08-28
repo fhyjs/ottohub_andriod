@@ -13,7 +13,7 @@ import androidx.fragment.app.Fragment;
 
 import org.eu.hanana.reimu.ottohub_andriod.R;
 
-public class FragActivity extends AppCompatActivity {
+public class FragActivity extends BaseActivity {
     public static final String ARG_FRAG_CLASS = "class";
     public static final String ARG_DATA = "data";
     public static final String ARG_TITLE = "title";
@@ -23,11 +23,11 @@ public class FragActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_frag);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        //ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            //Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+           // v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+           // return insets;
+        //});
         // 启用返回按钮
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

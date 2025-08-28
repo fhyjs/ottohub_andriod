@@ -36,11 +36,13 @@ public class AlertUtil {
                 .create();
     }
     public static androidx.appcompat.app.AlertDialog showMsg(Context context, String title, String msg) {
-        return new MaterialAlertDialogBuilder(context)
+        AlertDialog alertDialog = new MaterialAlertDialogBuilder(context)
                 .setTitle(title)
                 .setMessage(msg)
-                .setPositiveButton(R.string.ok,null)
+                .setPositiveButton(R.string.ok, null)
                 .create();
+        ThemeUtil.apply(alertDialog.getWindow().getDecorView());
+        return alertDialog;
     }
     public static androidx.appcompat.app.AlertDialog showLoading(Context context, String title){
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
@@ -65,6 +67,9 @@ public class AlertUtil {
         return loadingDialog;
     }
     public static AlertDialog showError(Context context, String message) {
+        AlertDialog alertDialog = showMsg(context, context.getString(R.string.error), message);
+        alertDialog.show();
+        if (true) return alertDialog;
 
         // 加载自定义布局
         View view = LayoutInflater.from(context).inflate(R.layout.dialog_error, null);

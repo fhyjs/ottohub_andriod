@@ -24,6 +24,7 @@ import android.widget.Toolbar;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -46,6 +47,7 @@ import com.google.android.material.navigation.NavigationView;
 import org.eu.hanana.reimu.lib.ottohub.api.auth.LoginResult;
 import org.eu.hanana.reimu.ottohub_andriod.activity.AccountListActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.AuditActivity;
+import org.eu.hanana.reimu.ottohub_andriod.activity.BaseActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.ContentManageActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.FavouriteActivity;
@@ -63,7 +65,7 @@ import org.eu.hanana.reimu.ottohub_andriod.util.SharedPreferencesKeys;
 import org.eu.hanana.reimu.ottohub_andriod.util.ThemeUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.UiUtil;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
     private final Handler handler = new Handler(Looper.getMainLooper());
     private Runnable fetchMsgCountRunnable = new Runnable() {
         @Override
@@ -85,7 +87,6 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private BottomNavigationView bottomNavigationView;
     private NavigationView navView;
-    private Insets systemBars;
     private ViewGroup navHeader;
 
     @Override
@@ -93,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         handler.post(fetchMsgCountRunnable);  // 启动定时任务
         prepareNavHeader(navHeader);
-
+        ThemeUtil.onPostCreate(this);
     }
 
     @Override
@@ -101,21 +102,20 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         handler.removeCallbacks(fetchMsgCountRunnable);  // 停止任务，避免内存泄漏
     }
+
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        ThemeUtil.onPostCreate(this);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ThemeUtil.onCreate(this);
+
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.fragment_container), (v, insets) -> {
-            systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right,0);
-            return insets;
-        });
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.nav_view), (v, insets) -> {
-            systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right,0);
-            return insets;
-        });
 
         if (!checkLauncher()) {
             startActivity(new Intent(this, LauncherActivity.class));
@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
                 R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-
+        toggle.getDrawerArrowDrawable().setColor(ThemeUtil.getTheme(this).getColorOnPrimary());
         // 显示左上角图标
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         // 菜单点击事件
@@ -155,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
-        navHeader = (ViewGroup) getLayoutInflater().inflate(R.layout.nav_header, null, false);
+        navHeader = (ViewGroup) getLayoutInflater().inflate(R.layout.nav_header, getRoot(), false);
         navView.addHeaderView(navHeader);
         prepareNavHeader(navHeader);
     }

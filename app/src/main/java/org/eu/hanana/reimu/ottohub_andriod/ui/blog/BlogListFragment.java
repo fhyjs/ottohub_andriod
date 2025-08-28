@@ -43,6 +43,7 @@ import org.eu.hanana.reimu.ottohub_andriod.R;
 
 import org.eu.hanana.reimu.ottohub_andriod.activity.SearchActivity;
 import org.eu.hanana.reimu.ottohub_andriod.data.blog.BlogViewModel;
+import org.eu.hanana.reimu.ottohub_andriod.ui.base.BaseFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.user.ProfileFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.InfiniteScrollListener;
 
@@ -54,7 +55,7 @@ import java.util.List;
  * Use the {@link BlogListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class BlogListFragment extends Fragment {
+public class BlogListFragment extends BaseFragment {
     @Nullable
     public Integer uid;
     @Nullable
@@ -198,7 +199,8 @@ public class BlogListFragment extends Fragment {
         Button button = new MaterialButton(getContext());
         // 设置按钮样式
         button.setText(buttonLabels[i]);
-        button.setTag(buttonLabels[i]);
+        button.setTag(R.id.btn_add_tag,buttonLabels[i]);
+        button.setTag("themed");
         button.setPadding(32, 16, 32, 16);
 
         // 设置点击事件

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
+    android:tag="themed|background"
     android:id="@+id/container"
     tools:context=".activity.BlogActivity"
     android:orientation="vertical"
@@ -13,6 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <Button
+            android:tag="themed"
             android:enabled="false"
             android:layout_marginEnd="10dp"
             android:id="@+id/btn_blog"
@@ -20,6 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         <Button
+            android:tag="themed"
             android:enabled="false"
             android:id="@+id/btn_comment"
             android:text="@string/comment"
@@ -65,6 +68,7 @@
                         app:shapeAppearanceOverlay="@style/CircleImageViewStyle" />
 
                     <TextView
+                        android:tag="themed"
                         android:id="@+id/tvAuthor"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

@@ -48,14 +48,17 @@ import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.activity.SearchActivity;
 import org.eu.hanana.reimu.ottohub_andriod.data.video.VideoCard;
 import org.eu.hanana.reimu.ottohub_andriod.data.video.VideoViewModel;
+import org.eu.hanana.reimu.ottohub_andriod.ui.base.BaseFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.user.ProfileFragment;
+import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.InfiniteScrollListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class VideoListFragment extends Fragment {
+public class VideoListFragment extends BaseFragment {
+    private static final String TAG = "VideoListFragment";
     public RecyclerView recyclerView;
     private VideoCardAdapter adapter;
     private final List<VideoCard> videoList = new ArrayList<>();
@@ -144,6 +147,9 @@ public class VideoListFragment extends Fragment {
     }
     private void showError(String message) {
         error=true;
+        Log.e(TAG, "showError: "+message);
+        AlertUtil.showError(this.getContext(),message);
+        if (true) return;
         // 检查 Fragment 是否已附加到 Activity
         if (getContext() == null || isDetached()) return;
 
@@ -186,7 +192,6 @@ public class VideoListFragment extends Fragment {
 
         for (int i = 0; i < buttonLabels.length; i++) {
             Button button = getTypeBtn(buttonLabels, i);
-
             button_area.addView(button);
             if (selectedButton==null){
                 selectedButton=button;
@@ -203,7 +208,8 @@ public class VideoListFragment extends Fragment {
         MaterialButton button = new MaterialButton(getContext());
         // 设置按钮样式
         button.setText(buttonLabels[i]);
-        button.setTag(buttonLabels[i]);
+        button.setTag("themed");
+        button.setTag(R.id.btn_add_tag,buttonLabels[i]);
         button.setPadding(32, 16, 32, 16);
 
         // 设置点击事件

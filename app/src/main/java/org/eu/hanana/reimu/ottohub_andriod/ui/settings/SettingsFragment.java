@@ -6,22 +6,37 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreference;
 import androidx.preference.SwitchPreferenceCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.activity.AboutActivity;
+import org.eu.hanana.reimu.ottohub_andriod.activity.ThemeActivity;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.CacheUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.LocaleHelper;
+import org.eu.hanana.reimu.ottohub_andriod.util.ThemeUtil;
+import org.eu.hanana.reimu.ottohub_andriod.util.UiUtil;
+
+import java.util.List;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view,savedInstanceState);
+        this.getView().setBackgroundColor(0xFFfdfdfd);
+    }
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.preferences, rootKey);
@@ -61,7 +76,13 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 return true;
             });
         }
-
+        Preference theme = findPreference("theme");
+        if (theme != null) {
+            theme.setOnPreferenceClickListener(preference -> {
+                startActivity(new Intent(getContext(), ThemeActivity.class));
+                return true;
+            });
+        }
         SwitchPreference autoLoginPref = findPreference("auto_login");
         if (autoLoginPref != null) {
             // 读取当前状态

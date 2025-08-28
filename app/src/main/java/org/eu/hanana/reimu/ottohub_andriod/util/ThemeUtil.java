@@ -1,94 +1,215 @@
 package org.eu.hanana.reimu.ottohub_andriod.util;
 
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
-import android.app.ActionBar;
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.content.res.TypedArray;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
-import android.util.TypedValue;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.ColorInt;
-import androidx.annotation.DeprecatedSinceApi;
-import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.ActionMenuItemView;
+import androidx.appcompat.widget.ActionBarContextView;
+import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 
-import org.eu.hanana.reimu.ottohub_andriod.R;
+import com.google.android.material.bottomnavigation.BottomNavigationItemView;
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.tabs.TabLayout;
+import com.google.gson.Gson;
 
-import java.lang.reflect.Field;
+import org.eu.hanana.reimu.ottohub_andriod.activity.BaseActivity;
+import org.eu.hanana.reimu.ottohub_andriod.data.ui.ThemeData;
 
-@Deprecated
+import java.util.List;
+
 public class ThemeUtil {
-    public static Resources.Theme getVTheme(AppCompatActivity activity){
-        Resources.Theme theme = activity.getResources().newTheme();
-        theme.applyStyle(R.style.Theme_Ottohub_andriod, true);
-        TypedValue typedValueColor = new TypedValue();
-        typedValueColor.type=TypedValue.TYPE_INT_COLOR_ARGB8;
-        typedValueColor.data=0xffff0000;
-        setValue(activity,typedValueColor, androidx.appcompat.R.attr.colorPrimary);
-        return theme;
+    private static boolean dirty = true;
+    private static ThemeData themeData;
+    public static void saveTheme(Context context, ThemeData newColor){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.edit().putString("user_color", new Gson().toJson(newColor)).commit();
+        dirty=true;
     }
-    public static void setValue(Context context, TypedValue typedValue,int id) {
-        Resources.Theme theme = context.getTheme();
-
-        // applyStyle 只能应用资源 id，所以需要间接方式：
-        // 使用 reflection 动态替换 mThemeImpl 中的 colorPrimary
-        try {
-            java.lang.reflect.Field themeImplField = theme.getClass().getDeclaredField("mThemeImpl");
-            themeImplField.setAccessible(true);
-            Object themeImpl = themeImplField.get(theme);
-
-            java.lang.reflect.Method applyAttrMethod =
-                    themeImpl.getClass().getDeclaredMethod(
-                            "applyStyleAttribute", int.class, TypedValue.class, boolean.class);
-            applyAttrMethod.setAccessible(true);
-
-            applyAttrMethod.invoke(themeImpl, id, typedValue, true);
-
-        } catch (Exception e) {
-            e.printStackTrace();
+    public static ThemeData getTheme(Context c){
+        if (!dirty&&themeData!=null){
+            return themeData;
+        }
+        Gson gson = new Gson();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
+        if (!prefs.contains("user_color")){
+            saveTheme(c,ThemeData.DEFAULT);
+        }
+        dirty=false;
+        themeData=gson.fromJson(prefs.getString("user_color", "ERROR"), ThemeData.class);
+        return themeData;
+    }
+    public static void onCreate(AppCompatActivity activity) {
+        var t = getTheme(activity);
+        // 应用颜色到状态栏/导航栏（API 21+）
+        activity.getWindow().setStatusBarColor(t.getColorActionBar());
+        activity.getWindow().setNavigationBarColor(t.getColorActionBar());
+    }
+    public static void onPostCreate(AppCompatActivity activity) {
+        var userColor = getTheme(activity);
+        var views = UiUtil.getAllViews(activity);
+        ActionBar supportActionBar = activity.getSupportActionBar();
+        if (supportActionBar!=null) {
+            supportActionBar.setBackgroundDrawable(new ColorDrawable(userColor.getColorActionBar()));
+        }
+        if (activity instanceof BaseActivity){
+            var ba=(BaseActivity) activity;
+            views.add(ba.toolbar);
+        }
+        apply(views,userColor);
+    }
+    public static void onViewCreated(Fragment fragment) {
+        var userColor = getTheme(fragment.getContext());
+        var views = UiUtil.getAllViews(fragment);
+        apply(views,userColor);
+    }
+    public static void apply(View view){
+        var userColor = getTheme(view.getContext());
+        var views = UiUtil.getAllViews(view);
+        apply(views,userColor);
+    }
+    public static void apply(List<View> views, ThemeData userColor){
+        for (View view : views) {
+            if (!String.valueOf(view.getTag()).contains("themed")) continue;
+            if (view instanceof Button){
+                var button = (Button) view;
+                button.setBackgroundTintList(createProgressBarColorStateList(userColor.getColorPrimary()));
+                button.setTextColor(createProgressBarColorStateList(userColor.getColorOnPrimary()));
+            }
+            if (view instanceof ProgressBar){
+                var progressBar = (ProgressBar) view;
+                var tint = createProgressBarColorStateList(userColor.getColorPrimary());
+                progressBar.setIndeterminateTintList(tint);
+                progressBar.setProgressTintList(tint);
+                progressBar.setSecondaryProgressTintList(tint);
+                progressBar.setProgressBackgroundTintList(ColorStateList.valueOf(Color.LTGRAY));
+            }
+            if (view instanceof BottomNavigationView){
+                var item = ((BottomNavigationView) view);
+                item.setBackgroundColor(userColor.getColorActionBar());
+                item.setItemIconTintList(createCheckingColorStateList(userColor.getColorPrimaryVariant()));
+                item.setItemTextColor(ColorStateList.valueOf(userColor.getColorOnPrimary()));
+            }
+            if (view instanceof Toolbar){
+                var item = ((Toolbar) view);
+                item.getOverflowIcon().setTint(userColor.getColorOnPrimary());
+                item.setTitleTextColor(userColor.getColorOnPrimary());
+                if (item.getNavigationIcon() != null) {
+                    item.getNavigationIcon().setTint(userColor.getColorOnPrimary());
+                }
+                item.post(() -> {
+                    for (int i = 0; i < item.getMenu().size(); i++) {
+                        MenuItem itemM = item.getMenu().getItem(i);
+                        if (itemM.getIcon() != null) {
+                            itemM.getIcon().setTint(userColor.getColorOnPrimary());
+                        }
+                    }
+                });
+            }
+            if (view instanceof TextView){
+                var item = ((TextView) view);
+                if (String.valueOf(item.getTag()).contains("second")){
+                    item.setTextColor(userColor.getColorOnPrimarySecond());
+                }else {
+                    item.setTextColor(userColor.getColorOnPrimary());
+                }
+            }
+            if (view instanceof TabLayout){
+                var item = ((TabLayout) view);
+                item.setTabIconTint(createSelectColorStateList(Color.GRAY,userColor.getColorPrimary()));
+            }
+            if (view instanceof ImageView){
+                var item = ((ImageView) view);
+                item.setImageTintList(ColorStateList.valueOf(userColor.getColorOnPrimary()));
+            }
+            if (String.valueOf(view.getTag()).contains("background")){
+                view.setBackgroundColor(userColor.getColorBackground());
+            }
         }
     }
-    public static void applyVTheme(AppCompatActivity activity){
-        Resources.Theme vTheme = getVTheme(activity);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            activity.setTheme(vTheme);
-        }else{
-            applyThemeCompat(activity, vTheme);
-        }
-
+    @ColorInt
+    public static int invertColor(@ColorInt int color) {
+        int a = Color.alpha(color);
+        int r = 255 - Color.red(color);
+        int g = 255 - Color.green(color);
+        int b = 255 - Color.blue(color);
+        return Color.argb(a, r, g, b);
     }
-    @DeprecatedSinceApi(api = 36)
-    public static void applyThemeCompat(Context context, Resources.Theme newTheme) {
-        try {
-            // 找到 ContextThemeWrapper 类（Activity 继承自它）
-            Class<?> clazz = Class.forName("android.view.ContextThemeWrapper");
+    public static ColorStateList createSelectColorStateList(int colorNormal, int colorSelected) {
+        int[][] states = new int[][] {
+                new int[] { android.R.attr.state_selected }, // 选中状态
+                new int[] { -android.R.attr.state_selected } // 未选中状态
+        };
 
-            // 取到 mTheme 字段
-            @SuppressLint("SoonBlockedPrivateApi") Field themeField = clazz.getDeclaredField("mTheme");
-            themeField.setAccessible(true);
+        int[] colors = new int[] {
+                colorSelected,
+                colorNormal
+        };
 
-            // 赋值新的 Theme
-            themeField.set(context, newTheme);
+        return new ColorStateList(states, colors);
+    }
+    public static ColorStateList createCheckingColorStateList(@ColorInt int baseColor) {
+        int[][] states = new int[][]{
+                new int[]{android.R.attr.state_checked},   // 选中
+                new int[]{-android.R.attr.state_checked}   // 未选中
+        };
 
-            // 同时把 mThemeResource 置 0，避免被覆盖
-            Field resField = clazz.getDeclaredField("mThemeResource");
-            resField.setAccessible(true);
-            resField.setInt(context, 0);
+        int[] colors = new int[]{
+                baseColor,
+                darkenColor(baseColor,0.6f)
+        };
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+       return new ColorStateList(states, colors);
+    }
+    public static ColorStateList createProgressBarColorStateList(@ColorInt int baseColor) {
+        int[][] states = new int[][]{
+                new int[]{android.R.attr.state_pressed},   // 按下
+                new int[]{-android.R.attr.state_enabled},  // 禁用
+                new int[]{}                                 // 默认
+        };
+
+        int[] colors = new int[]{
+                darkenColor(baseColor,0.9f),
+                darkenColor(baseColor,0.6f),
+                baseColor
+        };
+
+        return new ColorStateList(states, colors);
+    }
+    // 简单调暗函数，用于状态栏颜色
+    private static int darkenColor(int color,float factor) {
+        int r = (int) (Color.red(color) * factor);
+        int g = (int) (Color.green(color) * factor);
+        int b = (int) (Color.blue(color) * factor);
+        return Color.rgb(r, g, b);
+    }
+    private static int lightenColor(int color, float factor) {
+        int r = (int) (Color.red(color) + (255 - Color.red(color)) * factor);
+        int g = (int) (Color.green(color) + (255 - Color.green(color)) * factor);
+        int b = (int) (Color.blue(color) + (255 - Color.blue(color)) * factor);
+        return Color.rgb(r, g, b);
+    }
+    private static int darkenColor(int color) {
+       return darkenColor(color,0.85f);
     }
 }

@@ -33,7 +33,7 @@ import org.eu.hanana.reimu.ottohub_andriod.util.AppVersionUtil;
 
 import java.util.Random;
 
-public class AboutActivity extends AppCompatActivity {
+public class AboutActivity extends BaseActivity {
     protected int clickTimes;
 
     @OptIn(markerClass = UnstableApi.class)
@@ -46,11 +46,11 @@ public class AboutActivity extends AppCompatActivity {
         }
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_about);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        //ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            //Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+           // v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+           // return insets;
+        //});
         ((TextView) findViewById(R.id.tvVersion)).setText(AppVersionUtil.getVersionName(this)+"("+AppVersionUtil.getVersionCode(this)+")");
         ((TextView) findViewById(R.id.tvPackage)).setText(AppVersionUtil.getPackageName(this));
         ((TextView) findViewById(R.id.tvTime)).setText(BuildConfig.BUILD_TIME);

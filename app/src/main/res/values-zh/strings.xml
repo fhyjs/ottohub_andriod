@@ -156,4 +156,9 @@
     <string name="appeal">申诉</string>
     <string name="appeal_content">稿件被退回了!\n提交复审请求?</string>
     <string name="delete_msg">你会永久失去它(真的很久!!)</string>
+    <string name="theme_color">主题色</string>
+    <string name="theme_default">OH蓝</string>
+    <string name="theme_dark">阴间黑</string>
+    <string name="theme_settings">主题设置</string>
+    <string name="theme_sanae">早苗绿</string>
 </resources>

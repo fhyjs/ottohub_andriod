@@ -23,7 +23,7 @@ import org.eu.hanana.reimu.ottohub_andriod.util.UiUtil;
 
 import java.util.Objects;
 
-public class ImageAuditActivity extends AppCompatActivity {
+public class ImageAuditActivity extends BaseActivity {
     public static final String KEY_TYPE="type";
     public static final String KEY_DATA="data";
     public static final String KEY_URL="url";
@@ -35,11 +35,11 @@ public class ImageAuditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_image_audit);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        //ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            //Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+           // v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+           // return insets;
+        //});
         // 启用返回按钮
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:tag="themed|background"
     android:layout_margin="8dp"
     app:cardCornerRadius="8dp"
     app:cardElevation="4dp">
@@ -19,6 +20,7 @@
             android:orientation="vertical">
             <!-- 标题 -->
             <TextView
+                android:tag="themed"
                 android:id="@+id/tvTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -32,6 +34,7 @@
                 android:textSize="20sp"
                 android:textStyle="bold" />
             <TextView
+                android:tag="themed"
                 android:id="@+id/tvContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -66,6 +69,7 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:tag="themed|second"
                         android:id="@+id/tvAuthor"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -74,6 +78,7 @@
                         android:text="作者名称" />
 
                     <TextView
+                        android:tag="themed|second"
                         android:id="@+id/tvViews"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

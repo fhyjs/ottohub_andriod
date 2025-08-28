@@ -36,7 +36,7 @@ import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment;
 
 import java.util.Objects;
 
-public class SearchActivity extends AppCompatActivity {
+public class SearchActivity extends BaseActivity {
     private static final String TAG = "SearchActivity";
     public static final String TYPE_USER = "user";
     public static final String ARG_DATA = VideoListFragment.ARG_DATA;
@@ -57,11 +57,11 @@ public class SearchActivity extends AppCompatActivity {
         }
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_search);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        //ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            //Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+           // v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+           // return insets;
+        //});
         if (getIntent().hasExtra(ARG_TYPE)) {
             type= Objects.requireNonNull(getIntent().getStringExtra(ARG_TYPE));
         }

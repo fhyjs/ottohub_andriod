@@ -36,6 +36,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
                 <Button
+                    android:tag="themed"
                     android:enabled="false"
                     android:layout_marginEnd="4dp"
                     android:id="@+id/btnVideo"
@@ -43,6 +44,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
                 <Button
+                    android:tag="themed"
                     android:enabled="false"
                     android:layout_marginEnd="4dp"
                     android:id="@+id/btnBlog"

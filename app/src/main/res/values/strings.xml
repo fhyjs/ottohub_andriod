@@ -171,4 +171,9 @@
     <string name="appeal_content">Contribution has been reject! \nApply for review?</string>
     <string name="share_content" translatable="false">[%s] - OTTOHUB\n%s</string>
     <string name="delete_msg">You\'ll lose it forever!(It\'s really been a long time)</string>
+    <string name="theme_color">Theme Color</string>
+    <string name="theme_default">Default</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_settings">Theme Settings</string>
+    <string name="theme_sanae">Sanae green</string>
 </resources>

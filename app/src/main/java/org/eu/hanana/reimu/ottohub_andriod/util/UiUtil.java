@@ -1,6 +1,8 @@
 package org.eu.hanana.reimu.ottohub_andriod.util;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.PermissionInfo;
@@ -10,10 +12,12 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 
 import androidx.annotation.Px;
+import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -22,8 +26,70 @@ import org.eu.hanana.reimu.ottohub_andriod.R;
 
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UiUtil {
+    /**
+     * 根据资源名称获取字符串
+     * @param context Context
+     * @param name 资源名，比如 "app_name"
+     * @return 对应翻译的字符串，如果不存在返回 name
+     */
+    public static String getStringByName(Context context, String name) {
+        int resId = context.getResources().getIdentifier(name, "string", context.getPackageName());
+        if (resId != 0) {
+            return context.getString(resId);
+        } else {
+            return name; // 资源不存在
+        }
+    }
+
+    public static Activity getActivityFromView(View view) {
+        Context context = view.getContext();
+        while (context instanceof ContextWrapper) {
+            if (context instanceof Activity) {
+                return (Activity) context;
+            }
+            context = ((ContextWrapper) context).getBaseContext();
+        }
+        return null;
+    }
+    public static void getAllViews(View root, List<View> views) {
+
+        views.add(root);
+
+        if (root instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) root;
+            for (int i = 0; i < group.getChildCount(); i++) {
+                getAllViews(group.getChildAt(i), views);
+            }
+        }
+    }
+    public static List<View> getAllViews(Fragment fragment) {
+        View root = fragment.getView().getRootView();
+        List<View> views = new ArrayList<>();
+        getAllViews(root, views);
+        return views;
+    }
+    public static List<View> getAllViews(View view) {
+        View root = view.getRootView();
+        List<View> views = new ArrayList<>();
+        getAllViews(root, views);
+        return views;
+    }
+    public static List<View> getAllViews(ViewGroup view) {
+        View root = view;
+        List<View> views = new ArrayList<>();
+        getAllViews(root, views);
+        return views;
+    }
+    public static List<View> getAllViews(Activity activity) {
+        View root = activity.getWindow().getDecorView().getRootView();
+        List<View> views = new ArrayList<>();
+        getAllViews(root, views);
+        return views;
+    }
     public static void insertTextAtCursor(EditText et, String text) {
         int start = Math.max(et.getSelectionStart(), 0);
         int end = Math.max(et.getSelectionEnd(), 0);

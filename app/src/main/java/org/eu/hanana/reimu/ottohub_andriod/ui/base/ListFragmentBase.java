@@ -30,7 +30,7 @@ import org.eu.hanana.reimu.ottohub_andriod.util.InfiniteScrollListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ListFragmentBase<T extends CardAdapterBase<E,N>,N extends RecyclerView.ViewHolder,E,M extends ListViewModelBase<E>> extends Fragment {
+public abstract class ListFragmentBase<T extends CardAdapterBase<E,N>,N extends RecyclerView.ViewHolder,E,M extends ListViewModelBase<E>> extends BaseFragment {
     public RecyclerView recyclerView;
     protected T adapter;
     protected final List<E> videoList = new ArrayList<>();

@@ -99,7 +99,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.Locale;
 
-public class BlogActivity extends AppCompatActivity {
+public class BlogActivity extends BaseActivity {
     public static final String KEY_BID="bid";
     public static final String KEY_TYPE= ARG_TYPE;
     public static final String KEY_DATA= ARG_DATA;
@@ -121,11 +121,7 @@ public class BlogActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_blog);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.container), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+
         // 启用返回按钮
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

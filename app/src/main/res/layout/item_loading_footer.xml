@@ -9,6 +9,7 @@
 
     <!-- 进度条 -->
     <ProgressBar
+        android:tag="themed"
         android:id="@+id/progressBar"
         android:layout_width="48dp"
         android:layout_height="48dp"
@@ -16,6 +17,7 @@
 
     <!-- 提示文本 -->
     <TextView
+        android:tag="themed|second"
         android:id="@+id/tvLoading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
