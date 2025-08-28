@@ -7,6 +7,7 @@ import static org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ import org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentCardViewHolder;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.SharedPreferencesKeys;
+import org.eu.hanana.reimu.ottohub_andriod.util.ThemeUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.VibrateUtil;
 
 import java.util.List;
@@ -92,7 +94,7 @@ public class UserListCardAdapter extends CardAdapterBase<UserCard, UserCardViewH
            if (ApiUtil.isLogin()){
                if (Integer.parseInt(ApiUtil.getAppApi().getLoginResult().uid)==object.uid) {
                    holder.info.setText(String.format(Locale.getDefault(),"%s🌟 | %s",ctx.getString(R.string.current),object.info));
-                   holder.itemView.setBackgroundTintList(AppCompatResources.getColorStateList(ctx,R.color.teal_200));
+                   holder.itemView.setBackgroundTintList(ColorStateList.valueOf(ThemeUtil.getTheme(ctx).getColorPrimary()));
                }else {
                    holder.itemView.setBackgroundTintList(null);
                }

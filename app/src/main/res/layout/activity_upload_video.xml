@@ -6,6 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main"
+    android:tag="themed|background"
     tools:context=".activity.UploadVideoActivity"
     android:layout_width="match_parent">
     <LinearLayout
@@ -13,6 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <com.google.android.material.textfield.TextInputLayout
+            android:tag="themed"
             android:id="@+id/til_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -20,6 +22,7 @@
             android:hint="@string/title">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:tag="themed"
                 android:id="@+id/et_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -27,6 +30,7 @@
                 android:maxLines="1" />
         </com.google.android.material.textfield.TextInputLayout>
         <com.google.android.material.textfield.TextInputLayout
+            android:tag="themed"
             android:id="@+id/til_intro"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -34,6 +38,7 @@
             android:hint="@string/describe">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:tag="themed"
                 android:id="@+id/et_intro"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -45,11 +50,13 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:tag="themed"
             android:hint="@string/til_category"
             app:endIconMode="dropdown_menu">
 
             <com.google.android.material.textfield.MaterialAutoCompleteTextView
                 android:id="@+id/actv_category"
+                android:tag="themed"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="none"
@@ -57,6 +64,7 @@
         </com.google.android.material.textfield.TextInputLayout>
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
+            android:tag="themed"
             android:layout_height="wrap_content"
             android:hint="@string/til_type"
             app:endIconMode="dropdown_menu">
@@ -64,6 +72,7 @@
             <com.google.android.material.textfield.MaterialAutoCompleteTextView
                 android:id="@+id/actv_type"
                 android:layout_width="match_parent"
+                android:tag="themed"
                 android:layout_height="wrap_content"
                 android:inputType="none"
                 android:entries="@array/vid_type" />
@@ -82,6 +91,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
                 <com.google.android.material.button.MaterialButton
+                    android:tag="themed"
                     android:id="@+id/btn_tag_base"
                     android:visibility="gone"
                     android:layout_width="wrap_content"
@@ -97,6 +107,7 @@
                 android:id="@+id/til_tag"
                 android:layout_width="0dp"
                 android:layout_weight="3"
+                android:tag="themed"
                 android:layout_height="wrap_content"
                 android:hint="@string/tag">
 
@@ -110,6 +121,7 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_add_tag"
                 android:layout_weight="1"
+                android:tag="themed"
                 android:layout_width="0dp"
                 android:text="@string/add"
                 android:layout_height="wrap_content"/>
@@ -120,6 +132,7 @@
             android:layout_height="3dp"
             android:background="#CCCCCC" />
         <com.google.android.material.button.MaterialButton
+            android:tag="themed"
             android:id="@+id/btn_upload_cover"
             android:text="@string/upload_cover"
             android:layout_width="match_parent"
@@ -135,6 +148,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_upload_video"
             android:text="@string/select_video"
+            android:tag="themed"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
         <View
@@ -144,9 +158,11 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSend"
             android:text="@string/post"
+            android:tag="themed"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
         <TextView
+            android:tag="themed|second"
             android:id="@+id/tv_trouble"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

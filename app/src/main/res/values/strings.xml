@@ -176,4 +176,6 @@
     <string name="theme_dark">Dark</string>
     <string name="theme_settings">Theme Settings</string>
     <string name="theme_sanae">Sanae green</string>
+    <string name="theme_bili">Bili Pink</string>
+    <string name="include">Include</string>
 </resources>

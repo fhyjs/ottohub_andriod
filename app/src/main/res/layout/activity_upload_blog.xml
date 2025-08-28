@@ -2,12 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
+    android:tag="themed|background"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activity.UploadBlogActivity">
     <com.google.android.material.textfield.TextInputLayout
+        android:tag="themed"
         android:id="@+id/til_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -15,6 +17,7 @@
         android:hint="@string/title">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:tag="themed"
             android:id="@+id/et_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -22,6 +25,7 @@
             android:maxLines="1" />
     </com.google.android.material.textfield.TextInputLayout>
     <com.google.android.material.textfield.TextInputLayout
+        android:tag="themed"
         android:id="@+id/til_content"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -30,6 +34,7 @@
         android:hint="@string/content_8888">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:tag="themed"
             android:gravity="top|start"
             android:id="@+id/et_content"
             android:layout_width="match_parent"
@@ -42,6 +47,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <com.google.android.material.textfield.TextInputLayout
+            android:tag="themed"
             android:id="@+id/til_imgurl"
             android:layout_width="0dp"
             android:layout_weight="2"
@@ -49,6 +55,7 @@
             android:hint="@string/image_url">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:tag="themed"
                 android:id="@+id/et_imgurl"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -56,6 +63,7 @@
                 android:maxLines="1" />
         </com.google.android.material.textfield.TextInputLayout>
         <com.google.android.material.button.MaterialButton
+            android:tag="themed"
             android:id="@+id/btn_add"
             android:text="@string/add"
             android:layout_width="0dp"
@@ -67,18 +75,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <com.google.android.material.button.MaterialButton
+            android:tag="themed"
             android:id="@+id/btn_preview"
             android:text="@string/preview"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"/>
         <com.google.android.material.button.MaterialButton
+            android:tag="themed"
             android:id="@+id/btn_save_draft"
             android:text="@string/save_draft"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"/>
         <com.google.android.material.button.MaterialButton
+            android:tag="themed"
             android:id="@+id/btn_localimg"
             android:text="@string/upload_image"
             android:layout_weight="1"
@@ -86,6 +97,7 @@
             android:layout_height="wrap_content"/>
     </LinearLayout>
     <com.google.android.material.button.MaterialButton
+        android:tag="themed"
         android:id="@+id/btnSend"
         android:text="@string/post"
         android:layout_width="match_parent"

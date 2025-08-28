@@ -3,7 +3,8 @@ $(document).ready(function () {
   $.cookie('token', blog.getToken());
   $.cookie('uid', blog.getUid());
   $.cookie('password', blog.getPassWd());
-
+   $("body").css("background-color", intArgbToRgba(blog.getBgColor()));
+   $("body").css("color", intArgbToRgba(blog.getTextColor()));
 
   var intervalId = setInterval(function () {
     var data = blog.getData();
@@ -15,7 +16,17 @@ $(document).ready(function () {
     }
   }, 500);
 });
+function intArgbToRgba(argbInt) {
+    // 确保是 32 位整数
+    argbInt = argbInt >>> 0; // 转无符号整数
 
+    let a = ((argbInt >> 24) & 0xFF) / 255; // alpha 0~1
+    let r = (argbInt >> 16) & 0xFF;
+    let g = (argbInt >> 8) & 0xFF;
+    let b = argbInt & 0xFF;
+
+    return `rgba(${r}, ${g}, ${b}, ${a})`;
+}
 function loadBlog() {
   var content = null;
   if (typeof marked === "undefined") {

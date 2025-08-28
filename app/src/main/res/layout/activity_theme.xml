@@ -16,7 +16,12 @@
             android:id="@+id/ll_theme_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
+            <Button
+                android:visibility="gone"
+                android:text="@string/include"
+                android:id="@+id/btn_include"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

@@ -35,7 +35,12 @@ public class ThemeActivity extends BaseActivity {
         }
         setTitle(R.string.theme_settings);
         LinearLayout tl = findViewById(R.id.ll_theme_list);
-        var tList = new ArrayList<>(List.of(ThemeData.DEFAULT, ThemeData.DARK,ThemeData.SANAE));
+        var tList = new ArrayList<>(List.of(
+                ThemeData.DEFAULT,
+                ThemeData.DARK,
+                ThemeData.SANAE,
+                ThemeData.BILI
+                ));
         for (ThemeData themeData : tList) {
 
             View inflate = getLayoutInflater().inflate(R.layout.item_theme_card,tl,false);
@@ -57,6 +62,9 @@ public class ThemeActivity extends BaseActivity {
                 }
             });
         }
+        findViewById(R.id.btn_include).setOnClickListener(v -> {
+
+        });
     }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {

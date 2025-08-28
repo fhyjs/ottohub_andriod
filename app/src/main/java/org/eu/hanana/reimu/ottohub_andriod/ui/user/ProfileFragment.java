@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.ColorUtils;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -261,6 +262,7 @@ public class ProfileFragment extends BaseFragment {
             intent.putExtras(data);
             startActivity(intent);
         });
+        var colorMask = ThemeUtil.getTheme(getContext()).getColorBackground();
         //将封面作为卡片背景
         Glide.with(this)
                 .load(isSelf()?MyApp.getInstance().getOttohubApi().getLoginResult().cover_url:userDataResult.cover_url)
@@ -269,7 +271,7 @@ public class ProfileFragment extends BaseFragment {
                         new HardwareToSoftwareTransformation(),
                         new BlurTransformation(getContext(), 10),
                         new HardwareToSoftwareTransformation(),
-                        new ColorOverlayTransformation(0x6cffffff)
+                        new ColorOverlayTransformation(ColorUtils.setAlphaComponent(colorMask,0x6c))
                 )))
                 .into(new CustomTarget<Drawable>() {
                     @Override

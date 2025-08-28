@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
+    android:tag="themed|background"
     tools:context=".ui.audit.AuditVideoFragment">
 
     <com.google.android.material.textview.MaterialTextView

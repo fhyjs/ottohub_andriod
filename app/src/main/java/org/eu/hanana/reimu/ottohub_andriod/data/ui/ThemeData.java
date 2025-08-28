@@ -11,6 +11,7 @@ public class ThemeData {
     public static final ThemeData DEFAULT = new ThemeData("default",0xFF81D4FA,0xFF018786,0xFF0a0a0b,0xFF666666,0xFFfefefe,0xFFf3edf7);
     public static final ThemeData DARK = new ThemeData("dark",0xFFff9800,0xFFb56a02,0xFFfdfdfd,0xFF767676,0xFF0a0a0a,0xFF212121);
     public static final ThemeData SANAE = new ThemeData("sanae",0xFF8bc24b,0xFF56782e,0xFF0a0a0b,0xFF666666,0xFFd4dec8,0xFFa8de8c);
+    public static final ThemeData BILI = new ThemeData("bili",0xFFfb7299,0xFFa34a63,0xFF0d090a,0xFF666666,0xFFfff0f4,0xFFff94b2);
     private String name;
     @ColorInt
     private int colorPrimary;

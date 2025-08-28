@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
+    android:tag="themed|background"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
     app:cardCornerRadius="8dp"
@@ -13,6 +14,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
         <TextView
+            android:tag="themed"
             android:id="@+id/tvContent"
             android:text="CONTENT"
             android:textSize="20sp"

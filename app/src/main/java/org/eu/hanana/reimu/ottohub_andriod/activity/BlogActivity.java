@@ -94,6 +94,7 @@ import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.CustomWebView;
 import org.eu.hanana.reimu.ottohub_andriod.util.SharedPreferencesKeys;
+import org.eu.hanana.reimu.ottohub_andriod.util.ThemeUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -410,6 +411,14 @@ public class BlogActivity extends BaseActivity {
         @JavascriptInterface
         public void showToast(String message) {
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+        }
+        @JavascriptInterface
+        public int getBgColor() {
+            return ThemeUtil.getTheme(BlogActivity.this).getColorBackground();
+        }
+        @JavascriptInterface
+        public int getTextColor() {
+            return ThemeUtil.getTheme(BlogActivity.this).getColorOnPrimary();
         }
         @JavascriptInterface
         public String getToken() {

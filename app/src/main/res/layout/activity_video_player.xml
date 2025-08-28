@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:keepScreenOn="true"
+    android:tag="themed|background"
     android:fillViewport="true"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -49,6 +50,7 @@
                 android:orientation="horizontal">
 
                 <Button
+                    android:tag="themed"
                     android:layout_marginEnd="1dp"
                     android:id="@+id/video_desc_btn"
                     android:layout_width="wrap_content"
@@ -57,6 +59,7 @@
                     android:text="@string/describe" />
 
                 <Button
+                    android:tag="themed"
                     android:layout_marginEnd="1dp"
                     android:id="@+id/video_comment_btn"
                     android:layout_width="wrap_content"
@@ -64,6 +67,7 @@
                     android:layout_weight="1"
                     android:text="@string/comment" />
                 <com.google.android.material.button.MaterialButton
+                    android:tag="themed"
                     android:id="@+id/btnDanmaku"
                     android:layout_marginEnd="4dp"
                     app:icon="@drawable/chat_24px"
@@ -72,6 +76,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
                 <com.google.android.material.button.MaterialButton
+                    android:tag="themed"
                     android:id="@+id/btnSend"
                     app:icon="@drawable/send_24dp"
                     android:paddingEnd="11dp"

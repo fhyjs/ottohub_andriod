@@ -8,6 +8,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -42,8 +43,10 @@ import org.eu.hanana.reimu.ottohub_andriod.activity.ProfileActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.SearchActivity;
 import org.eu.hanana.reimu.ottohub_andriod.service.CopyService;
 import org.eu.hanana.reimu.ottohub_andriod.service.DownloadVideoForegroundService;
+import org.eu.hanana.reimu.ottohub_andriod.ui.base.BaseFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
+import org.eu.hanana.reimu.ottohub_andriod.util.ThemeUtil;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -53,7 +56,7 @@ import java.util.Locale;
  * Use the {@link VideoDescribeFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class VideoDescribeFragment extends androidx.fragment.app.Fragment {
+public class VideoDescribeFragment extends BaseFragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -89,6 +92,7 @@ public class VideoDescribeFragment extends androidx.fragment.app.Fragment {
         ((TextView) view.findViewById(R.id.video_desc_text)).setText(vData.intro);
         ((TextView) view.findViewById(R.id.username)).setText(vData.username);
         ((TextView) view.findViewById(R.id.tvInfo)).setText(vData.userintro);
+        view.findViewById(R.id.clAuthorInfo).setBackgroundColor(Color.TRANSPARENT);
         TextView vidInfo = view.findViewById(R.id.tvIntro);
         vidInfo.setText(getString(R.string.video_card_info_short,vData.view_count,vData.like_count,vData.favorite_count));
         TextView vidTime = view.findViewById(R.id.tvDetail);
@@ -107,7 +111,6 @@ public class VideoDescribeFragment extends androidx.fragment.app.Fragment {
             intent.putExtras(bundle);
             startActivity(intent);
         });
-
         // 默认加载第一个 Fragment
         getChildFragmentManager()
                 .beginTransaction()
@@ -168,6 +171,7 @@ public class VideoDescribeFragment extends androidx.fragment.app.Fragment {
         Arrays.stream(vData.tag.split("#")).skip(1).forEach(tag -> {
            var btn = new MaterialButton(getContext());
            btn.setText(tag);
+           btn.setTag("themed");
             // 添加间距
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -186,6 +190,7 @@ public class VideoDescribeFragment extends androidx.fragment.app.Fragment {
             });
            tagsArea.addView(btn);
         });
+        ThemeUtil.apply(tagsArea);
         view.findViewById(R.id.btn_download).setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), CopyService.class);
             intent.putExtra("uri", Uri.parse("content://org.eu.hanana.reimu.ottohub_andriod.provider.download/video?vid="+vData.vid));

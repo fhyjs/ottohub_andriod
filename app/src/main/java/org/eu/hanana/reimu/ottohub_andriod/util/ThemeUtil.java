@@ -6,12 +6,14 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -24,13 +26,16 @@ import androidx.appcompat.view.menu.ActionMenuItemView;
 import androidx.appcompat.widget.ActionBarContextView;
 import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.ColorUtils;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
 
 import org.eu.hanana.reimu.ottohub_andriod.activity.BaseActivity;
@@ -83,10 +88,15 @@ public class ThemeUtil {
         var views = UiUtil.getAllViews(fragment);
         apply(views,userColor);
     }
-    public static void apply(View view){
+    public static void apply(View view) {
         var userColor = getTheme(view.getContext());
-        var views = UiUtil.getAllViews(view);
-        apply(views,userColor);
+        List<View> views = null;
+        if (view instanceof ViewGroup) {
+            views = UiUtil.getAllViews(((ViewGroup) view));
+        }else {
+            views = UiUtil.getAllViews(view);
+        }
+        apply(views, userColor);
     }
     public static void apply(List<View> views, ThemeData userColor){
         for (View view : views) {
@@ -136,11 +146,52 @@ public class ThemeUtil {
             }
             if (view instanceof TabLayout){
                 var item = ((TabLayout) view);
-                item.setTabIconTint(createSelectColorStateList(Color.GRAY,userColor.getColorPrimary()));
+                item.setBackgroundColor(userColor.getColorBackground());
+                item.setSelectedTabIndicatorColor(userColor.getColorPrimary());
+                item.setTabTextColors(Color.GRAY,userColor.getColorPrimary());
+                item.setTabRippleColor(createFocusStateList(userColor.getColorPrimary()));
             }
             if (view instanceof ImageView){
                 var item = ((ImageView) view);
                 item.setImageTintList(ColorStateList.valueOf(userColor.getColorOnPrimary()));
+            }
+            if (view instanceof EditText){
+                var item = ((EditText) view);
+                item.setTextColor(userColor.getColorOnPrimary());
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    Drawable textCursorDrawable = item.getTextCursorDrawable();
+                    if (textCursorDrawable != null) {
+                        textCursorDrawable.setTint(userColor.getColorPrimary());
+                    }
+                }
+
+            }
+            if (view instanceof MaterialButton){
+                var item = ((MaterialButton) view);
+                item.setIconTint(createIconTintList(userColor.getColorOnPrimary()));
+            }
+            if (view instanceof TextInputLayout){
+                var item = ((TextInputLayout) view);
+                item.setHintTextColor(new ColorStateList(
+                        new int[][]{
+                                new int[]{android.R.attr.state_focused}, // 获得焦点
+                                new int[]{}                              // 默认
+                        },
+                        new int[]{
+                                userColor.getColorPrimary(), // 聚焦时主题色
+                                darkenColor(userColor.getColorOnPrimary()) // 默认较浅
+                        }
+                ));
+                item.setBoxStrokeColorStateList(new ColorStateList(
+                        new int[][]{
+                                new int[]{android.R.attr.state_focused}, // 获得焦点
+                                new int[]{}                              // 默认
+                        },
+                        new int[]{
+                                userColor.getColorPrimary(), // 聚焦时主题色
+                                darkenColor(userColor.getColorOnPrimary()) // 默认较浅
+                        }
+                ));
             }
             if (String.valueOf(view.getTag()).contains("background")){
                 view.setBackgroundColor(userColor.getColorBackground());
@@ -154,6 +205,40 @@ public class ThemeUtil {
         int g = 255 - Color.green(color);
         int b = 255 - Color.blue(color);
         return Color.argb(a, r, g, b);
+    }
+    public static ColorStateList createIconTintList(int baseColor) {
+        return new ColorStateList(
+                new int[][]{
+                        new int[]{android.R.attr.state_pressed}, // 按下
+                        new int[]{android.R.attr.state_focused}, // 获得焦点
+                        new int[]{}                              // 默认
+                },
+                new int[]{
+                        ColorUtils.setAlphaComponent(baseColor, 0xFF),  // 按下：完全不透明
+                        ColorUtils.setAlphaComponent(baseColor, 0xAA),  // 焦点：稍微浅一点
+                        ColorUtils.setAlphaComponent(baseColor, 0x88)   // 默认：更淡
+                }
+        );
+    }
+    public static ColorStateList createFocusStateList(int rippleColor){
+        // 按下
+        // 获得焦点
+        // 默认
+        // 按下半透明
+        // 焦点更浅
+        // 默认透明
+        return new ColorStateList(
+                new int[][]{
+                        new int[]{android.R.attr.state_pressed}, // 按下
+                        new int[]{android.R.attr.state_focused}, // 获得焦点
+                        new int[]{}                              // 默认
+                },
+                new int[]{
+                        ColorUtils.setAlphaComponent(rippleColor, 80),  // 按下半透明
+                        ColorUtils.setAlphaComponent(rippleColor, 60),  // 焦点更浅
+                        ColorUtils.setAlphaComponent(rippleColor, 0)    // 默认透明
+                }
+        );
     }
     public static ColorStateList createSelectColorStateList(int colorNormal, int colorSelected) {
         int[][] states = new int[][] {

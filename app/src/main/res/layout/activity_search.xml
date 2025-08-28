@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
+    android:tag="themed|background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activity.SearchActivity">
@@ -16,6 +17,7 @@
         android:elevation="4dp" >
 
         <EditText
+            android:tag="themed"
             android:imeOptions="actionSearch"
             android:id="@+id/searchContent"
             android:layout_width="0dp"
@@ -30,6 +32,7 @@
             android:paddingVertical="12dp"/>
 
         <com.google.android.material.button.MaterialButton
+            android:tag="themed"
             android:id="@+id/searchButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -48,6 +51,7 @@
 
 
     <com.google.android.material.tabs.TabLayout
+        android:tag="themed"
         android:id="@+id/tlSearchType"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

@@ -172,6 +172,7 @@ public class UploadVideoActivity extends BaseActivity {
             if (tag.isEmpty()) return;
             tagEt.setText("");
             Button tagBtn = (Button) UiUtil.clone(findViewById(R.id.btn_tag_base),new MaterialButton(this));
+            tagBtn.setTag("themed");
             ((LinearLayout) findViewById(R.id.ll_tag)).addView(tagBtn);
             tagBtn.setText("#"+tag);
             tagBtn.setOnClickListener(v1 -> ((LinearLayout) findViewById(R.id.ll_tag)).removeView(v1));

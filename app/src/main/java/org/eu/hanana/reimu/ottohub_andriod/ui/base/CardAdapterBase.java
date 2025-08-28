@@ -83,7 +83,9 @@ public abstract class CardAdapterBase<E,T extends RecyclerView.ViewHolder> exten
                     .inflate(R.layout.item_loading_footer, parent, false);
             return new EmptyViewHolder(view);
         } else {
-            return createViewHolder(parent);
+            T viewHolder = createViewHolder(parent);
+            ThemeUtil.apply(viewHolder.itemView);
+            return viewHolder;
         }
     }
 
