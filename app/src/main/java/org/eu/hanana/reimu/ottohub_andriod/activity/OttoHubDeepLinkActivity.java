@@ -48,9 +48,11 @@ public class OttoHubDeepLinkActivity extends AppCompatActivity {
             if ("open".equals(uri.getHost())){
                 target = new Intent(this, MainActivity.class);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-                    if (BuildConfig.APPLICATION_ID.equals(getReferrer().getHost())){
+                    if (getReferrer()!=null&&BuildConfig.APPLICATION_ID.equals(getReferrer().getHost())){
                         Toast.makeText(this, "Oh!Here is the OTTOHUB!", Toast.LENGTH_SHORT).show();
                         target=null;
+                        finish();
+                        return;
                     }
                 }
             } else if ("blog".equals(uri.getHost())) {
