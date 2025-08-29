@@ -34,7 +34,7 @@ android {
         multiDexEnabled true
         targetSdk 36
         versionCode 280
-        versionName "2.8.0_Code.Yuyuko"
+        versionName "2.8.0_Code.Yukari"
         resConfigs "en", "zh" // Example: Support English and Spanish
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "BUILD_TIME", "\"${new Date().format("yyyy-MM-dd HH:mm:ss")}\""
