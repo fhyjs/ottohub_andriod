@@ -4,10 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:orientation="vertical"
+    android:tag="themed|background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activity.ContentManageActivity">
     <com.google.android.material.tabs.TabLayout
+        android:tag="themed"
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

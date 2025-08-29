@@ -17,7 +17,7 @@ public class CommentCardViewHolder extends RecyclerView.ViewHolder {
         username=itemView.findViewById(R.id.tvAuthor);
         info=itemView.findViewById(R.id.tvInfo);
         avatar=itemView.findViewById(R.id.ivAvatar);
-        content=itemView.findViewById(R.id.tvContent);
+        llContent=itemView.findViewById(R.id.ll_content);
         reply=itemView.findViewById(R.id.btn_reply);
         report=itemView.findViewById(R.id.btn_report);
         userinfo=itemView.findViewById(R.id.ll_userinfo);
@@ -29,7 +29,7 @@ public class CommentCardViewHolder extends RecyclerView.ViewHolder {
     public final TextView username;
     public final TextView info;
     public final ImageView avatar;
-    public final TextView content;
+    public final LinearLayout llContent;
     public final Button reply;
     public final Button report;
     public final Button delete;

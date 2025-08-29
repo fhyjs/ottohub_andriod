@@ -44,14 +44,13 @@
                     android:text="INFO"/>
             </LinearLayout>
         </LinearLayout>
-        <TextView
-            android:tag="themed"
-            android:id="@+id/tvContent"
-            android:text="CONTENT"
-            android:textSize="20sp"
-            android:textColor="@color/black"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+        <LinearLayout
+            android:orientation="vertical"
+            android:id="@+id/ll_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </LinearLayout>
         <LinearLayout
             android:layout_gravity="end"
             android:orientation="horizontal"

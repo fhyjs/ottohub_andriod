@@ -13,10 +13,12 @@ import static org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity.TYPE_AUD
 import static org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity.TYPE_VIEW;
 
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -43,7 +45,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.PlaybackException;
 import androidx.media3.common.PlaybackParameters;
@@ -165,6 +169,17 @@ public class VideoPlayerActivity extends BaseActivity {
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                         //| View.SYSTEM_UI_FLAG_LAYOUT_STABLE
         );
+        // 获取控制器
+        WindowInsetsControllerCompat controller =
+                WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+
+        // 隐藏状态栏和导航栏
+        controller.hide(WindowInsetsCompat.Type.systemBars());
+
+        // 设置行为：允许手势临时呼出系统栏，几秒后自动隐藏
+        controller.setSystemBarsBehavior(
+                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        );
     }
     protected boolean lastPlayStatus;
     @Override
@@ -281,9 +296,6 @@ public class VideoPlayerActivity extends BaseActivity {
                         .commit();
             });
         }
-    }
-
-    private void preinit() {
         runOnUiThread(()->{
             Point size = new Point();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -305,11 +317,26 @@ public class VideoPlayerActivity extends BaseActivity {
                 findViewById(R.id.horizontalScrollView).setVisibility(GONE);
                 View fullscreenView = findViewById(R.id.video_view_wrapper);
                 ViewGroup.LayoutParams params = fullscreenView.getLayoutParams();
-                params.width = size.x;
-                params.height = size.y-getSupportActionBar().getHeight();
+                Rect rect = new Rect();
+                getWindow().getDecorView().getWindowVisibleDisplayFrame(rect);
+                int visibleWidth = rect.width();
+                int visibleHeight = rect.height();
+                params.width = visibleWidth;
+                params.height = visibleHeight;
                 fullscreenView.setLayoutParams(params);
+                if (getSupportActionBar() != null) {
+                    getSupportActionBar().hide();
+                }
+            }else {
+                if (getSupportActionBar() != null) {
+                    getSupportActionBar().show();
+                }
             }
         });
+    }
+
+    private void preinit() {
+
     }
 
     public void  destroy(){
@@ -331,7 +358,15 @@ public class VideoPlayerActivity extends BaseActivity {
         // 创建媒体播放器
         mediaPlayer = new ExoPlayer.Builder(this).build();
         runOnUiThread(()->{
+            WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
             videoSurface.setPlayer(mediaPlayer);
+            videoSurface.setFullscreenButtonState(getResources().getConfiguration().orientation== Configuration.ORIENTATION_LANDSCAPE);
+            videoSurface.setFullscreenButtonClickListener(isFullscreen -> {
+                if (isFullscreen){
+                    hideNavigationBar();
+                }
+                setRequestedOrientation(isFullscreen?ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE:ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            });
         });
 
         mediaPlayer.addListener(new Player.Listener() {

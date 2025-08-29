@@ -9,6 +9,7 @@ import static org.eu.hanana.reimu.ottohub_andriod.ui.audit.AuditAdapter.ARG_RESU
 import static org.eu.hanana.reimu.ottohub_andriod.ui.audit.AuditAdapter.ARG_TARGET;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.audit.AuditFragment.TYPE_BLOG;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.message.MessageListFragment.ARG_TYPE;
+import static org.eu.hanana.reimu.ottohub_andriod.util.UiUtil.shareText;
 
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
@@ -92,6 +93,7 @@ import org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase;
 import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
+import org.eu.hanana.reimu.ottohub_andriod.util.ClipboardUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.CustomWebView;
 import org.eu.hanana.reimu.ottohub_andriod.util.SharedPreferencesKeys;
 import org.eu.hanana.reimu.ottohub_andriod.util.ThemeUtil;
@@ -192,6 +194,11 @@ public class BlogActivity extends BaseActivity {
             bundle.putInt(ProfileActivity.KEY_UID,blogResult.uid);
             intent.putExtras(bundle);
             startActivity(intent);
+        });
+        findViewById(R.id.btn_share).setOnClickListener(v -> {
+            var txt = v.getContext().getString(R.string.share_content,blogResult.title,"https://ottohub.cn/b/"+bid);
+            ClipboardUtil.copyToClipboard(v.getContext(),txt);
+            shareText(v.getContext(),txt);
         });
         findViewById(R.id.btn_like).setOnClickListener(v -> {
             if (MyApp.getInstance().getOttohubApi().getLoginToken()==null) {

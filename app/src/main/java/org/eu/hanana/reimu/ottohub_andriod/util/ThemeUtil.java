@@ -26,7 +26,10 @@ import androidx.appcompat.view.menu.ActionMenuItemView;
 import androidx.appcompat.widget.ActionBarContextView;
 import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 import androidx.core.graphics.ColorUtils;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
@@ -34,6 +37,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
@@ -66,9 +70,6 @@ public class ThemeUtil {
     }
     public static void onCreate(AppCompatActivity activity) {
         var t = getTheme(activity);
-        // 应用颜色到状态栏/导航栏（API 21+）
-        activity.getWindow().setStatusBarColor(t.getColorActionBar());
-        activity.getWindow().setNavigationBarColor(t.getColorActionBar());
     }
     public static void onPostCreate(AppCompatActivity activity) {
         var userColor = getTheme(activity);
@@ -81,6 +82,10 @@ public class ThemeUtil {
             var ba=(BaseActivity) activity;
             views.add(ba.toolbar);
         }
+        WindowCompat.setDecorFitsSystemWindows(activity.getWindow(), true);
+        // 设置系统栏颜色
+        activity.getWindow().setStatusBarColor(userColor.getColorActionBar());
+        activity.getWindow().setNavigationBarColor(userColor.getColorActionBar());
         apply(views,userColor);
     }
     public static void onViewCreated(Fragment fragment) {
@@ -103,8 +108,10 @@ public class ThemeUtil {
             if (!String.valueOf(view.getTag()).contains("themed")) continue;
             if (view instanceof Button){
                 var button = (Button) view;
-                button.setBackgroundTintList(createProgressBarColorStateList(userColor.getColorPrimary()));
-                button.setTextColor(createProgressBarColorStateList(userColor.getColorOnPrimary()));
+                if (!String.valueOf(view.getTag()).contains("icon")) {
+                    button.setBackgroundTintList(createProgressBarColorStateList(userColor.getColorPrimary()));
+                    button.setTextColor(createProgressBarColorStateList(userColor.getColorOnPrimary()));
+                }
             }
             if (view instanceof ProgressBar){
                 var progressBar = (ProgressBar) view;
@@ -158,6 +165,11 @@ public class ThemeUtil {
             if (view instanceof EditText){
                 var item = ((EditText) view);
                 item.setTextColor(userColor.getColorOnPrimary());
+                item.setHintTextColor(userColor.getColorOnPrimarySecond());
+            }
+            if (view instanceof EditText){
+                var item = ((EditText) view);
+                item.setTextColor(userColor.getColorOnPrimary());
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     Drawable textCursorDrawable = item.getTextCursorDrawable();
                     if (textCursorDrawable != null) {
@@ -168,7 +180,12 @@ public class ThemeUtil {
             }
             if (view instanceof MaterialButton){
                 var item = ((MaterialButton) view);
-                item.setIconTint(createIconTintList(userColor.getColorOnPrimary()));
+                if (!String.valueOf(view.getTag()).contains("icon")) {
+                    item.setIconTint(createIconTintList(userColor.getColorOnPrimary()));
+                }else {
+                    item.setIconTint(ColorStateList.valueOf(userColor.getColorPrimary()));
+                    item.setTextColor(userColor.getColorPrimary());
+                }
             }
             if (view instanceof TextInputLayout){
                 var item = ((TextInputLayout) view);
@@ -194,7 +211,13 @@ public class ThemeUtil {
                 ));
             }
             if (String.valueOf(view.getTag()).contains("background")){
-                view.setBackgroundColor(userColor.getColorBackground());
+                if (view instanceof CardView){
+                    ((CardView) view).setCardBackgroundColor(userColor.getColorBackground());
+                }else if(view.getBackground()==null){
+                    view.setBackgroundColor(userColor.getColorBackground());
+                }else {
+                    view.getBackground().setTint(userColor.getColorBackground());
+                }
             }
         }
     }

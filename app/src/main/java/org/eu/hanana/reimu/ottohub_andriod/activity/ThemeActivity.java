@@ -39,7 +39,9 @@ public class ThemeActivity extends BaseActivity {
                 ThemeData.DEFAULT,
                 ThemeData.DARK,
                 ThemeData.SANAE,
-                ThemeData.BILI
+                ThemeData.BILI,
+                ThemeData.PURPLE_MD2,
+                ThemeData.CHINA_RED
                 ));
         for (ThemeData themeData : tList) {
 

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.PermissionInfo;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Parcel;
@@ -30,6 +31,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UiUtil {
+    public static String toCssColor(int color){
+        int a = Color.alpha(color);
+        int r = Color.red(color);
+        int g = Color.green(color);
+        int b = Color.blue(color);
+
+        return "rgba(" + r + "," + g + "," + b + "," + (a / 255f) + ")";
+    }
+    public static boolean containsHtml(String text) {
+        if (text == null) return false;
+        String pattern = "(?i).*<(html|head|body|div|span|p|br|a|img|ul|li|table|tr|td|h[1-6]|b|i|u|strong|em|script|style).*?>.*";
+        return text.matches(pattern);
+    }
     /**
      * 根据资源名称获取字符串
      * @param context Context

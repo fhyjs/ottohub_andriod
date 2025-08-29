@@ -2,6 +2,7 @@ package org.eu.hanana.reimu.ottohub_andriod.ui.video;
 
 import static org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase.ARG_TYPE;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase.TYPE_VIDEO;
+import static org.eu.hanana.reimu.ottohub_andriod.util.UiUtil.shareText;
 
 import android.app.Fragment;
 import android.content.ComponentName;
@@ -46,6 +47,7 @@ import org.eu.hanana.reimu.ottohub_andriod.service.DownloadVideoForegroundServic
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.BaseFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
+import org.eu.hanana.reimu.ottohub_andriod.util.ClipboardUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ThemeUtil;
 
 import java.util.Arrays;
@@ -191,6 +193,11 @@ public class VideoDescribeFragment extends BaseFragment {
            tagsArea.addView(btn);
         });
         ThemeUtil.apply(tagsArea);
+        view.findViewById(R.id.btn_share).setOnClickListener(v -> {
+            var txt = v.getContext().getString(R.string.share_content,vData.title,"https://ottohub.cn/v/"+vData.vid);
+            ClipboardUtil.copyToClipboard(v.getContext(),txt);
+            shareText(v.getContext(),txt);
+        });
         view.findViewById(R.id.btn_download).setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), CopyService.class);
             intent.putExtra("uri", Uri.parse("content://org.eu.hanana.reimu.ottohub_andriod.provider.download/video?vid="+vData.vid));

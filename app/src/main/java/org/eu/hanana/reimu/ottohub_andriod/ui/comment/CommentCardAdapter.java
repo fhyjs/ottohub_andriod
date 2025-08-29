@@ -7,15 +7,23 @@ import static androidx.core.content.ContextCompat.startActivity;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase.ARG_PARENT_DATA;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase.TYPE_BLOG;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase.TYPE_VIDEO;
+import static org.eu.hanana.reimu.ottohub_andriod.util.UiUtil.toCssColor;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -32,6 +40,8 @@ import org.eu.hanana.reimu.ottohub_andriod.ui.base.CardAdapterBase;
 import org.eu.hanana.reimu.ottohub_andriod.ui.blog.BlogListFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
+import org.eu.hanana.reimu.ottohub_andriod.util.ThemeUtil;
+import org.eu.hanana.reimu.ottohub_andriod.util.UiUtil;
 
 import java.util.List;
 
@@ -56,7 +66,8 @@ public class CommentCardAdapter extends CardAdapterBase<CommentCard, CommentCard
     public void makeCardUi(final CommentCardViewHolder holder,final CommentCard object) {
         var ctx = holder.avatar.getContext();
         holder.username.setText(object.username);
-        holder.content.setText(object.content);
+        //holder.content.setText(object.content);
+        holder.llContent.removeAllViews();
         holder.info.setText(object.info);
         Glide.with(holder.avatar.getContext())
                 .load(object.avatarUrl)
@@ -171,5 +182,82 @@ public class CommentCardAdapter extends CardAdapterBase<CommentCard, CommentCard
                 thread.start();
             },null).show();
         });
+        if (UiUtil.containsHtml(object.content)){
+            var view = getContentWv(ctx);
+            String html = "<html><head><style>" +
+                    "body { background-color:" + toCssColor(ThemeUtil.getTheme(ctx).getColorBackground()) + "; color:" + toCssColor(ThemeUtil.getTheme(ctx).getColorOnPrimary()) + "; }" +
+                    "</style></head><body>" +
+                    object.content +
+                    "</body></html>";
+            view.loadDataWithBaseURL("https://m.ottohub.com/",html,"text/html","utf-8",null);
+            holder.llContent.addView(view);
+        }else {
+            TextView contentTv = getContentTv(ctx);
+            contentTv.setText(object.content);
+            holder.llContent.addView(contentTv);
+        }
+    }
+    protected TextView getContentTv(Context context){
+        TextView tvContent = new TextView(context);
+
+// 设置 tag
+        tvContent.setTag("themed");
+
+// 设置 id（需要注意 id 必须是资源里已有的）
+        tvContent.setId(R.id.tvContent);
+
+// 设置文字
+        tvContent.setText("CONTENT");
+
+// 设置文字大小（sp 单位）
+        tvContent.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+
+// 设置文字颜色
+        tvContent.setTextColor(ContextCompat.getColor(context, R.color.black));
+
+// 设置布局参数
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        tvContent.setLayoutParams(lp);
+        return tvContent;
+    }
+    protected WebView getContentWv(Context context){
+        WebView webView = new WebView(context);
+
+// 设置 tag
+        webView.setTag("themed");
+
+// 设置 id（webView id 必须是资源里已有的）
+        webView.setId(R.id.tvContent);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        // ✅ 启用 JS
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.setLayoutParams(lp);
+        webView.setVerticalScrollBarEnabled(false);
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                // 用 JS 获取网页内容高度
+                view.post(()->view.evaluateJavascript(
+                        "(function() { return document.body.scrollHeight; })();",
+                        value -> {
+                            try {
+                                int contentHeight = (int) Float.parseFloat(value);
+                                ViewGroup.LayoutParams params = view.getLayoutParams();
+                                params.height = (int) (contentHeight * view.getScale()); // 转换成像素
+                                view.setLayoutParams(params);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                ));
+            }
+        });
+        return webView;
     }
 }

@@ -122,17 +122,20 @@
                 android:visibility="gone">
 
                 <com.google.android.material.button.MaterialButton
+                    android:tag="themed"
                     android:id="@+id/btn_audit_status"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
                 <com.google.android.material.button.MaterialButton
+                    android:tag="themed"
                     android:id="@+id/btn_share"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/share" />
 
                 <com.google.android.material.button.MaterialButton
+                    android:tag="themed"
                     android:id="@+id/btn_delete"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

@@ -21,6 +21,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
             <com.google.android.material.button.MaterialButton
+                android:tag="themed|icon"
                 android:id="@+id/btn_like"
                 style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
                 android:text="@string/like"
@@ -31,6 +32,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
             <com.google.android.material.button.MaterialButton
+                android:tag="themed|icon"
                 android:id="@+id/btn_favourite"
                 style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
                 android:text="@string/favourite"
@@ -41,6 +43,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
             <com.google.android.material.button.MaterialButton
+                android:tag="themed|icon"
                 android:id="@+id/btn_report"
                 style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
                 android:text="@string/report"
@@ -50,8 +53,20 @@
                 android:textSize="20sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
+                <com.google.android.material.button.MaterialButton
+                    android:tag="themed|icon"
+                    android:id="@+id/btn_share"
+                    style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+                    android:text="@string/share"
+                    app:icon="@drawable/send_24dp"
+                    app:iconGravity="textTop"
+                    app:iconPadding="2dp"
+                    android:textSize="20sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_download"
+                android:tag="themed|icon"
                 style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
                 android:text="@string/download"
                 app:icon="@drawable/download_2_24dp"
