@@ -27,7 +27,7 @@ public class CommentViewModel extends ListViewModelBase<CommentCard> {
 
         var result = new ArrayList<CommentCard>();
         ApiUtil.throwApiError(commentListResult);
-        commentListResult.comment_list.stream().map(comment -> new CommentCard(comment.getCid(),comment.getParentCid(),comment.username,comment.avatar_url,comment.time,comment.content).withRaw(comment)).forEach(result::add);
+        commentListResult.comment_list.stream().map(comment -> new CommentCard(comment.getCid(),comment.getParentCid(),comment.username,comment.avatar_url,comment.time+" (obc"+comment.getCid()+")",comment.content).withRaw(comment)).forEach(result::add);
 
         if (result.isEmpty()){
             commentFrag.hasMoreData=false;

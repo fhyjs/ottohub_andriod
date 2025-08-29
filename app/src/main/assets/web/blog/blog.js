@@ -51,7 +51,7 @@ function loadBlog() {
 
   $("#content").html(content);
   $("#title").html(blog_data.title);
-  $("#subtitle").html(blog_data.time);
+  $("#subtitle").html(blog_data.time+" (ob"+blog_data.bid+")");
   matchLink();
   $('a').attr('target', '_blank');
 

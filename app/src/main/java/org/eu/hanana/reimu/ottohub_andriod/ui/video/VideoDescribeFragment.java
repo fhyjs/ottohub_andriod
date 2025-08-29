@@ -4,6 +4,7 @@ import static org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase
 import static org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase.TYPE_VIDEO;
 import static org.eu.hanana.reimu.ottohub_andriod.util.UiUtil.shareText;
 
+import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.ComponentName;
 import android.content.Context;
@@ -86,6 +87,7 @@ public class VideoDescribeFragment extends BaseFragment {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -96,7 +98,7 @@ public class VideoDescribeFragment extends BaseFragment {
         ((TextView) view.findViewById(R.id.tvInfo)).setText(vData.userintro);
         view.findViewById(R.id.clAuthorInfo).setBackgroundColor(Color.TRANSPARENT);
         TextView vidInfo = view.findViewById(R.id.tvIntro);
-        vidInfo.setText(getString(R.string.video_card_info_short,vData.view_count,vData.like_count,vData.favorite_count));
+        vidInfo.setText(getString(R.string.video_card_info_short,vData.view_count,vData.like_count,vData.favorite_count)+" (ov"+vData.vid+")");
         TextView vidTime = view.findViewById(R.id.tvDetail);
         vidTime.setText(vData.time);
         Glide.with(view.getContext())

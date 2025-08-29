@@ -41,7 +41,14 @@ public class UiUtil {
     }
     public static boolean containsHtml(String text) {
         if (text == null) return false;
-        String pattern = "(?i).*<(html|head|body|div|span|p|br|a|img|ul|li|table|tr|td|h[1-6]|b|i|u|strong|em|script|style).*?>.*";
+        // (?i) 忽略大小写，(?s) 让 . 匹配换行
+        // <([a-z][a-z0-9]*)\b[^>]*>(.*?)</\1> 匹配成对标签
+        // <([a-z][a-z0-9]*)\b[^>]*/> 匹配自闭合标签
+        String pattern = "(?is).*(" +
+                "<([a-z][a-z0-9]*)\\b[^>]*>.*?</\\2>" + // 成对标签
+                "|" +
+                "<([a-z][a-z0-9]*)\\b[^>]*/>" +        // 自闭合标签
+                ").*";
         return text.matches(pattern);
     }
     /**

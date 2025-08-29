@@ -185,7 +185,16 @@ public class CommentCardAdapter extends CardAdapterBase<CommentCard, CommentCard
         if (UiUtil.containsHtml(object.content)){
             var view = getContentWv(ctx);
             String html = "<html><head><style>" +
-                    "body { background-color:" + toCssColor(ThemeUtil.getTheme(ctx).getColorBackground()) + "; color:" + toCssColor(ThemeUtil.getTheme(ctx).getColorOnPrimary()) + "; }" +
+                    "body {" +
+                    "  background-color:" + toCssColor(ThemeUtil.getTheme(ctx).getColorBackground()) + ";" +
+                    "  color:" + toCssColor(ThemeUtil.getTheme(ctx).getColorOnPrimary()) + ";" +
+                    "  margin:0;" +
+                    "  padding:0;" +
+                    "}" +
+                    "img {" +
+                    "  max-width: 100%;" +  // 保持原始宽度
+                    "  object-fit: fill;" +
+                    "}" +
                     "</style></head><body>" +
                     object.content +
                     "</body></html>";
