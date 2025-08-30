@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.view.View;
@@ -17,20 +18,66 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import androidx.annotation.OptIn;
 import androidx.annotation.Px;
 import androidx.fragment.app.Fragment;
+import androidx.media3.common.C;
+import androidx.media3.common.util.UnstableApi;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import org.eu.hanana.reimu.ottohub_andriod.R;
+import org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity;
+import org.eu.hanana.reimu.ottohub_andriod.activity.ProfileActivity;
+import org.eu.hanana.reimu.ottohub_andriod.activity.VideoPlayerActivity;
 
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class UiUtil {
+    @OptIn(markerClass = UnstableApi.class)
+    public static void openUrl(Context context, String url){
+        if (url.toLowerCase(Locale.ROOT).contains("ottohub.cn")){
+            var ottohubUrl = url.split("/");
+            var ottohubOperation = ottohubUrl[ottohubUrl.length-2];
+            var ottohubTarget = ottohubUrl[ottohubUrl.length-1];
+            try {
+                if (ottohubOperation.contains("b")){
+                    Intent intent = new Intent(context, BlogActivity.class);
+                    var data = new Bundle();
+                    data.putInt(BlogActivity.KEY_BID,Integer.parseInt(ottohubTarget));
+                    intent.putExtras(data);
+                    context.startActivity(intent);
+                    return;
+                }else if (ottohubOperation.contains("v")){
+                    Intent intent = new Intent(context, VideoPlayerActivity.class);
+                    var data = new Bundle();
+                    data.putInt(VideoPlayerActivity.KEY_VID,Integer.parseInt(ottohubTarget));
+                    intent.putExtras(data);
+                    context.startActivity(intent);
+                    return;
+                }else if (ottohubOperation.contains("u")){
+                    Intent intent = new Intent(context, ProfileActivity.class);
+                    var data = new Bundle();
+                    data.putInt(ProfileActivity.KEY_UID,Integer.parseInt(ottohubTarget));
+                    intent.putExtras(data);
+                    context.startActivity(intent);
+                    return;
+                }
+            }catch (Exception ignored){}
+
+        }
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        if (intent.resolveActivity(context.getPackageManager()) != null) {
+            context.startActivity(intent);
+        } else {
+            AlertUtil.showMsg(context,context.getString(R.string.open_url),context.getString(R.string.open_url_desc,url)).show();
+        }
+    }
     public static String toCssColor(int color){
         int a = Color.alpha(color);
         int r = Color.red(color);
@@ -41,15 +88,19 @@ public class UiUtil {
     }
     public static boolean containsHtml(String text) {
         if (text == null) return false;
-        // (?i) 忽略大小写，(?s) 让 . 匹配换行
-        // <([a-z][a-z0-9]*)\b[^>]*>(.*?)</\1> 匹配成对标签
-        // <([a-z][a-z0-9]*)\b[^>]*/> 匹配自闭合标签
-        String pattern = "(?is).*(" +
-                "<([a-z][a-z0-9]*)\\b[^>]*>.*?</\\2>" + // 成对标签
-                "|" +
-                "<([a-z][a-z0-9]*)\\b[^>]*/>" +        // 自闭合标签
-                ").*";
-        return text.matches(pattern);
+
+        // (?i) 忽略大小写, (?s) 让 . 匹配换行
+        // 1. 成对标签：<tag ...>...</tag>
+        // 2. 自闭合：<tag .../>
+        // 3. 空标签写法：<img ...>（允许没有 / 结尾）
+        String regex = "(?is)"
+                + "<([a-z][a-z0-9]*)\\b[^>]*>.*?</\\1>"   // 成对标签
+                + "|"
+                + "<([a-z][a-z0-9]*)\\b[^>]*/>"           // 自闭合标签
+                + "|"
+                + "<(?is)\\b[^>]*>"; // 特殊空标签允许 > 结尾
+
+        return java.util.regex.Pattern.compile(regex).matcher(text).find();
     }
     /**
      * 根据资源名称获取字符串

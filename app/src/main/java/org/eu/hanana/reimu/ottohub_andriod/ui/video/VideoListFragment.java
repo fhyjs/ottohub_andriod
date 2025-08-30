@@ -18,6 +18,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.ConcatAdapter;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,6 +34,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.PopupWindow;
@@ -48,6 +50,7 @@ import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.activity.SearchActivity;
 import org.eu.hanana.reimu.ottohub_andriod.data.video.VideoCard;
 import org.eu.hanana.reimu.ottohub_andriod.data.video.VideoViewModel;
+import org.eu.hanana.reimu.ottohub_andriod.ui.banner.BannerFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.BaseFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.user.ProfileFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
@@ -63,6 +66,7 @@ public class VideoListFragment extends BaseFragment {
     private VideoCardAdapter adapter;
     private final List<VideoCard> videoList = new ArrayList<>();
     public int currentPage = 0;
+    public ConcatAdapter concatAdapter;
     public boolean hasMoreData = true;
     private VideoViewModel viewModel;
     private InfiniteScrollListener scrollListener;
@@ -83,6 +87,8 @@ public class VideoListFragment extends BaseFragment {
     public static final String ACTION_FAVOURITE = "fav";
     public static final String ACTION_HISTORY = "history";
     public String action=ACTION_DEFAULT;
+    private HeaderAdapter headerAdapter
+            ;
 
     public VideoListFragment() {
         // Required empty public constructor
@@ -141,8 +147,10 @@ public class VideoListFragment extends BaseFragment {
         videoList.addAll(data);
         if (oldSize == 0) {
             adapter.notifyDataSetChanged();
+            concatAdapter.notifyDataSetChanged();
         } else {
             adapter.notifyItemRangeInserted(oldSize, data.size());
+            concatAdapter.notifyItemRangeInserted(oldSize, data.size());
         }
     }
     private void showError(String message) {
@@ -197,9 +205,6 @@ public class VideoListFragment extends BaseFragment {
                 selectedButton=button;
             }
         }
-        if (uid!=null||!action.equals(ACTION_DEFAULT)||(getParentFragment()!=null&&(getParentFragment().getClass()== ProfileFragment.class||getParentFragment().getClass()== VideoDescribeFragment.class))){
-            button_area.removeAllViews();
-        }
         return inflate;
     }
 
@@ -251,12 +256,37 @@ public class VideoListFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
         this.view=view;
         recyclerView = view.findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        var glm = new GridLayoutManager(getContext(), 2);
+        recyclerView.setLayoutManager(glm);
         recyclerView.setItemAnimator(null);
         // 初始化适配器
         adapter = new VideoCardAdapter(videoList);
         adapter.setFrag(this);
-        recyclerView.setAdapter(adapter);
+        concatAdapter = new ConcatAdapter();
+        // 创建 header
+        FrameLayout header = (FrameLayout) LayoutInflater.from(getContext()).inflate(R.layout.video_list_header_wrapper, recyclerView, false);
+        headerAdapter = new HeaderAdapter(header, this);
+        concatAdapter.addAdapter(headerAdapter);
+        concatAdapter.addAdapter(adapter);
+        if (uid!=null||!action.equals(ACTION_DEFAULT)||(getParentFragment()!=null&&(getParentFragment().getClass()== ProfileFragment.class||getParentFragment().getClass()== VideoDescribeFragment.class))){
+            LinearLayout button_area = view.findViewById(R.id.video_type_button_area);
+            button_area.removeAllViews();
+            concatAdapter.removeAdapter(headerAdapter);
+        }
+        recyclerView.setAdapter(concatAdapter);
+        // ⭐ 重点：让 header 独占两列
+        glm.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                // 获取当前 position 对应的 adapter
+                RecyclerView.Adapter<?> a = concatAdapter.getWrappedAdapterAndPosition(position).first;
+                if (a instanceof HeaderAdapter) {
+                    return glm.getSpanCount(); // header 占满 2 列
+                }
+                return 1; // 普通 item 占 1 列
+            }
+        });
+
 
         View llTopContainer = view.findViewById(R.id.llTopContainer);
 
@@ -362,6 +392,7 @@ public class VideoListFragment extends BaseFragment {
         currentPage=0;
         videoList.clear();
         adapter.notifyDataSetChanged();
+        concatAdapter.notifyDataSetChanged();
         loadInitialData();
     }
     private void loadInitialData() {

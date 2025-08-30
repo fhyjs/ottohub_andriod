@@ -89,7 +89,11 @@ public class VideoCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public int getItemViewType(int position) {
         // 最后一个位置显示加载提示
-        return (position == videoList.size() && isLoading) ? TYPE_LOADING : TYPE_ITEM;
+        // 如果有 footer 且到最后一个位置
+        if (isLoading && position == getItemCount() - 1) {
+            return TYPE_LOADING;
+        }
+        return TYPE_ITEM;
     }
 
     @Override
@@ -110,6 +114,7 @@ public class VideoCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof VideoCardViewHolder) {
             var vcvHolder = ((VideoCardViewHolder) holder);
+            if (position>=videoList.size()||position<0) return;
             VideoCard video = videoList.get(position);
 
             // 绑定数据
@@ -216,12 +221,17 @@ public class VideoCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     // 控制加载提示的显示/隐藏
     public void showLoading() {
-        isLoading = true;
-        notifyItemInserted(videoList.size());
+        if (!isLoading) {
+            isLoading = true;
+            notifyItemInserted(getItemCount() - 1); // 插入到最后一个位置
+        }
     }
 
     public void hideLoading() {
-        isLoading = false;
-        notifyItemRemoved(videoList.size());
+        if (isLoading) {
+            int pos = getItemCount() - 1;
+            isLoading = false;
+            notifyItemRemoved(pos); // 移除最后一个位置
+        }
     }
 }

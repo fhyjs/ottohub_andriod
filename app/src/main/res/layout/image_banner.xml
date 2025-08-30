@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- 图片 -->
+    <ImageView
+        android:id="@+id/imageBanner"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop" />
+
+    <!-- 底部半透明黑条 -->
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/bar"
+        android:layout_width="match_parent"
+        android:minHeight="32dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="#88000000"> <!-- 半透明黑，66 表示 40% 透明度 -->
+        <TextView
+            android:id="@+id/title"
+            android:layout_margin="5dp"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:text="@string/placeholder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+</FrameLayout>

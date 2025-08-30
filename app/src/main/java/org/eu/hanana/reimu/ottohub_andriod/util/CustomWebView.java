@@ -44,6 +44,9 @@ public class CustomWebView extends WebView {
         super(context, attrs);
         init(context);
     }
+    public CustomWebView(Context context) {
+        super(context,null);
+    }
 
     private void init(Context context) {
         // 添加进度条

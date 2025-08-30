@@ -127,6 +127,7 @@ public class AlertUtil {
         protected Activity activity;
         @Override
         public void uncaughtException(@NonNull Thread t, @NonNull Throwable e) {
+            e.printStackTrace();
             activity.runOnUiThread(()->AlertUtil.showMsg(activity,activity.getString(R.string.error),"ERROR:"+e+" at "+t.getName()).show());
         }
     }
