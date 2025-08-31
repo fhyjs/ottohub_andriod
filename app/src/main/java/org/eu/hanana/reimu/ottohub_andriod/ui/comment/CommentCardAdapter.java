@@ -31,6 +31,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.material.button.MaterialButton;
 import com.google.gson.Gson;
 
 import org.eu.hanana.reimu.lib.ottohub.api.comment.IfGetExpResult;
@@ -204,6 +205,15 @@ public class CommentCardAdapter extends CardAdapterBase<CommentCard, CommentCard
             TextView contentTv = getContentTv(ctx);
             contentTv.setText(object.content);
             holder.llContent.addView(contentTv);
+        }
+        LinearLayout tagArea = holder.itemView.findViewById(R.id.ll_tag);
+        tagArea.removeAllViews();
+        for (String tag : object.getCommentResult().honour.split(",")) {
+            if (tag.equals("吉吉国民")) continue;
+            var btn = new MaterialButton(ctx);
+            btn.setTag("themed");
+            btn.setText(tag);
+            tagArea.addView(btn);
         }
     }
     protected TextView getContentTv(Context context){

@@ -2,6 +2,7 @@ package org.eu.hanana.reimu.ottohub_andriod.activity;
 
 import static org.eu.hanana.reimu.ottohub_andriod.util.UiUtil.dpToPx;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.View;
@@ -18,13 +19,22 @@ import com.google.android.material.appbar.MaterialToolbar;
 
 import org.eu.hanana.reimu.ottohub_andriod.MainActivity;
 import org.eu.hanana.reimu.ottohub_andriod.R;
+import org.eu.hanana.reimu.ottohub_andriod.util.LocaleUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ThemeUtil;
+
+import java.util.Locale;
 
 public abstract class BaseActivity extends AppCompatActivity {
     public  MaterialToolbar toolbar;
     public ViewGroup getRoot(){
         return (ViewGroup) findViewById(android.R.id.content);
     }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(LocaleUtil.updateLocale(newBase));
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

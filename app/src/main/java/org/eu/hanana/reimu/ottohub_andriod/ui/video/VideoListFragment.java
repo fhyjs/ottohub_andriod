@@ -3,27 +3,21 @@ package org.eu.hanana.reimu.ottohub_andriod.ui.video;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase.ARG_TYPE;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase.TYPE_VIDEO;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.user.ProfileFragment.Arg_Uid;
-import static org.eu.hanana.reimu.ottohub_andriod.util.UiUtil.dpToPx;
 
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuProvider;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ConcatAdapter;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -36,31 +30,25 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.PopupMenu;
-import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import org.eu.hanana.reimu.ottohub_andriod.MainActivity;
-import org.eu.hanana.reimu.ottohub_andriod.MyApp;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.activity.SearchActivity;
 import org.eu.hanana.reimu.ottohub_andriod.data.video.VideoCard;
 import org.eu.hanana.reimu.ottohub_andriod.data.video.VideoViewModel;
-import org.eu.hanana.reimu.ottohub_andriod.ui.banner.BannerFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.BaseFragment;
+import org.eu.hanana.reimu.ottohub_andriod.ui.base.IScrollTopChecker;
 import org.eu.hanana.reimu.ottohub_andriod.ui.user.ProfileFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.InfiniteScrollListener;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-public class VideoListFragment extends BaseFragment {
+public class VideoListFragment extends BaseFragment implements IScrollTopChecker {
     private static final String TAG = "VideoListFragment";
     public RecyclerView recyclerView;
     private VideoCardAdapter adapter;
@@ -87,8 +75,8 @@ public class VideoListFragment extends BaseFragment {
     public static final String ACTION_FAVOURITE = "fav";
     public static final String ACTION_HISTORY = "history";
     public String action=ACTION_DEFAULT;
-    private HeaderAdapter headerAdapter
-            ;
+    private HeaderAdapter headerAdapter;
+    private boolean hideButtons;
 
     public VideoListFragment() {
         // Required empty public constructor
@@ -249,6 +237,11 @@ public class VideoListFragment extends BaseFragment {
         }
         selectedButton.setEnabled(false);
         refresh();
+        if (!selectedButton.getTag(R.id.btn_add_tag).equals(buttonLabels[0])){
+            concatAdapter.removeAdapter(headerAdapter);
+        }else if (!hideButtons){
+            concatAdapter.addAdapter(0,headerAdapter);
+        }
     }
 
     @Override
@@ -268,7 +261,8 @@ public class VideoListFragment extends BaseFragment {
         headerAdapter = new HeaderAdapter(header, this);
         concatAdapter.addAdapter(headerAdapter);
         concatAdapter.addAdapter(adapter);
-        if (uid!=null||!action.equals(ACTION_DEFAULT)||(getParentFragment()!=null&&(getParentFragment().getClass()== ProfileFragment.class||getParentFragment().getClass()== VideoDescribeFragment.class))){
+        hideButtons = uid!=null||!action.equals(ACTION_DEFAULT)||(getParentFragment()!=null&&(getParentFragment().getClass()== ProfileFragment.class||getParentFragment().getClass()== VideoDescribeFragment.class));
+        if (hideButtons){
             LinearLayout button_area = view.findViewById(R.id.video_type_button_area);
             button_area.removeAllViews();
             concatAdapter.removeAdapter(headerAdapter);
@@ -344,6 +338,12 @@ public class VideoListFragment extends BaseFragment {
         requireActivity().addMenuProvider(new MyMenuProvider(), getViewLifecycleOwner());
         updateVidType();
     }
+
+    @Override
+    public boolean atTop() {
+        return !recyclerView.canScrollVertically(-1);
+    }
+
     // 定义 MenuProvider
     private class MyMenuProvider implements MenuProvider {
         @Override

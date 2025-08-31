@@ -10,6 +10,14 @@
         android:key="theme"
         android:title="@string/theme_color"
         android:summary="Set the main color of this app" />
+    <ListPreference
+        android:defaultValue="sys"
+        android:entries="@array/languages_setting"
+        android:entryValues="@array/languages_setting_val"
+        android:icon="@drawable/translate_24dp"
+        android:key="language"
+        android:summary="Change language,As shown in the title.\n更改应用语言"
+        android:title="Language/语言" />
     <SwitchPreference
         android:icon="@drawable/account_circle_off"
         android:defaultValue="true"
@@ -49,4 +57,9 @@
         android:key="about"
         android:title="@string/about"
         android:summary="About this app" />
+    <Preference
+        android:icon="@drawable/reset_settings_24dp"
+        android:key="reset"
+        android:title="@string/reset"
+        android:summary="Click to clear ALL settings" />
 </PreferenceScreen>

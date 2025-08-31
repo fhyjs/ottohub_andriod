@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
 import androidx.preference.SwitchPreference;
 import androidx.preference.SwitchPreferenceCompat;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.activity.AboutActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.ThemeActivity;
+import org.eu.hanana.reimu.ottohub_andriod.ui.base.IScrollTopChecker;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.CacheUtil;
@@ -31,11 +33,15 @@ import org.eu.hanana.reimu.ottohub_andriod.util.UiUtil;
 
 import java.util.List;
 
-public class SettingsFragment extends PreferenceFragmentCompat {
+public class SettingsFragment extends PreferenceFragmentCompat implements IScrollTopChecker {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view,savedInstanceState);
         this.getView().setBackgroundColor(0xFFfdfdfd);
+    }
+    @Override
+    public boolean atTop() {
+        return !getListView().canScrollVertically(-1);
     }
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -58,6 +64,30 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 return true;
             });
         }
+        Preference reset = findPreference("reset");
+        if (reset != null) {
+            reset.setOnPreferenceClickListener(preference -> {
+                AlertUtil.showYesNo(getContext(),getString(R.string.reset),getString(R.string.issure),(dialog, which) -> {
+                    // 1. 清除现有设置
+                    PreferenceManager.getDefaultSharedPreferences(getContext())
+                            .edit().clear().apply();
+
+                    // 2. 重新加载 XML 默认值
+                    PreferenceManager.setDefaultValues(getContext(), R.xml.preferences, true);
+
+                    // 3. 刷新当前界面（让 UI 更新成默认值）
+                    getActivity().recreate();
+                },null).show();
+                return true;
+            });
+        }
+        Preference language = findPreference("language");
+        if (language != null) {
+            language.setOnPreferenceChangeListener((preference, newValue) -> {
+                getActivity().recreate();
+                return true;
+            });
+        }
         Preference logout = findPreference("logout");
         if (logout != null) {
             logout.setOnPreferenceClickListener(preference -> {
@@ -68,7 +98,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 return true;
             });
         }
-
         Preference about = findPreference("about");
         if (about != null) {
             about.setOnPreferenceClickListener(preference -> {

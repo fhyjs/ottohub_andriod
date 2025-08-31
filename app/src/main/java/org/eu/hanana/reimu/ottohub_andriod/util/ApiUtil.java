@@ -23,6 +23,7 @@ import org.eu.hanana.reimu.lib.ottohub.api.auth.LoginResult;
 import org.eu.hanana.reimu.lib.ottohub.api.im.NewMessageNumResult;
 import org.eu.hanana.reimu.ottohub_andriod.MyApp;
 import org.eu.hanana.reimu.ottohub_andriod.R;
+import org.eu.hanana.reimu.ottohub_andriod.data.api.DataSerializerEntity;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -34,6 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -51,6 +53,22 @@ public class ApiUtil {
     private static int newMegCount;
     private static Map<String,String> apiExceptionMessage = null;
     private static final OkHttpClient client = new OkHttpClient();
+    protected static final Gson gson = new Gson();
+    public static <T> T deserializationData(String data){
+        DataSerializerEntity dataSerializerEntity = gson.fromJson(data, DataSerializerEntity.class);
+        Class<T> clazz = null;
+        try {
+            clazz = (Class<T>) Class.forName(dataSerializerEntity.className);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return gson.fromJson(dataSerializerEntity.data,clazz);
+    }
+    public static String serializeData(Object data){
+        JsonElement dataJson = gson.toJsonTree(data);
+        DataSerializerEntity dataSerializerEntity = new DataSerializerEntity(data.getClass().getName(), dataJson);
+        return gson.toJson(dataJson);
+    }
     public static void downloadFileToZip(ZipOutputStream zos, String url, String entryName) throws Exception {
         Request request = new Request.Builder()
                 .url(url)

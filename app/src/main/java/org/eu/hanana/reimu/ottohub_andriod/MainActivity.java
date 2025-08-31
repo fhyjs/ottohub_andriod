@@ -3,6 +3,8 @@ package org.eu.hanana.reimu.ottohub_andriod;
 import static android.widget.Toast.LENGTH_SHORT;
 import static androidx.core.content.ContextCompat.startActivity;
 
+import static org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity.TYPE_PREVIEW;
+
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -19,6 +21,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
@@ -43,8 +46,10 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.color.MaterialColors;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.gson.Gson;
 
 import org.eu.hanana.reimu.lib.ottohub.api.auth.LoginResult;
+import org.eu.hanana.reimu.lib.ottohub.api.blog.BlogResult;
 import org.eu.hanana.reimu.ottohub_andriod.activity.AccountListActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.AuditActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.BaseActivity;
@@ -64,6 +69,10 @@ import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.SharedPreferencesKeys;
 import org.eu.hanana.reimu.ottohub_andriod.util.ThemeUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.UiUtil;
+import org.eu.hanana.reimu.ottohub_andriod.util.UpdateUtil;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class MainActivity extends BaseActivity {
     private final Handler handler = new Handler(Looper.getMainLooper());
@@ -158,6 +167,34 @@ public class MainActivity extends BaseActivity {
         navHeader = (ViewGroup) getLayoutInflater().inflate(R.layout.nav_header, getRoot(), false);
         navView.addHeaderView(navHeader);
         prepareNavHeader(navHeader);
+        Thread threadCheckUpdate = getUpdater();
+        threadCheckUpdate.start();
+    }
+
+    @NonNull
+    private Thread getUpdater() {
+        Thread threadCheckUpdate = new Thread(() -> UpdateUtil.checkNow((hasUpdate, data) -> {
+            if (!hasUpdate||isFinishing()||isDestroyed()) return;
+            runOnUiThread(()-> AlertUtil.showYesNo(this,getString(R.string.update_available),getString(R.string.update_now),(dialog, which) -> {
+                var br = new BlogResult();
+                br.title="["+getString(R.string.update_log)+"] "+data.version_str;
+                br.content=String.format("<hr/><h1><a href=\"%s\">%s</a></h1><hr/>\n",data.download_url,getString(R.string.update_now))+data.change_log;
+                LocalDateTime now = LocalDateTime.now();
+                br.time = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                br.username = "fhyjs";
+                br.uid = 4384;
+                br.avatar_url = "https://cdn.ottohub.cn/user/user_avatar/user_avatar_4384.jpg";
+                Intent intent = new Intent(this, BlogActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putInt(BlogActivity.KEY_BID,0);
+                bundle.putString(BlogActivity.KEY_DATA,new Gson().toJson(br));
+                bundle.putString(BlogActivity.KEY_TYPE,TYPE_PREVIEW);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            },null).show());
+        }));
+        threadCheckUpdate.setUncaughtExceptionHandler(new AlertUtil.ThreadAlert(this));
+        return threadCheckUpdate;
     }
 
     private boolean checkLauncher() {

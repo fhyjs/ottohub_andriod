@@ -44,6 +44,7 @@ import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.activity.SearchActivity;
 import org.eu.hanana.reimu.ottohub_andriod.data.blog.BlogViewModel;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.BaseFragment;
+import org.eu.hanana.reimu.ottohub_andriod.ui.base.IScrollTopChecker;
 import org.eu.hanana.reimu.ottohub_andriod.ui.user.ProfileFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.InfiniteScrollListener;
 
@@ -55,7 +56,7 @@ import java.util.List;
  * Use the {@link BlogListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class BlogListFragment extends BaseFragment {
+public class BlogListFragment extends BaseFragment implements IScrollTopChecker {
     @Nullable
     public Integer uid;
     @Nullable
@@ -65,7 +66,10 @@ public class BlogListFragment extends BaseFragment {
     public BlogListFragment() {
         // Required empty public constructor
     }
-
+    @Override
+    public boolean atTop() {
+        return !recyclerView.canScrollVertically(-1);
+    }
     // TODO: Rename and change types and number of parameters
     public static BlogListFragment newInstance() {
         BlogListFragment fragment = new BlogListFragment();

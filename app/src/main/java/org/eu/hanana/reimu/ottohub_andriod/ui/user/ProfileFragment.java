@@ -1,5 +1,6 @@
 package org.eu.hanana.reimu.ottohub_andriod.ui.user;
 
+import static android.view.View.VISIBLE;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment.ACTION_BY_USER;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment.ARG_ACTION;
 
@@ -55,6 +56,7 @@ import org.eu.hanana.reimu.ottohub_andriod.activity.FragActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.ImageViewActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.MessageActivity;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.BaseFragment;
+import org.eu.hanana.reimu.ottohub_andriod.ui.base.IScrollTopChecker;
 import org.eu.hanana.reimu.ottohub_andriod.ui.blog.BlogListFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.settings.SettingsFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment;
@@ -99,8 +101,8 @@ public class ProfileFragment extends BaseFragment {
     public ProfileFragment() {
         // Required empty public constructor
     }
-    public static ProfileFragment newInstance(@Nullable Integer uid) {
-        ProfileFragment fragment = new ProfileFragment();
+    public static Fragment newInstance(@Nullable Integer uid) {
+        Fragment fragment = new ProfileFragment();
         Bundle args = new Bundle();
         if (uid!=null)
             args.putInt(Arg_Uid,uid);
@@ -297,12 +299,15 @@ public class ProfileFragment extends BaseFragment {
                 });
         //滑动控制
         TouchInterceptFrameLayout.OnTouchListener onTouchListener = new TouchInterceptFrameLayout.OnTouchListener() {
+            private Fragment frag;
+            private float deltaY;//小于零上划，大于零下拉
             private final View pta = view.findViewById(R.id.profile_top_area);
             private int originalHeight = 0;
             private float downY = 0;
             private final int minHeight = 0; // px，可以换成 dp 转换
             private int maxHeight = 0; // 可设置上限避免爆炸拉伸
             private final int touchSlop = 8;   // 忽略小于8px的滑动
+            private boolean visible=true;
             @Override
             public void onTouch(MotionEvent ev) {
                 ViewGroup.LayoutParams lp = pta.getLayoutParams();
@@ -315,14 +320,14 @@ public class ProfileFragment extends BaseFragment {
                         if (maxHeight == 0 || maxHeight < originalHeight) {
                             maxHeight = originalHeight;
                         }
+                        frag = getChildFragmentManager().findFragmentById(R.id.fragment_container);
                         break;
 
                     case MotionEvent.ACTION_MOVE:
-                        float deltaY = ev.getY() - downY;
+                        deltaY = ev.getY() - downY;
 
                         // 滑动小于 touchSlop 忽略（防止抖动）
-                        if (Math.abs(deltaY) < touchSlop) return;
-
+                        if (Math.abs(deltaY) < touchSlop) break;
                         int newHeight = (int) (originalHeight + deltaY);
 
                         // 限制高度范围
@@ -337,7 +342,12 @@ public class ProfileFragment extends BaseFragment {
                             pta.setVisibility(View.GONE);
                             frameLayout.setInterceptMove(false);
                         }else {
-                            pta.setVisibility(View.VISIBLE);
+                            if (frag instanceof IScrollTopChecker){
+                                var top = ((IScrollTopChecker) frag).atTop();
+                                //frameLayout.setInterceptMove(false);
+                                if (!top) break;
+                            }
+                            pta.setVisibility(VISIBLE);
                             frameLayout.setInterceptMove(true);
                             if (newHeight>=maxHeight){
                                 frameLayout.setInterceptMove(false);
@@ -345,9 +355,8 @@ public class ProfileFragment extends BaseFragment {
                         }
                         break;
                     case MotionEvent.ACTION_UP:
-                        pta.setVisibility(View.VISIBLE);
                         ValueAnimator animator;
-                        if(pta.getHeight()==maxHeight||lp.height<0){
+                        if(lp.height<0||(deltaY==0&&pta.getHeight()==maxHeight)){
                             animator = ValueAnimator.ofInt(pta.getHeight(), 0);
                             animator.setDuration(300); // 动画时长 1 秒
                             animator.addUpdateListener(animation -> {
@@ -359,8 +368,10 @@ public class ProfileFragment extends BaseFragment {
                                 public void onAnimationEnd(Animator animation) {
                                     if (lp.height<maxHeight*0.5) {
                                         pta.setVisibility(View.GONE);
+                                        visible=false;
                                         frameLayout.setInterceptMove(false);
                                     }else {
+                                        visible=true;
                                         frameLayout.setInterceptMove(true);
                                     }
                                 }
@@ -368,9 +379,12 @@ public class ProfileFragment extends BaseFragment {
                             animator.start();
                             return;
                         }
-                        if (lp.height<maxHeight*0.5) {
+                        if (deltaY==0) break;
+                        if (visible) {
+                            if (lp.height>=maxHeight) break;
                             animator = ValueAnimator.ofInt(lp.height, 0);
                         }else {
+                            if (lp.height<=minHeight) break;
                             animator = ValueAnimator.ofInt(lp.height, maxHeight);
                         }
                         animator.setDuration(300); // 动画时长 1 秒
@@ -384,12 +398,15 @@ public class ProfileFragment extends BaseFragment {
                             public void onAnimationEnd(Animator animation) {
                                 if (lp.height<maxHeight*0.5) {
                                     pta.setVisibility(View.GONE);
+                                    visible=false;
                                     frameLayout.setInterceptMove(false);
                                 }else {
+                                    visible=true;
                                     frameLayout.setInterceptMove(true);
                                 }
                             }
                         });
+                        pta.setVisibility(VISIBLE);
                         animator.start();
 
                         break;
@@ -431,8 +448,9 @@ public class ProfileFragment extends BaseFragment {
                     });
                     // 更新角标数字
                     TextView badgeTextView = actionView.findViewById(R.id.badge_text_view);
-                    badgeTextView.setText(String.valueOf(ApiUtil.getNewMegCount()));   // 角标数字
-                    badgeTextView.setVisibility(ApiUtil.getNewMegCount()>0?View.VISIBLE:View.GONE);
+                    var number =ApiUtil.getNewMegCount();
+                    badgeTextView.setText(number>99?"99+":String.valueOf(number));   // 角标数字
+                    badgeTextView.setVisibility(ApiUtil.getNewMegCount()>0? VISIBLE:View.GONE);
                     ThemeUtil.apply(actionView);
                     actionView.setBackgroundColor(ThemeUtil.getTheme(getContext()).getColorActionBar());
 
@@ -446,7 +464,7 @@ public class ProfileFragment extends BaseFragment {
                     startActivity(intent);
                     return true;
                 }else if (menuItem.getItemId() == R.id.action_toggle) {
-                    var isExpanded = view.findViewById(R.id.profile_top_area).getVisibility()==View.VISIBLE;
+                    var isExpanded = view.findViewById(R.id.profile_top_area).getVisibility()== VISIBLE;
                     if (isExpanded){
                         menuItem.setIcon(R.drawable.arrow_downward_24dp);
                         UiUtil.slideUp(view.findViewById(R.id.profile_top_area));

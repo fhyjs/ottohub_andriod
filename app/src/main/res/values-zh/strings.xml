@@ -165,4 +165,9 @@
     <string name="include">导入</string>
     <string name="theme_purple_md2">葡萄紫</string>
     <string name="theme_china_red">中国红</string>
+    <string name="system">系统</string>
+    <string name="reset">重置</string>
+    <string name="update_available">发现更新!</string>
+    <string name="update_now">现在更新吗?</string>
+    <string name="update_log">更新日志</string>
 </resources>

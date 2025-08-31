@@ -180,4 +180,9 @@
     <string name="include">Include</string>
     <string name="theme_purple_md2">Grape Purper</string>
     <string name="theme_china_red">China Red</string>
+    <string name="system">System</string>
+    <string name="reset">Reset</string>
+    <string name="update_available">Update Available!</string>
+    <string name="update_now">Update now?</string>
+    <string name="update_log">Change log</string>
 </resources>
