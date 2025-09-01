@@ -36,4 +36,9 @@
         android:icon="@drawable/folder_managed"
         android:title="@string/content_manage"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_settings"
+        android:icon="@drawable/settings_24dp"
+        android:title="@string/settings"
+        app:showAsAction="ifRoom" />
 </menu>

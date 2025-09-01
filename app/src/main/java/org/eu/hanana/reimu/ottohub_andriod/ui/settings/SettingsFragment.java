@@ -30,6 +30,7 @@ import org.eu.hanana.reimu.ottohub_andriod.util.CacheUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.LocaleHelper;
 import org.eu.hanana.reimu.ottohub_andriod.util.ThemeUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.UiUtil;
+import org.eu.hanana.reimu.ottohub_andriod.util.UpdateUtil;
 
 import java.util.List;
 
@@ -85,6 +86,13 @@ public class SettingsFragment extends PreferenceFragmentCompat implements IScrol
         if (language != null) {
             language.setOnPreferenceChangeListener((preference, newValue) -> {
                 getActivity().recreate();
+                return true;
+            });
+        }
+        Preference update_now = findPreference("update_now");
+        if (update_now != null) {
+            update_now.setOnPreferenceClickListener(preference -> {
+                UpdateUtil.getUpdaterChecker(this.getActivity()).start();
                 return true;
             });
         }

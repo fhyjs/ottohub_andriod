@@ -33,8 +33,8 @@ android {
         minSdk 21
         multiDexEnabled true
         targetSdk 36
-        versionCode 282
-        versionName "2.8.2_Code.Yukari"
+        versionCode 283
+        versionName "2.8.3_Code.Yukari"
         resConfigs "en", "zh" // Example: Support English and Spanish
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "BUILD_TIME", "\"${new Date().format("yyyy-MM-dd HH:mm:ss")}\""

@@ -40,4 +40,16 @@
         <item>zh</item>
         <item>en</item>
     </string-array>
+    <string-array name="scale_type_value" >
+        <item>auto</item>
+        <item>fit</item>
+        <item>full</item>
+        <item>zoom</item>
+    </string-array>
+    <string-array name="scale_type" >
+        <item>@string/auto</item>
+        <item>@string/fit</item>
+        <item>@string/full</item>
+        <item>@string/zoom</item>
+    </string-array>
 </resources>

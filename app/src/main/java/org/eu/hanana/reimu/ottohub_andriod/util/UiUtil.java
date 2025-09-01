@@ -1,5 +1,7 @@
 package org.eu.hanana.reimu.ottohub_andriod.util;
 
+import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -10,11 +12,15 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowInsets;
+import android.view.WindowMetrics;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -23,6 +29,8 @@ import androidx.annotation.Px;
 import androidx.fragment.app.Fragment;
 import androidx.media3.common.C;
 import androidx.media3.common.util.UnstableApi;
+import androidx.media3.ui.AspectRatioFrameLayout;
+import androidx.preference.PreferenceManager;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -39,6 +47,45 @@ import java.util.List;
 import java.util.Locale;
 
 public class UiUtil {
+    @OptIn(markerClass = UnstableApi.class)
+    @AspectRatioFrameLayout.ResizeMode
+    public static int getScaleTypeVideoInt(Context c) {
+        var st = getScaleTypeVideo(c);
+        if (st.equals("zoom")){
+            return AspectRatioFrameLayout.RESIZE_MODE_ZOOM;
+        }
+        if (st.equals("fit")){
+            return AspectRatioFrameLayout.RESIZE_MODE_FIT;
+        }
+        if (st.equals("fill")){
+            return AspectRatioFrameLayout.RESIZE_MODE_FILL;
+        }
+        return AspectRatioFrameLayout.RESIZE_MODE_FIT;
+    }
+    public static String getScaleTypeVideo(Context c){
+        return PreferenceManager.getDefaultSharedPreferences(c).getString("scale_type","auto");
+    }
+    public static int getAppWindowHeight(Activity activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            // API 30+
+            WindowMetrics metrics = activity.getWindowManager().getCurrentWindowMetrics();
+            WindowInsets insets = metrics.getWindowInsets();
+
+            // 去掉系统栏区域（状态栏、导航栏）
+            int insetsHeight = insets.getInsetsIgnoringVisibility(
+                    WindowInsets.Type.systemBars()
+            ).bottom + insets.getInsetsIgnoringVisibility(
+                    WindowInsets.Type.systemBars()
+            ).top;
+
+            return metrics.getBounds().height() - insetsHeight;
+        } else {
+            // API < 30
+            DisplayMetrics dm = new DisplayMetrics();
+            activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
+            return dm.heightPixels;
+        }
+    }
     @OptIn(markerClass = UnstableApi.class)
     public static void openUrl(Context context, String url){
         if (url.toLowerCase(Locale.ROOT).contains("ottohub.cn")){

@@ -185,4 +185,12 @@
     <string name="update_available">Update Available!</string>
     <string name="update_now">Update now?</string>
     <string name="update_log">Change log</string>
+    <string name="update_check">Check Update</string>
+    <string name="update_no">No Update!</string>
+    <string name="common">Common</string>
+    <string name="scale_type">Video Scale Type</string>
+    <string name="auto">Auto</string>
+    <string name="fit">Fit</string>
+    <string name="full">Full</string>
+    <string name="zoom">zoom</string>
 </resources>

@@ -170,4 +170,12 @@
     <string name="update_available">发现更新!</string>
     <string name="update_now">现在更新吗?</string>
     <string name="update_log">更新日志</string>
+    <string name="update_check">检查更新</string>
+    <string name="update_no">无更新</string>
+    <string name="common">通用</string>
+    <string name="scale_type">播放器缩放方式</string>
+    <string name="auto">[推荐] 自动</string>
+    <string name="fit">适应(有黑边)</string>
+    <string name="full">填充(画面拉伸变形)</string>
+    <string name="zoom">放大</string>
 </resources>

@@ -1,10 +1,13 @@
 package org.eu.hanana.reimu.ottohub_andriod.activity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -12,11 +15,22 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
 import org.eu.hanana.reimu.ottohub_andriod.R;
+import org.eu.hanana.reimu.ottohub_andriod.ui.user.UserListFragment;
 
 public class FragActivity extends BaseActivity {
     public static final String ARG_FRAG_CLASS = "class";
     public static final String ARG_DATA = "data";
     public static final String ARG_TITLE = "title";
+    public static Intent create(Context context,Class<? extends Fragment> clazz,Bundle arg,@Nullable String title){
+        var intent = new Intent(context, FragActivity.class);
+        var data = new Bundle();
+        data.putString(FragActivity.ARG_FRAG_CLASS, clazz.getName());
+        if(title != null )
+            data.putString(FragActivity.ARG_TITLE, title);
+        data.putBundle(FragActivity.ARG_DATA,arg);
+        intent.putExtras(data);
+        return intent;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

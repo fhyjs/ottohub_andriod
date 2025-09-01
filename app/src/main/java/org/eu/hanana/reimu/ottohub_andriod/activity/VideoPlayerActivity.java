@@ -1,6 +1,8 @@
 package org.eu.hanana.reimu.ottohub_andriod.activity;
 
 import static android.view.View.GONE;
+import static androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_FILL;
+import static androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT;
 import static com.kuaishou.akdanmaku.data.DanmakuItemData.DANMAKU_MODE_CENTER_BOTTOM;
 import static com.kuaishou.akdanmaku.data.DanmakuItemData.DANMAKU_MODE_CENTER_TOP;
 import static com.kuaishou.akdanmaku.data.DanmakuItemData.DANMAKU_MODE_ROLLING;
@@ -11,6 +13,7 @@ import static com.kuaishou.akdanmaku.data.DanmakuItemData.MERGED_TYPE_NORMAL;
 
 import static org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity.TYPE_AUDIT;
 import static org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity.TYPE_VIEW;
+import static org.eu.hanana.reimu.ottohub_andriod.util.UiUtil.getScaleTypeVideoInt;
 
 import android.content.Context;
 import android.content.pm.ActivityInfo;
@@ -52,6 +55,7 @@ import androidx.media3.common.MediaItem;
 import androidx.media3.common.PlaybackException;
 import androidx.media3.common.PlaybackParameters;
 import androidx.media3.common.Player;
+import androidx.media3.common.VideoSize;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.datasource.DefaultHttpDataSource;
 import androidx.media3.datasource.HttpDataSource;
@@ -83,7 +87,9 @@ import org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase;
 import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoDescribeFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
+import org.eu.hanana.reimu.ottohub_andriod.util.UiUtil;
 
+import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -157,8 +163,14 @@ public class VideoPlayerActivity extends BaseActivity {
         });
         findViewById(R.id.video_desc_btn).setEnabled(false);
         setDanmakuEnable(true);
+    }
+
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
         init();
     }
+
     private void hideNavigationBar() {
         View decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility(
@@ -221,14 +233,18 @@ public class VideoPlayerActivity extends BaseActivity {
     public void init(){
         setTitle("loading...");
         initDanmaku();
-        new Thread(()->{
+        Thread thread = new Thread(() -> {
             preinit();
             initPlayer();
-            if (mediaPlayer==null) return;;
+            if (mediaPlayer == null) return;
+            ;
             loadData(false);
-            if (mediaPlayer==null) return;;
+            if (mediaPlayer == null) return;
+            ;
             postinit();
-        }).start();
+        });
+        thread.setUncaughtExceptionHandler(new AlertUtil.ThreadAlert(this));
+        thread.start();
     }
 
     private void postinit() {
@@ -367,9 +383,16 @@ public class VideoPlayerActivity extends BaseActivity {
                 }
                 setRequestedOrientation(isFullscreen?ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE:ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             });
+
+            videoSurface.setResizeMode(getScaleTypeVideoInt(this));
         });
 
         mediaPlayer.addListener(new Player.Listener() {
+            @Override
+            public void onPlayWhenReadyChanged(boolean playWhenReady, int reason) {
+                Player.Listener.super.onPlayWhenReadyChanged(playWhenReady, reason);
+            }
+
             @Override
             public void onIsPlayingChanged(boolean isPlaying) {
                 if (isPlaying){
@@ -396,8 +419,29 @@ public class VideoPlayerActivity extends BaseActivity {
                         break;
                     case Player.STATE_IDLE:
                         break;
-                    case Player.STATE_READY:
+                    case Player.STATE_READY: {
+                        if (!UiUtil.getScaleTypeVideo(VideoPlayerActivity.this).equals("auto")) break;
+                        VideoSize videoSize = mediaPlayer.getVideoSize();
+                        var vVideo = videoSize.height>videoSize.width;
+                        if(vVideo&&getResources().getConfiguration().orientation!= Configuration.ORIENTATION_LANDSCAPE){
+                            View fullscreenView = findViewById(R.id.video_view_wrapper);
+                            var sizeW = fullscreenView.getWidth();
+                            var sizeH = fullscreenView.getHeight();
+                            var nSizeH = ((float)sizeW)*videoSize.height/videoSize.width;
+                            nSizeH = Math.clamp(nSizeH,sizeH, UiUtil.getAppWindowHeight(VideoPlayerActivity.this)*0.60f);
+                            fullscreenView.setLayoutParams(new ViewGroup.LayoutParams(sizeW,(int)nSizeH));
+                            var pcH = (nSizeH/(float) sizeH);
+                            if (pcH>0.8f&&pcH<0.98f){
+                                videoSurface.setResizeMode(RESIZE_MODE_FILL);
+                            }
+                        }else {
+                            if (videoSize.width>videoSize.height)
+                                videoSurface.setResizeMode(RESIZE_MODE_FILL);
+                            else
+                                videoSurface.setResizeMode(RESIZE_MODE_FIT);
+                        }
                         break;
+                    }
                 }
             }
 
@@ -420,6 +464,22 @@ public class VideoPlayerActivity extends BaseActivity {
             }
         });
         startProgressUpdater();
+    }
+    /**
+     * 反射获取 PlayerView 内部的 StyledPlayerControlView (controller)。
+     */
+    public static PlayerControlView getController(PlayerView playerView) {
+        try {
+            Field field = PlayerView.class.getDeclaredField("controller");
+            field.setAccessible(true);
+            Object obj = field.get(playerView);
+            if (obj instanceof PlayerControlView) {
+                return (PlayerControlView) obj;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
     public void internalTimeCheck(){
         lastDanmakuUpdate++;
