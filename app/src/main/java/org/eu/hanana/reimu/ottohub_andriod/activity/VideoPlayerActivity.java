@@ -22,25 +22,36 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PersistableBundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Display;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowInsets;
 import android.view.WindowManager;
 import android.view.WindowMetrics;
+import android.widget.AbsListView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
@@ -68,6 +79,10 @@ import androidx.media3.ui.PlayerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.internal.TextWatcherAdapter;
+import com.google.android.material.slider.Slider;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.gson.Gson;
 import com.kuaishou.akdanmaku.DanmakuConfig;
 import com.kuaishou.akdanmaku.data.DanmakuItemData;
@@ -83,15 +98,19 @@ import org.eu.hanana.reimu.lib.ottohub.api.video.VideoResult;
 import org.eu.hanana.reimu.ottohub_andriod.MyApp;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.ui.audit.AuditVideoFragment;
+import org.eu.hanana.reimu.ottohub_andriod.ui.base.UnlockedDanmakuRender;
 import org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase;
 import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoDescribeFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
+import org.eu.hanana.reimu.ottohub_andriod.util.ThemeUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.UiUtil;
 
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import yuku.ambilwarna.AmbilWarnaDialog;
 
@@ -247,21 +266,31 @@ public class VideoPlayerActivity extends BaseActivity {
         thread.start();
     }
 
+
     private void postinit() {
         findViewById(R.id.btnDanmaku).setOnClickListener(v -> {
             setDanmakuEnable(!getDanmakuEnable());
         });
         findViewById(R.id.btnSend).setOnClickListener(v -> {
             AtomicInteger atomicInteger = new AtomicInteger(0xffffffff);
+            AtomicInteger atomicTextSize = new AtomicInteger(20);
+            AtomicReference<String> atomicDanmakuType = new AtomicReference<>("scroll");
             BottomSheetDialog bottomSheetDialog = AlertUtil.showInput(this, input -> {
                 int i = atomicInteger.get();
                 String color = Integer.toHexString(i).substring(2);
                 var time = mediaPlayer.getCurrentPosition();
                 Thread thread = new Thread(() -> {
-                    EmptyResult emptyResult = MyApp.getInstance().getOttohubApi().getDanmakuApi().send_danmaku(vid, input,  time/ 1000d, "scroll",color, "20px", "");
-
+                    EmptyResult emptyResult = MyApp.getInstance().getOttohubApi().getDanmakuApi().send_danmaku(vid, input,  time/ 1000d, atomicDanmakuType.get(),color, atomicTextSize.get() +"px", "");
                     ApiUtil.throwApiError(emptyResult);
-                    danmakuPlayer.send(new DanmakuItemData(danmakuPlayer.getCurrentTimeMs(),time+10,input,DANMAKU_MODE_ROLLING,20,Color.parseColor("#"+color),0,DANMAKU_STYLE_SELF_SEND,0,null,MERGED_TYPE_NORMAL));
+                    var local_type=-1;
+                    if (atomicDanmakuType.get().equals("scroll")){
+                        local_type=DANMAKU_MODE_ROLLING;
+                    }else if (atomicDanmakuType.get().equals("top")){
+                        local_type=DANMAKU_MODE_CENTER_TOP;
+                    }else if (atomicDanmakuType.get().equals("bottom")){
+                        local_type=DANMAKU_MODE_CENTER_BOTTOM;
+                    }
+                    danmakuPlayer.send(new DanmakuItemData(danmakuPlayer.getCurrentTimeMs(),time+10,input,local_type,atomicTextSize.get(),Color.parseColor("#"+color),0,DANMAKU_STYLE_SELF_SEND,0,null,MERGED_TYPE_NORMAL));
                 });
                 thread.setUncaughtExceptionHandler(new AlertUtil.ThreadAlert(this));
                 thread.start();
@@ -275,18 +304,25 @@ public class VideoPlayerActivity extends BaseActivity {
                     LinearLayout.LayoutParams.WRAP_CONTENT));
             linearLayout.setOrientation(LinearLayout.HORIZONTAL);
             linearLayout.addView(editInput);
-            MaterialButton colorBtn = new MaterialButton(bottomSheetDialog.getContext());
-            colorBtn.setIcon(AppCompatResources.getDrawable(this,R.drawable.border_color));
-            colorBtn.setPadding(0,0,5,0);
-            colorBtn.setMinWidth(0);
+            ImageButton colorBtn = new ImageButton(bottomSheetDialog.getContext());
+            ImageButton styleBtn = new ImageButton(bottomSheetDialog.getContext());
+            colorBtn.setBackground(null);
+            styleBtn.setBackground(null);
+            Drawable drawable = AppCompatResources.getDrawable(this, R.drawable.border_color);
+            Drawable drawableStyle = AppCompatResources.getDrawable(this, R.drawable.style_24dp);
+            drawable.setTint(ThemeUtil.getTheme(this).getColorPrimary());
+            drawableStyle.setTint(ThemeUtil.getTheme(this).getColorPrimary());
+            colorBtn.setImageDrawable(drawable);
+            styleBtn.setImageDrawable(drawableStyle);
             linearLayout.addView(colorBtn,0);
+            linearLayout.addView(styleBtn,1);
             colorBtn.setOnClickListener(v1 -> {
                 editInput.clearFocus();
                 AmbilWarnaDialog dialog = new AmbilWarnaDialog(this, editInput.getCurrentTextColor(), new AmbilWarnaDialog.OnAmbilWarnaListener() {
                     @Override
                     public void onOk(AmbilWarnaDialog dialog, int color) {
                         editInput.setTextColor(color);
-                        colorBtn.setIconTint(ColorStateList.valueOf(color));
+                        colorBtn.getDrawable().setTint((color));
                         atomicInteger.set(color);
                     }
 
@@ -296,6 +332,57 @@ public class VideoPlayerActivity extends BaseActivity {
                     }
                 });
                 dialog.show();
+            });
+            styleBtn.setOnClickListener(v1 -> {
+                View customView = LayoutInflater.from(this).inflate(R.layout.dialog_danmaku_style, null);
+                AutoCompleteTextView dropdown = customView.findViewById(R.id.dropdown_menu_danmaku_mode);
+                Slider sliderDS = customView.findViewById(R.id.slider_danmaku_size);
+                EditText textEditDS = customView.findViewById(R.id.input_value_ds);
+                List<String> items = List.of(getString(R.string.danmaku_float), getString(R.string.danmaku_Top), getString(R.string.danmaku_bottom));
+                List<String> itemValues = List.of("scroll","top", "bottom");
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, items);
+                dropdown.setAdapter(adapter);
+                dropdown.setText(items.get(itemValues.indexOf(atomicDanmakuType.get())),false);
+
+                sliderDS.setValue(atomicTextSize.get());
+                textEditDS.setText(String.valueOf(atomicTextSize.get()));
+                sliderDS.addOnChangeListener((slider, v2, fromUser) -> {
+                    if (fromUser) {
+
+                        textEditDS.setText(String.valueOf((int) v2));
+                    }
+                });
+                textEditDS.addTextChangedListener(new TextWatcher(){
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
+                    }
+
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        try {
+                            int val = Integer.parseInt(s.toString());
+                            val= (int) Math.clamp(sliderDS.getValueFrom(),val,sliderDS.getValueTo());
+                            sliderDS.setValue(val);
+                        } catch (NumberFormatException e) {
+                            // 忽略空值或非法输入
+                        }
+                    }
+                });
+
+                new MaterialAlertDialogBuilder(this)
+                        .setView(customView)
+                        .setPositiveButton("确定", (dialog, which) -> {
+                            atomicDanmakuType.set(itemValues.get(items.indexOf(dropdown.getText().toString())));
+                            atomicTextSize.set((int) sliderDS.getValue());
+                        })
+                        .setNegativeButton("取消", null)
+                        .show();
             });
             rootView.addView(linearLayout,0);
             bottomSheetDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
@@ -348,6 +435,17 @@ public class VideoPlayerActivity extends BaseActivity {
                     getSupportActionBar().show();
                 }
             }
+            getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+                @Override
+                public void handleOnBackPressed() {
+                    if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+                    }else {
+                        this.setEnabled(false);
+                        getOnBackPressedDispatcher().onBackPressed();
+                    }
+                }
+            });
         });
     }
 
@@ -372,6 +470,7 @@ public class VideoPlayerActivity extends BaseActivity {
     @OptIn(markerClass = UnstableApi.class)
     private void initPlayer() {
         // 创建媒体播放器
+        View fullscreenView = findViewById(R.id.video_view_wrapper);
         mediaPlayer = new ExoPlayer.Builder(this).build();
         runOnUiThread(()->{
             WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
@@ -385,6 +484,7 @@ public class VideoPlayerActivity extends BaseActivity {
             });
 
             videoSurface.setResizeMode(getScaleTypeVideoInt(this));
+            fullscreenView.setLayoutParams(new ViewGroup.LayoutParams(fullscreenView.getWidth(),(int) (UiUtil.getAppWindowHeight(VideoPlayerActivity.this)*0.354)));
         });
 
         mediaPlayer.addListener(new Player.Listener() {
@@ -424,7 +524,6 @@ public class VideoPlayerActivity extends BaseActivity {
                         VideoSize videoSize = mediaPlayer.getVideoSize();
                         var vVideo = videoSize.height>videoSize.width;
                         if(vVideo&&getResources().getConfiguration().orientation!= Configuration.ORIENTATION_LANDSCAPE){
-                            View fullscreenView = findViewById(R.id.video_view_wrapper);
                             var sizeW = fullscreenView.getWidth();
                             var sizeH = fullscreenView.getHeight();
                             var nSizeH = ((float)sizeW)*videoSize.height/videoSize.width;
@@ -612,7 +711,7 @@ public class VideoPlayerActivity extends BaseActivity {
         mediaPlayer.setMediaSource(mediaSource);
     }
     private void initDanmaku() {
-        danmakuPlayer = new DanmakuPlayer(new SimpleRenderer(),new DataSource());
+        danmakuPlayer = new DanmakuPlayer(new UnlockedDanmakuRender(),new DataSource());
         danmakuPlayer.bindView(findViewById(R.id.sv_danmaku));
         danmakuConfig = new DanmakuConfig();
         danmakuConfig.setAllowOverlap(true);

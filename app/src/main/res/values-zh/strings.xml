@@ -178,4 +178,9 @@
     <string name="fit">适应(有黑边)</string>
     <string name="full">填充(画面拉伸变形)</string>
     <string name="zoom">放大</string>
+    <string name="danmaku_mode">弹幕类型</string>
+    <string name="danmaku_float">滚幕</string>
+    <string name="danmaku_Top">置顶</string>
+    <string name="danmaku_bottom">置底</string>
+    <string name="danmaku_size">字体大小(px)</string>
 </resources>

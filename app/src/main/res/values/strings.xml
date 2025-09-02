@@ -193,4 +193,9 @@
     <string name="fit">Fit</string>
     <string name="full">Full</string>
     <string name="zoom">zoom</string>
+    <string name="danmaku_mode">Danmaku Type</string>
+    <string name="danmaku_float">Floating</string>
+    <string name="danmaku_Top">Top</string>
+    <string name="danmaku_bottom">Bottom</string>
+    <string name="danmaku_size">Font Size(px)</string>
 </resources>

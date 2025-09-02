@@ -8,6 +8,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -22,10 +23,12 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import org.eu.hanana.reimu.lib.ottohub.api.system.SlidesResult;
 import org.eu.hanana.reimu.lib.ottohub.api.system.SlideshowResult;
 import org.eu.hanana.reimu.ottohub_andriod.R;
+import org.eu.hanana.reimu.ottohub_andriod.activity.VideoPlayerActivity;
 import org.eu.hanana.reimu.ottohub_andriod.ui.banner.BannerAdapter;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ThemeUtil;
+import org.eu.hanana.reimu.ottohub_andriod.util.UiUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +48,9 @@ public class BannerFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.video_list_header, container, false);
+        View inflate = inflater.inflate(R.layout.video_list_header, container, false);
+        inflate.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) (UiUtil.getAppWindowHeight(getActivity())*0.30f)));
+        return inflate;
     }
 
     @Override
