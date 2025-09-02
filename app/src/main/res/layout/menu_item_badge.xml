@@ -31,7 +31,8 @@
         android:background="@drawable/badge_background"
         android:textColor="@android:color/white"
         android:textSize="12sp"
-        android:text="99+"
+        android:minWidth="16dp"
+        android:text="2"
         android:gravity="center"
         android:visibility="visible" />
 </FrameLayout>
