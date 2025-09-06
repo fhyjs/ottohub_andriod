@@ -75,6 +75,7 @@
                     android:layout_height="wrap_content"/>
             </HorizontalScrollView>
             <TextView
+                android:textIsSelectable="true"
                 android:tag="themed"
                 android:minHeight="0dp"
                 android:textColor="@android:color/primary_text_light"

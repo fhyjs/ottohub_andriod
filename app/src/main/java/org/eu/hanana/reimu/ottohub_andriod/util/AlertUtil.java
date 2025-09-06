@@ -31,6 +31,7 @@ import lombok.AllArgsConstructor;
 
 public class AlertUtil {
     public static androidx.appcompat.app.AlertDialog showYesNo(Context context, String title, String msg, DialogInterface.OnClickListener yes, DialogInterface.OnClickListener no) {
+        if (context==null) return null;
         return new MaterialAlertDialogBuilder(context)
                 .setTitle(title)
                 .setMessage(msg)
@@ -39,12 +40,12 @@ public class AlertUtil {
                 .create();
     }
     public static androidx.appcompat.app.AlertDialog showMsg(Context context, String title, String msg) {
-        AlertDialog alertDialog = new MaterialAlertDialogBuilder(context)
+        if (context==null) return null;
+        return new MaterialAlertDialogBuilder(context)
                 .setTitle(title)
                 .setMessage(msg)
                 .setPositiveButton(R.string.ok, null)
                 .create();
-        return alertDialog;
     }
     public static androidx.appcompat.app.AlertDialog showLoading(Context context, String title){
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
@@ -128,6 +129,7 @@ public class AlertUtil {
         @Override
         public void uncaughtException(@NonNull Thread t, @NonNull Throwable e) {
             e.printStackTrace();
+            if (activity==null||activity.isFinishing()||activity.isDestroyed()) return;
             activity.runOnUiThread(()->AlertUtil.showMsg(activity,activity.getString(R.string.error),"ERROR:"+e+" at "+t.getName()).show());
         }
     }

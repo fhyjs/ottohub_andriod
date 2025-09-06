@@ -3,12 +3,15 @@ package org.eu.hanana.reimu.ottohub_andriod.util;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
@@ -39,13 +42,14 @@ public class CustomWebView extends WebView {
     private ProgressBar progressBar;
     public static final String internal = "https://android_asset/";
     public WebSettings settings;
+    private int lastHeight = 0;
 
     public CustomWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
     public CustomWebView(Context context) {
-        super(context,null);
+        this(context,null);
     }
 
     private void init(Context context) {
@@ -57,6 +61,8 @@ public class CustomWebView extends WebView {
         // 基础设置
         settings = super.getSettings();
         settings.setJavaScriptEnabled(true);
+        settings.setBuiltInZoomControls(false);
+        settings.setDisplayZoomControls(false);
         settings.setDomStorageEnabled(true);
         settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         settings.setAllowFileAccess(true);
@@ -70,6 +76,19 @@ public class CustomWebView extends WebView {
         // 客户端设置
         setWebChromeClient(new CustomWebChromeClient());
         setWebViewClient(new CustomWebViewClient());
+        addJavascriptInterface(new Object(){
+            @JavascriptInterface
+            public void setHeight(int height){
+                post(()->{
+                    var hv = height;
+                    hv=(int) (hv * getScale());
+                    if (hv == lastHeight) return; // 防止重复设置
+                    lastHeight = hv;
+
+                    setMinimumHeight(hv);
+                });
+            }
+        },"hanana");
     }
 
     @NonNull
@@ -80,42 +99,7 @@ public class CustomWebView extends WebView {
 
     @OptIn(markerClass = UnstableApi.class)
     public void openUrl(String url){
-        if (url.toLowerCase(Locale.ROOT).contains("ottohub.cn")){
-            var ottohubUrl = url.split("/");
-            var ottohubOperation = ottohubUrl[ottohubUrl.length-2];
-            var ottohubTarget = ottohubUrl[ottohubUrl.length-1];
-            try {
-                if (ottohubOperation.contains("b")){
-                    Intent intent = new Intent(getContext(), BlogActivity.class);
-                    var data = new Bundle();
-                    data.putInt(BlogActivity.KEY_BID,Integer.parseInt(ottohubTarget));
-                    intent.putExtras(data);
-                    getContext().startActivity(intent);
-                    return;
-                }else if (ottohubOperation.contains("v")){
-                    Intent intent = new Intent(getContext(), VideoPlayerActivity.class);
-                    var data = new Bundle();
-                    data.putInt(VideoPlayerActivity.KEY_VID,Integer.parseInt(ottohubTarget));
-                    intent.putExtras(data);
-                    getContext().startActivity(intent);
-                    return;
-                }else if (ottohubOperation.contains("u")){
-                    Intent intent = new Intent(getContext(), ProfileActivity.class);
-                    var data = new Bundle();
-                    data.putInt(ProfileActivity.KEY_UID,Integer.parseInt(ottohubTarget));
-                    intent.putExtras(data);
-                    getContext().startActivity(intent);
-                    return;
-                }
-            }catch (Exception ignored){}
-
-        }
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-        if (intent.resolveActivity(getContext().getPackageManager()) != null) {
-            getContext().startActivity(intent);
-        } else {
-            AlertUtil.showMsg(getContext(),getContext().getString(R.string.open_url),getContext().getString(R.string.open_url_desc,url)).show();
-        }
+        UiUtil.openUrl(getContext(),url);
     }
     public class CustomWebChromeClient extends WebChromeClient {
         @Override
@@ -166,6 +150,21 @@ public class CustomWebView extends WebView {
     }
 
     public class CustomWebViewClient extends WebViewClient {
+        @Override
+        public void onPageStarted(WebView webView, String url, Bitmap favicon) {
+            super.onPageStarted(webView, url, favicon);
+        }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            super.onPageFinished(view, url);
+            String js = "var tag = document.createElement('script');" +
+                    "tag.type = 'text/javascript';" +
+                    "tag.src = \""+internal+"web/assets/webview.js\";" +
+                    "document.head.appendChild(tag);";
+            view.evaluateJavascript(js, null);
+        }
+
         @Override
         public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
             if (!request.getUrl().toString().startsWith(internal))

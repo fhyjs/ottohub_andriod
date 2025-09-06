@@ -196,7 +196,7 @@ public class VideoDescribeFragment extends BaseFragment {
         });
         ThemeUtil.apply(tagsArea);
         view.findViewById(R.id.btn_share).setOnClickListener(v -> {
-            var txt = v.getContext().getString(R.string.share_content,vData.title,"https://ottohub.cn/v/"+vData.vid);
+            var txt = v.getContext().getString(R.string.share_content,vData.title,"https://m.ottohub.cn/v/"+vData.vid);
             ClipboardUtil.copyToClipboard(v.getContext(),txt);
             shareText(v.getContext(),txt);
         });

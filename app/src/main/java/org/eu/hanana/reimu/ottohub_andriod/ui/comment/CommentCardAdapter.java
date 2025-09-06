@@ -41,6 +41,7 @@ import org.eu.hanana.reimu.ottohub_andriod.ui.base.CardAdapterBase;
 import org.eu.hanana.reimu.ottohub_andriod.ui.blog.BlogListFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
+import org.eu.hanana.reimu.ottohub_andriod.util.CustomWebView;
 import org.eu.hanana.reimu.ottohub_andriod.util.ThemeUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.UiUtil;
 
@@ -227,12 +228,12 @@ public class CommentCardAdapter extends CardAdapterBase<CommentCard, CommentCard
 
 // 设置文字
         tvContent.setText("CONTENT");
-
+        tvContent.setTextIsSelectable(true);
 // 设置文字大小（sp 单位）
         tvContent.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
 
 // 设置文字颜色
-        tvContent.setTextColor(ContextCompat.getColor(context, R.color.black));
+        tvContent.setTextColor(ThemeUtil.getTheme(context).getColorOnPrimary());
 
 // 设置布局参数
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
@@ -243,7 +244,7 @@ public class CommentCardAdapter extends CardAdapterBase<CommentCard, CommentCard
         return tvContent;
     }
     protected WebView getContentWv(Context context){
-        WebView webView = new WebView(context);
+        WebView webView = new CustomWebView(context);
 
 // 设置 tag
         webView.setTag("themed");
@@ -258,25 +259,7 @@ public class CommentCardAdapter extends CardAdapterBase<CommentCard, CommentCard
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setLayoutParams(lp);
         webView.setVerticalScrollBarEnabled(false);
-        webView.setWebViewClient(new WebViewClient() {
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                // 用 JS 获取网页内容高度
-                view.post(()->view.evaluateJavascript(
-                        "(function() { return document.body.scrollHeight; })();",
-                        value -> {
-                            try {
-                                int contentHeight = (int) Float.parseFloat(value);
-                                ViewGroup.LayoutParams params = view.getLayoutParams();
-                                params.height = (int) (contentHeight * view.getScale()); // 转换成像素
-                                view.setLayoutParams(params);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                ));
-            }
-        });
+
         return webView;
     }
 }

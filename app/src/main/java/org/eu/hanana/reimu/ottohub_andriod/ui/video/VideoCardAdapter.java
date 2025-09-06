@@ -186,7 +186,7 @@ public class VideoCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 }
             }
             vcvHolder.itemView.findViewById(R.id.btn_share).setOnClickListener(v -> {
-                var txt = v.getContext().getString(R.string.share_content,video.getTitle(),"https://ottohub.cn/v/"+video.getVid());
+                var txt = v.getContext().getString(R.string.share_content,video.getTitle(),"https://m.ottohub.cn/v/"+video.getVid());
                 ClipboardUtil.copyToClipboard(v.getContext(),txt);
                 shareText(v.getContext(),txt);
             });

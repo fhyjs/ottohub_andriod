@@ -196,7 +196,7 @@ public class BlogActivity extends BaseActivity {
             startActivity(intent);
         });
         findViewById(R.id.btn_share).setOnClickListener(v -> {
-            var txt = v.getContext().getString(R.string.share_content,blogResult.title,"https://ottohub.cn/b/"+bid);
+            var txt = v.getContext().getString(R.string.share_content,blogResult.title,"https://m.ottohub.cn/b/"+bid);
             ClipboardUtil.copyToClipboard(v.getContext(),txt);
             shareText(v.getContext(),txt);
         });

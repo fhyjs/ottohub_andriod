@@ -24,6 +24,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.textfield.TextInputEditText;
+
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.databinding.ActivityLoginBinding;
 import org.eu.hanana.reimu.ottohub_andriod.ui.login.LoggedInUserView;
@@ -51,8 +53,8 @@ public class LoginActivity extends BaseActivity {
         loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
 
-         usernameEditText = binding.username;
-         passwordEditText = binding.password;
+         usernameEditText = ((TextInputEditText) binding.username);
+         passwordEditText = ((TextInputEditText) binding.password);
         final Button loginButton = binding.login;
         loadingProgressBar = binding.loading;
 
@@ -132,7 +134,7 @@ public class LoginActivity extends BaseActivity {
         thread.start();
     }
     private void updateUiWithUser(LoggedInUserView model) {
-        String welcome = getString(org.eu.hanana.reimu.ottohub_andriod.R.string.welcome) + model.getDisplayName();
+        String welcome = getString(R.string.welcome) + model.getDisplayName();
         // TODO : initiate successful logged in experience
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
         AlertDialog alertDialog = AlertUtil.showMsg(this, getString(R.string.tip), getString(R.string.ok));

@@ -1,5 +1,7 @@
 package org.eu.hanana.reimu.ottohub_andriod.ui.comment;
 
+import static android.view.View.GONE;
+
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -30,6 +32,7 @@ import org.eu.hanana.reimu.ottohub_andriod.data.comment.CommentViewModel;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.ListFragmentBase;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
+import org.eu.hanana.reimu.ottohub_andriod.util.ThemeUtil;
 
 import java.util.List;
 
@@ -132,13 +135,13 @@ public class CommentFragmentBase extends ListFragmentBase<CommentCardAdapter, Co
         if (parent!=0&&parentData!=null) {
             Toolbar toolbar  = new Toolbar(getContext());
             toolbar.setLayoutParams(new Toolbar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            toolbar.setBackgroundResource(com.google.android.material.R.color.design_default_color_primary);
+            toolbar.setBackgroundColor(ThemeUtil.getTheme(getContext()).getColorActionBar());
             toolbar.setTitle(getString(R.string.reply_of)+" "+parentData.username);
-            toolbar.setTitleTextColor(getResources().getColor(com.google.android.material.R.color.design_default_color_surface));
+            toolbar.setTitleTextColor(ThemeUtil.getTheme(getContext()).getColorOnPrimary());
             // 设置返回按钮图标和颜色
             Drawable navIcon = ContextCompat.getDrawable(inflate.getContext(), androidx.appcompat.R.drawable.abc_ic_ab_back_material);
             if (navIcon != null) {
-                navIcon.setTint(ContextCompat.getColor(inflate.getContext(), R.color.white));
+                navIcon.setTint(ThemeUtil.getTheme(getContext()).getColorOnPrimary());
                 toolbar.setNavigationIcon(navIcon);
             }
                         // 设置返回按钮点击事件
@@ -188,6 +191,11 @@ public class CommentFragmentBase extends ListFragmentBase<CommentCardAdapter, Co
 
 // 6. 添加点击事件
         fab.setOnClickListener(v -> {
+            if (ApiUtil.getAppApi().getLoginResult()==null){
+                AlertUtil.showError(getContext(),getString(R.string.not_login));
+                fab.setVisibility(GONE);
+                return;
+            }
             AlertUtil.showInput(inflate.getContext(),input -> {
                 Thread thread = new Thread(() -> {
                     IfGetExpResult ifGetExpResult;

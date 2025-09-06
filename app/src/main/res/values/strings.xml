@@ -198,4 +198,5 @@
     <string name="danmaku_Top">Top</string>
     <string name="danmaku_bottom">Bottom</string>
     <string name="danmaku_size">Font Size(px)</string>
+    <string name="update_err">Error checking update!</string>
 </resources>

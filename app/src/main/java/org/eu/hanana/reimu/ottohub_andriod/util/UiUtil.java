@@ -116,7 +116,6 @@ public class UiUtil {
                     return;
                 }
             }catch (Exception ignored){}
-
         }
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         if (intent.resolveActivity(context.getPackageManager()) != null) {
