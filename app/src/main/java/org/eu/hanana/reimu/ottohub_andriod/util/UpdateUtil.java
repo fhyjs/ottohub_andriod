@@ -65,7 +65,10 @@ public class UpdateUtil {
                     },null).show());
                 });
             }catch (Exception e){
-                Toast.makeText(activity, activity.getString(R.string.update_err)+ e, Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+                activity.runOnUiThread(()->{
+                    Toast.makeText(activity, activity.getString(R.string.update_err)+ e, Toast.LENGTH_SHORT).show();
+                });
             }
         });
         threadCheckUpdate.setUncaughtExceptionHandler(new AlertUtil.ThreadAlert(activity));
