@@ -199,4 +199,9 @@
     <string name="danmaku_bottom">Bottom</string>
     <string name="danmaku_size">Font Size(px)</string>
     <string name="update_err">Error checking update!</string>
+    <string name="send_msg_1">Send message</string>
+    <string name="shorts">Short Videos</string>
+    <string name="back">Back</string>
+    <string name="detailed">detailed</string>
+    <string name="user_settings">User Settings</string>
 </resources>

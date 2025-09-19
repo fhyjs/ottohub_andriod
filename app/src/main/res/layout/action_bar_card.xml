@@ -83,6 +83,7 @@
                 android:layout_height="wrap_content">
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_approve"
+                    android:tag="themed|icon"
                     style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
                     android:text="@string/approve"
                     app:icon="@drawable/order_approve_24dp"
@@ -97,6 +98,7 @@
                     android:text="@string/reject"
                     app:icon="@drawable/contract_delete_24dp"
                     app:iconGravity="textTop"
+                    android:tag="themed|icon"
                     app:iconPadding="2dp"
                     android:textSize="20sp"
                     android:layout_width="wrap_content"

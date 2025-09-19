@@ -45,7 +45,6 @@ public class SendMessageFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -63,6 +62,10 @@ public class SendMessageFragment extends Fragment {
         etContent = view.findViewById(R.id.etContent);
         tilReceiverUid = view.findViewById(R.id.tilReceiverUid);
         tilContent = view.findViewById(R.id.tilContent);
+
+        if (getArguments() != null && getArguments().containsKey("receiver")) {
+            etReceiverUid.setText(String.valueOf( getArguments().getInt("receiver")));
+        }
 
         btnSend.setOnClickListener(v -> {
             String uidText = etReceiverUid.getText() != null ? etReceiverUid.getText().toString().trim() : "";

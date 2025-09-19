@@ -58,15 +58,7 @@ public class UpdateMessageCountBackgroundService extends Service {
         // 这里放你的网络请求代码，比如调用 ApiUtil.fetchMsgCount() 等
         Thread thread = new Thread(ApiUtil::fetchMsgCount);
         thread.setUncaughtExceptionHandler((t, e) -> {
-            Notification error = new NotificationCompat.Builder(this, "error")
-                    .setContentTitle(getString(R.string.ottohub))
-                    .setContentText(getString(R.string.error) + e)
-                    .setSmallIcon(R.drawable.ottoicon)
-                    .build();
-            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-                notificationManager.notify(1, error);
-            }
+
         });
         thread.start();
         if (isAppForeground(this)){

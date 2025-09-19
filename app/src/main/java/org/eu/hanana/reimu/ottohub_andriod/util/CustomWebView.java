@@ -1,8 +1,12 @@
 package org.eu.hanana.reimu.ottohub_andriod.util;
 
+import static android.content.Context.MODE_PRIVATE;
+
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
@@ -12,18 +16,26 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
+import android.webkit.JsPromptResult;
+import android.webkit.JsResult;
+import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
 import androidx.media3.common.util.UnstableApi;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+import org.eu.hanana.reimu.ottohub_andriod.MyApp;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.ProfileActivity;
@@ -38,11 +50,17 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Locale;
 
+import lombok.Setter;
+
 public class CustomWebView extends WebView {
     private ProgressBar progressBar;
     public static final String internal = "https://android_asset/";
     public WebSettings settings;
     private int lastHeight = 0;
+    @Setter
+    private ValueCallback<Uri[]> filePathCallback;
+    private FileChooserListener fileChooserListener;
+
 
     public CustomWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -78,6 +96,20 @@ public class CustomWebView extends WebView {
         setWebViewClient(new CustomWebViewClient());
         addJavascriptInterface(new Object(){
             @JavascriptInterface
+            public String intArgbToRgba(int argbInt) {
+                // >>> 是无符号右移
+                int a = (argbInt >>> 24) & 0xFF;  // 0-255
+                int r = (argbInt >> 16) & 0xFF;
+                int g = (argbInt >> 8) & 0xFF;
+                int b = argbInt & 0xFF;
+
+                // 转成 0~1 的浮点 alpha
+                float alpha = a / 255f;
+
+                return String.format(Locale.getDefault(),"rgba(%d, %d, %d, %.2f)", r, g, b, alpha);
+            }
+
+            @JavascriptInterface
             public void setHeight(int height){
                 post(()->{
                     var hv = height;
@@ -87,6 +119,32 @@ public class CustomWebView extends WebView {
 
                     setMinimumHeight(hv);
                 });
+            }
+            @JavascriptInterface
+            public void showToast(String message) {
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+            }
+            @JavascriptInterface
+            public int getBgColor() {
+                return ThemeUtil.getTheme(getContext()).getColorBackground();
+            }
+            @JavascriptInterface
+            public int getTextColor() {
+                return ThemeUtil.getTheme(getContext()).getColorOnPrimary();
+            }
+            @JavascriptInterface
+            public String getToken() {
+                return ApiUtil.getAppApi().getLoginToken();
+            }
+            @JavascriptInterface
+            public String getUid() {
+                SharedPreferences sharedPreferences = MyApp.getInstance().getSharedPreferences(SharedPreferencesKeys.Perf_Auth, MODE_PRIVATE);
+                return sharedPreferences.getString(SharedPreferencesKeys.Key_Username,"");
+            }
+            @JavascriptInterface
+            public String getPassWd() {
+                SharedPreferences sharedPreferences = MyApp.getInstance().getSharedPreferences(SharedPreferencesKeys.Perf_Auth, MODE_PRIVATE);
+                return sharedPreferences.getString(SharedPreferencesKeys.Key_Passwd,"");
             }
         },"hanana");
     }
@@ -147,8 +205,77 @@ public class CustomWebView extends WebView {
             }
             super.onProgressChanged(view, newProgress);
         }
+        @Override
+        public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
+            new MaterialAlertDialogBuilder(view.getContext())
+                    .setTitle(R.string.tip)
+                    .setMessage(message)
+                    .setPositiveButton(R.string.conform, (dialog, which) -> result.confirm())
+                    .setOnCancelListener(dialog -> result.cancel()) // 弹窗关闭时取消
+                    .show();
+            return true;
+        }
+
+        @Override
+        public boolean onJsConfirm(WebView view, String url, String message, JsResult result) {
+            new MaterialAlertDialogBuilder(view.getContext())
+                    .setTitle(R.string.conform)
+                    .setMessage(message)
+                    .setPositiveButton(R.string.conform, (dialog, which) -> result.confirm())
+                    .setNegativeButton(R.string.cancel, (dialog, which) -> result.cancel())
+                    .setOnCancelListener(dialog -> result.cancel()) // 弹窗关闭时取消
+                    .show();
+            return true;
+        }
+
+        @Override
+        public boolean onJsPrompt(WebView view, String url, String message, String defaultValue, JsPromptResult result) {
+            final EditText input = new EditText(view.getContext());
+            input.setText(defaultValue);
+
+            new MaterialAlertDialogBuilder(view.getContext())
+                    .setTitle(message)
+                    .setView(input)
+                    .setPositiveButton(R.string.conform, (dialog, which) -> result.confirm(input.getText().toString()))
+                    .setNegativeButton(R.string.cancel, (dialog, which) -> result.cancel())
+                    .setOnCancelListener(dialog -> result.cancel()) // 弹窗关闭时取消
+                    .show();
+            return true;
+        }
+        @Override
+        public boolean onShowFileChooser(WebView webView,
+                                         ValueCallback<Uri[]> filePathCallback,
+                                         FileChooserParams fileChooserParams) {
+            if (CustomWebView.this.filePathCallback != null) {
+                CustomWebView.this.filePathCallback.onReceiveValue(null);
+            }
+            CustomWebView.this.filePathCallback = filePathCallback;
+
+            if (fileChooserListener != null) {
+                fileChooserListener.onShowFileChooser(fileChooserParams.createIntent());
+            }
+            return true;
+        }
     }
 
+    public void onFileChooserResult(int resultCode, Intent data) {
+        if (filePathCallback != null) {
+            Uri[] results = null;
+            if (resultCode == Activity.RESULT_OK && data != null) {
+                String dataString = data.getDataString();
+                if (dataString != null) {
+                    results = new Uri[]{Uri.parse(dataString)};
+                }
+            }
+            filePathCallback.onReceiveValue(results);
+            filePathCallback = null;
+        }
+    }
+
+    // 回调接口
+    public interface FileChooserListener {
+        void onShowFileChooser(Intent intent);
+    }
     public class CustomWebViewClient extends WebViewClient {
         @Override
         public void onPageStarted(WebView webView, String url, Bitmap favicon) {

@@ -5,4 +5,8 @@
         android:id="@+id/btn_view_avatar"/>
     <item android:title="@string/view_cover"
         android:id="@+id/btn_view_cover"/>
+    <item android:title="@string/send_msg_1"
+        android:id="@+id/btn_send_message"/>
+    <item android:title="@string/user_settings"
+        android:id="@+id/btn_user_settings"/>
 </menu>

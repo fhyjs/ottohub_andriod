@@ -37,6 +37,7 @@ import com.google.android.material.button.MaterialButton;
 import org.eu.hanana.reimu.ottohub_andriod.MainActivity;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.activity.SearchActivity;
+import org.eu.hanana.reimu.ottohub_andriod.activity.ShortVideoActivity;
 import org.eu.hanana.reimu.ottohub_andriod.data.video.VideoCard;
 import org.eu.hanana.reimu.ottohub_andriod.data.video.VideoViewModel;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.BaseFragment;
@@ -44,6 +45,7 @@ import org.eu.hanana.reimu.ottohub_andriod.ui.base.IScrollTopChecker;
 import org.eu.hanana.reimu.ottohub_andriod.ui.user.ProfileFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.InfiniteScrollListener;
+import org.eu.hanana.reimu.ottohub_andriod.util.ThemeUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -282,44 +284,6 @@ public class VideoListFragment extends BaseFragment implements IScrollTopChecker
         });
 
 
-        View llTopContainer = view.findViewById(R.id.llTopContainer);
-
-        boolean[] isHidden = {false}; // 用数组方便匿名类修改
-
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                if (newState==RecyclerView.SCREEN_STATE_OFF){
-                    if (recyclerView.canScrollVertically(-1)) {
-                        // RecyclerView 不在顶部，要隐藏 llTopContainer
-                        if (!isHidden[0]) {
-                            isHidden[0] = true;
-                            llTopContainer.animate()
-                                    .translationY(-llTopContainer.getHeight())
-                                    .alpha(0f)
-                                    .setDuration(200)
-                                    .withEndAction(() -> llTopContainer.setVisibility(View.GONE))
-                                    .start();
-                        }
-                    } else {
-                        // RecyclerView 在顶部，要显示 llTopContainer
-                        if (isHidden[0]) {
-                            recyclerView.scrollTo(0,0);
-                            isHidden[0] = false;
-                            llTopContainer.setVisibility(View.VISIBLE);
-                            llTopContainer.animate()
-                                    .translationY(0)
-                                    .alpha(1f)
-                                    .setDuration(100)
-                                    .start();
-                        }
-                    }
-                }
-                }
-        });
-
-
 
 
 
@@ -346,12 +310,19 @@ public class VideoListFragment extends BaseFragment implements IScrollTopChecker
 
     // 定义 MenuProvider
     private class MyMenuProvider implements MenuProvider {
+        protected MenuItem shorts;
         @Override
         public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
             if ((getActivity()!=null&&getActivity().getClass()!=MainActivity.class)||(getParentFragment()!=null&&getParentFragment().getClass()== ProfileFragment.class))
                 return;
             if (getActivity()==null) return;
             // 加载菜单布局
+            shorts = menu.add(getString(R.string.shorts));
+            shorts.setEnabled(true);
+            shorts.setVisible(true);
+            shorts.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            shorts.setIcon(R.drawable.animated_images_24dp);
+
             menuInflater.inflate(R.menu.video_list_menu, menu);
         }
 
@@ -362,6 +333,12 @@ public class VideoListFragment extends BaseFragment implements IScrollTopChecker
             if (item != null) {
                 item.setVisible(true);
                 item.setEnabled(true);
+            }
+            for (int i = 0; i < menu.size(); i++) {
+                MenuItem itemM = menu.getItem(i);
+                if (itemM.getIcon() != null) {
+                    itemM.getIcon().setTint(ThemeUtil.getTheme(getContext()).getColorOnPrimary());
+                }
             }
         }
 
@@ -376,6 +353,16 @@ public class VideoListFragment extends BaseFragment implements IScrollTopChecker
             if (id == R.id.action_search_button) {
                 // 创建 Intent
                 Intent intent = new Intent(getActivity(), SearchActivity.class);
+
+                // 添加额外数据（可选）
+                intent.putExtra(ARG_TYPE, TYPE_VIDEO);
+
+                // 启动 Activity
+                startActivity(intent); // 简单启动
+                return true;
+            }
+            if (menuItem == shorts) {
+                Intent intent = new Intent(getActivity(), ShortVideoActivity.class);
 
                 // 添加额外数据（可选）
                 intent.putExtra(ARG_TYPE, TYPE_VIDEO);

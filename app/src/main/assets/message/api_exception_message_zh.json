@@ -2,5 +2,7 @@
   "missing_argument": "缺少参数",
   "not_reviewer": "你不是超管",
   "system_error": "服务端返回未知故障",
+  "error_uid": "用户不存在",
+  "too_many_requests": "哇袄,你太快了,服务器要追不上了!!",
   "content_too_shore": "你话太少了"
 }

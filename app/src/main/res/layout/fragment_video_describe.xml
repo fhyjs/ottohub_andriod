@@ -94,14 +94,23 @@
                     android:orientation="horizontal" />
             </HorizontalScrollView>
 
-            <FrameLayout
+            <com.google.android.material.textview.MaterialTextView
+                android:textSize="22sp"
+                android:layout_width="wrap_content"
+                android:id="@+id/mtv"
+                android:layout_height="wrap_content"
+                android:tag="themed"
+                android:text="@string/recommend"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/scrollView" />
+            <org.eu.hanana.reimu.ottohub_andriod.util.TouchInterceptFrameLayout
                 android:id="@+id/fragment_container"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                app:layout_constraintTop_toBottomOf="@id/scrollView">
+                app:layout_constraintTop_toBottomOf="@id/mtv">
 
-            </FrameLayout>
+            </org.eu.hanana.reimu.ottohub_andriod.util.TouchInterceptFrameLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>

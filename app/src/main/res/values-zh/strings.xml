@@ -184,4 +184,9 @@
     <string name="danmaku_bottom">置底</string>
     <string name="danmaku_size">字体大小(px)</string>
     <string name="update_err">无法检测更新</string>
+    <string name="send_msg_1">发送消息</string>
+    <string name="shorts">短视频模式</string>
+    <string name="back">返回</string>
+    <string name="detailed">详情</string>
+    <string name="user_settings">编辑个人资料</string>
 </resources>

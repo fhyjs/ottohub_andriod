@@ -70,6 +70,7 @@ public class AlertUtil {
         return loadingDialog;
     }
     public static AlertDialog showError(Context context, String message) {
+        if (context==null) return null;
         AlertDialog alertDialog = showMsg(context, context.getString(R.string.error), message);
         alertDialog.show();
         if (true) return alertDialog;

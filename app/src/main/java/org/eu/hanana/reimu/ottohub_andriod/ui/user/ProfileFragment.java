@@ -55,12 +55,15 @@ import org.eu.hanana.reimu.ottohub_andriod.activity.BaseActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.FragActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.ImageViewActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.MessageActivity;
+import org.eu.hanana.reimu.ottohub_andriod.activity.UserSettingsActivity;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.BaseFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.IScrollTopChecker;
 import org.eu.hanana.reimu.ottohub_andriod.ui.blog.BlogListFragment;
+import org.eu.hanana.reimu.ottohub_andriod.ui.message.SendMessageFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.settings.SettingsFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
+import org.eu.hanana.reimu.ottohub_andriod.util.ApiException;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ClassUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ProfileUtil;
@@ -195,10 +198,10 @@ public class ProfileFragment extends BaseFragment {
             throw new RuntimeException(e);
         }
         if (!userResult.isSuccess()){
-            throw new RuntimeException("Error getting userdata:"+userResult.getMessage());
+            ApiUtil.throwApiError(userResult);
         }
         if (!userDataResult.isSuccess()){
-            throw new RuntimeException("Error getting userinfo:"+userDataResult.getMessage());
+            ApiUtil.throwApiError(userDataResult);
         }
     }
     protected void initUI() {
@@ -430,8 +433,12 @@ public class ProfileFragment extends BaseFragment {
                     Drawable drawable = AppCompatResources.getDrawable(getContext(), R.drawable.mail_24dp);
                     drawable.setTintList(ContextCompat.getColorStateList(getContext(),R.color.black));
                     menu.add(Menu.NONE,10,Menu.NONE,getString(R.string.mail)).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
                 }
                 menuInflater.inflate(R.menu.menu_action_profile,menu);
+                if (!isSelf()) {
+                    menu.findItem(R.id.btn_user_settings).setVisible(false);
+                }
             }
 
             @Override
@@ -477,6 +484,13 @@ public class ProfileFragment extends BaseFragment {
                     ImageViewActivity.start(getContext(),isSelf()?MyApp.getInstance().getOttohubApi().getLoginResult().avatar_url:userDataResult.avatar_url);
                 } else if (menuItem.getItemId() == R.id.btn_view_cover) {
                     ImageViewActivity.start(getContext(),isSelf()?MyApp.getInstance().getOttohubApi().getLoginResult().cover_url:userDataResult.cover_url);
+                } else if (menuItem.getItemId() == R.id.btn_send_message) {
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("receiver",getUid());
+                    startActivity(FragActivity.create(getContext(), SendMessageFragment.class,bundle,getString(R.string.send_msg_1)));
+                } else if (menuItem.getItemId() == R.id.btn_user_settings) {
+                    var target = new Intent(getContext(), UserSettingsActivity.class);
+                    startActivity(target);
                 }
                 return false;
             }

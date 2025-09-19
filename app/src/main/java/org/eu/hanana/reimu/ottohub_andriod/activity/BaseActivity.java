@@ -26,6 +26,7 @@ import java.util.Locale;
 
 public abstract class BaseActivity extends AppCompatActivity {
     public  MaterialToolbar toolbar;
+    public LinearLayout wrapper;
     public ViewGroup getRoot(){
         return (ViewGroup) findViewById(android.R.id.content);
     }
@@ -52,7 +53,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         rootView.removeView(existingLayout); // 移除原布局
 
         // 创建新的 LinearLayout
-        LinearLayout wrapper = new LinearLayout(this);
+        wrapper = new LinearLayout(this);
         wrapper.setOrientation(LinearLayout.VERTICAL);
         wrapper.setLayoutParams(new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,

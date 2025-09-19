@@ -160,7 +160,7 @@ public class ApiUtil {
     }
     protected static void checkErrorMessages(@Nullable String c){
         if (apiExceptionMessage==null) {
-            String country = Locale.getDefault().getCountry().toLowerCase(Locale.ROOT);
+            String country = LocaleUtil.getLocale(MyApp.getInstance().getApplicationContext()).toString().toLowerCase(Locale.ROOT);
             if (c!=null) country=c;
             InputStream resourceAsStream = null;
             try {

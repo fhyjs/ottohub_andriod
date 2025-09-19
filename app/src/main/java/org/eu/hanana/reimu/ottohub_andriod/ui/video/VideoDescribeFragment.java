@@ -18,6 +18,7 @@ import android.os.Bundle;
 
 import android.os.IBinder;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -46,10 +47,12 @@ import org.eu.hanana.reimu.ottohub_andriod.activity.SearchActivity;
 import org.eu.hanana.reimu.ottohub_andriod.service.CopyService;
 import org.eu.hanana.reimu.ottohub_andriod.service.DownloadVideoForegroundService;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.BaseFragment;
+import org.eu.hanana.reimu.ottohub_andriod.ui.base.IScrollTopChecker;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ClipboardUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ThemeUtil;
+import org.eu.hanana.reimu.ottohub_andriod.util.TouchInterceptFrameLayout;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -60,7 +63,7 @@ import java.util.Locale;
  * create an instance of this fragment.
  */
 public class VideoDescribeFragment extends BaseFragment {
-
+    protected TouchInterceptFrameLayout frameLayout;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_VDATA = "param1";
@@ -92,6 +95,7 @@ public class VideoDescribeFragment extends BaseFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         this.view=view;
+        frameLayout=view.findViewById(R.id.fragment_container);
         ((TextView) view.findViewById(R.id.video_title)).setText(vData.title);
         ((TextView) view.findViewById(R.id.video_desc_text)).setText(vData.intro);
         ((TextView) view.findViewById(R.id.username)).setText(vData.username);
@@ -213,6 +217,35 @@ public class VideoDescribeFragment extends BaseFragment {
             }
             Toast.makeText(getContext(),R.string.notise_msg,Toast.LENGTH_SHORT).show();
         });
+
+        var onTouchListener = new TouchInterceptFrameLayout.OnTouchListener() {
+            private androidx.fragment.app.Fragment frag;
+            private float lastY = 0;  // 记录上一次的 Y 坐标
+            @Override
+            public void onTouch(MotionEvent ev) {
+                if (ev.getAction()==MotionEvent.ACTION_DOWN){
+                    frag = getChildFragmentManager().findFragmentById(R.id.fragment_container);
+                    lastY = ev.getY();  // 初始化上一次位置
+                }else if (ev.getAction()==MotionEvent.ACTION_UP) {
+                    frameLayout.setInterceptMove(true);
+                }else {
+                    float currentY = ev.getY();
+                    float deltaY = currentY - lastY; // Y 方向变化量
+                    lastY = currentY;  // 更新上一次位置
+                    if (frag instanceof IScrollTopChecker){
+                        var stc = ((IScrollTopChecker) frag);
+                        if (stc.atTop()){
+                            frameLayout.setInterceptMove(deltaY > 0);
+                        }else {
+
+                        }
+                    }
+                }
+            }
+        };
+        frameLayout.setInterceptMove(true);
+        frameLayout.setTouchListener(onTouchListener);
+        frameLayout.setInterceptTouchListener(onTouchListener);
     }
     private void updateActionBtns() {
         ((TextView) view.findViewById(R.id.btn_like)).setText(String.format(Locale.getDefault(),"%d%s",vData.like_count,getString(R.string.like)));

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.video.VideoFragment">
+
+    <FrameLayout
+        android:id="@+id/video_view_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.media3.ui.PlayerView
+            android:id="@+id/video_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:background="#FF0c0c0b"
+            android:fitsSystemWindows="false"
+            app:resize_mode="fit">
+
+            <com.kuaishou.akdanmaku.ui.DanmakuView
+                android:id="@+id/sv_danmaku"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="visible" />
+        </androidx.media3.ui.PlayerView>
+    </FrameLayout>
+
+    <!-- 用户信息 -->
+    <LinearLayout
+        android:id="@+id/ll_userinfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.01"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivAvatar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_launcher_background"
+            app:shapeAppearanceOverlay="@style/CircleImageViewStyle" />
+
+        <TextView
+            android:textColor="@color/white"
+            android:id="@+id/tv_name"
+            android:layout_gravity="bottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/placeholder" />
+    </LinearLayout>
+
+    <!-- 视频标题 -->
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/placeholder"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.03"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/video_view_wrapper"
+        app:layout_constraintVertical_bias="0.87" />
+
+    <!-- 右侧操作按钮 -->
+    <LinearLayout
+        android:id="@+id/ll_right_actions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="-20dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.75">
+
+        <!-- 点赞 -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_like"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="@android:color/transparent"
+            android:contentDescription="@string/like"
+            android:text="@string/like"
+            app:icon="@drawable/thumb_up_24dp"
+            app:iconGravity="textTop"
+            app:iconTint="@color/white" />
+
+        <!-- 收藏 -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_favorite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="@android:color/transparent"
+            android:contentDescription="@string/favourite"
+            android:text="@string/favourite"
+            app:icon="@drawable/kitchen_24dp"
+            app:iconGravity="textTop"
+            app:iconTint="@color/white" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_comment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="@android:color/transparent"
+            android:contentDescription="@string/comment"
+            android:text="@string/comment"
+            app:icon="@drawable/chat_24px"
+            app:iconGravity="textTop"
+            app:iconTint="@color/white" />
+
+        <!-- 详情 -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/transparent"
+            android:contentDescription="@string/detailed"
+            android:gravity="center"
+            android:text="@string/detailed"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            app:icon="@drawable/add_row_above_24dp"
+            app:iconGravity="textTop"
+            app:iconTint="@color/white" />
+
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

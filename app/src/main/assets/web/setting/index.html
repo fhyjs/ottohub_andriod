@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="../assets/materialize.min.css" type="text/css">
+    <link rel="stylesheet" href="../assets/icon.css">
+    <link rel="stylesheet" href="settings_v1.1.1.css" type="text/css">
+    <title>OTTOhub - 设置</title>
+    <script src="../assets/jquery-3.7.1.min.js"></script>
+    <script src="../assets/jquery.cookie.min.js"></script>
+    <script src="../assets/text_processing.js"></script>
+    <script src="../assets/materialize.min.js"></script>
+    <script>
+        $.cookie('token', hanana.getToken());
+        $.cookie('uid', hanana.getUid());
+        $.cookie('password', hanana.getPassWd());
+        window.addEventListener("hananaLoaded", function(e) {
+            // 创建 script 元素
+            const script = document.createElement("script");
+
+            // 设置属性
+            script.src = "settings_v1.4.4.js"; // 必填
+            script.type = "module";    // 可选，默认是 text/javascript
+            // 添加到 head
+            document.head.appendChild(script);
+        });
+    </script>
+</head>
+<body>
+<div id="settingsbar">
+    <div class="profile_card" id="pw">修改密码</div>
+    <div class="profile_card" id="phone">修改手机号</div>
+    <div class="profile_card" id="qq">修改QQ</div>
+    <div class="profile_card" id="username">修改用户名</div>
+    <div class="profile_card" id="sex">修改性别</div>
+    <div class="profile_card" id="intro">修改简介</div>
+
+    <div class="interval"></div>
+    <div class="file_btn" id="avatar_btn">更新头像</div>
+    <div class="file_btn" id="cover_btn">更新封面</div>
+</div>
+
+<div id="progress_bar"></div>
+</body>
+</html>

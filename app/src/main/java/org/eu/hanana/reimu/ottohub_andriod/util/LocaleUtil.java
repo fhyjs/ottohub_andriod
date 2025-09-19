@@ -9,8 +9,7 @@ import androidx.preference.PreferenceManager;
 import java.util.Locale;
 
 public class LocaleUtil {
-
-    public static Context updateLocale(Context context) {
+    public static Locale getLocale(Context context) {
         String ls = PreferenceManager.getDefaultSharedPreferences(context).getString("language", "sys");
         Locale locale;
         if (ls.equals("sys")){
@@ -18,7 +17,10 @@ public class LocaleUtil {
         }else {
             locale=new Locale(ls);
         }
-        return updateLocale(context, locale);
+        return locale;
+    }
+    public static Context updateLocale(Context context) {
+        return updateLocale(context, getLocale(context));
     }
     public static Context updateLocale(Context context, Locale locale) {
         Locale.setDefault(locale);

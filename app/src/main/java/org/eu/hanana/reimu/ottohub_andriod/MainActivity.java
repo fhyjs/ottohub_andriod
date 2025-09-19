@@ -105,7 +105,6 @@ public class MainActivity extends BaseActivity {
         super.onResume();
         handler.post(fetchMsgCountRunnable);  // 启动定时任务
         prepareNavHeader(navHeader);
-        ThemeUtil.onPostCreate(this);
     }
 
     @Override
@@ -117,13 +116,11 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        ThemeUtil.onPostCreate(this);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ThemeUtil.onCreate(this);
 
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
