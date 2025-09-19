@@ -62,7 +62,7 @@ public class VideoListFragment extends BaseFragment implements IScrollTopChecker
     private InfiniteScrollListener scrollListener;
     public Button selectedButton;
     public boolean error;
-    public int[] buttonLabels = {R.string.recommend,R.string.latest,R.string.week_hot,R.string.monthly_hot,R.string.sesson_hot,R.string.kichiku,R.string.mad,R.string.vocaloid,R.string.theater,R.string.game,R.string.nostalgia,R.string.music,R.string.other};
+    public int[] buttonLabels = {R.string.recommend,R.string.latest,R.string.week_hot,R.string.monthly_hot,R.string.sesson_hot,R.string.kichiku,R.string.vocaloid,R.string.theater,R.string.game,R.string.nostalgia,R.string.music,R.string.other};
     private View view;
     @Nullable
     public Integer uid;
