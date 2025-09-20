@@ -24,6 +24,8 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.media3.common.util.UnstableApi;
 
 import com.google.android.material.button.MaterialButton;
+import com.qihoo360.replugin.RePlugin;
+import com.qihoo360.replugin.RePluginApplication;
 
 import org.eu.hanana.reimu.lib.ottohub.api.video.VideoResult;
 import org.eu.hanana.reimu.ottohub_andriod.BuildConfig;
@@ -55,6 +57,7 @@ public class AboutActivity extends BaseActivity {
         ((TextView) findViewById(R.id.tvPackage)).setText(AppVersionUtil.getPackageName(this));
         ((TextView) findViewById(R.id.tvTime)).setText(BuildConfig.BUILD_TIME);
         ((TextView) findViewById(R.id.tvGit)).setText(BuildConfig.GIT_COMMIT);
+        ((TextView) findViewById(R.id.tvReplugin)).setText(RePlugin.getVersion());
         findViewById(R.id.imageView).setOnClickListener(v -> {
             clickTimes++;
             if (clickTimes>=4) {

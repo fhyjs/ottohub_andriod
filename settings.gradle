@@ -7,9 +7,14 @@ pluginManagement {
                 includeGroupByRegex("androidx.*")
             }
         }
+        maven { url 'https://maven.aliyun.com/repository/public/' }
         maven { url "https://www.jitpack.io" }
         mavenCentral()
         gradlePluginPortal()
+        maven {
+            allowInsecureProtocol = true
+            url "http://maven.geelib.360.cn/nexus/repository/replugin/"
+        }
     }
 }
 dependencyResolutionManagement {
@@ -27,8 +32,11 @@ dependencyResolutionManagement {
         flatDir {
             dirs 'libs'  // 指定本地仓库路径
         }
+        maven {
+            allowInsecureProtocol = true
+            url "http://maven.geelib.360.cn/nexus/repository/replugin/"
+        }
     }
 }
-
 rootProject.name = "ottohub_andriod"
 include ':app'

@@ -100,30 +100,6 @@ public class CommentFragmentBase extends ListFragmentBase<CommentCardAdapter, Co
         super.onViewCreated(view, savedInstanceState);
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
-            public void handleOnBackCancelled() {
-                super.handleOnBackCancelled();
-                setEnabled(false);
-                requireActivity().getOnBackPressedDispatcher().dispatchOnBackCancelled();
-                setEnabled(true);
-            }
-
-            @Override
-            public void handleOnBackStarted(@NonNull BackEventCompat backEvent) {
-                super.handleOnBackStarted(backEvent);
-                setEnabled(false);
-                requireActivity().getOnBackPressedDispatcher().dispatchOnBackStarted(backEvent);
-                setEnabled(true);
-            }
-
-            @Override
-            public void handleOnBackProgressed(@NonNull BackEventCompat backEvent) {
-                super.handleOnBackProgressed(backEvent);
-                setEnabled(false);
-                requireActivity().getOnBackPressedDispatcher().dispatchOnBackProgressed(backEvent);
-                setEnabled(true);
-            }
-
-            @Override
             public void handleOnBackPressed() {
                 boolean canPopBackStack = getParentFragmentManager().getBackStackEntryCount() > 0;
 

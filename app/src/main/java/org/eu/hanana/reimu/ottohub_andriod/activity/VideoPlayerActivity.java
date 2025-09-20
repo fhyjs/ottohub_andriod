@@ -367,7 +367,7 @@ public class VideoPlayerActivity extends BaseActivity {
                     public void onTextChanged(CharSequence s, int start, int before, int count) {
                         try {
                             int val = Integer.parseInt(s.toString());
-                            val= (int) Math.clamp(sliderDS.getValueFrom(),val,sliderDS.getValueTo());
+                            val= (int) Math.clamp(val,sliderDS.getValueFrom(),sliderDS.getValueTo());
                             sliderDS.setValue(val);
                         } catch (NumberFormatException e) {
                             // 忽略空值或非法输入

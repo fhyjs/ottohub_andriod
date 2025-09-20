@@ -103,6 +103,26 @@
                 android:layout_height="wrap_content"
                 android:text="GIT"/>
         </LinearLayout>
+        <LinearLayout
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:gravity="left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="RePlugin"/>
+            <TextView
+                android:id="@+id/tvReplugin"
+                android:textSize="20sp"
+                android:gravity="right"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="REPLUGIN"/>
+        </LinearLayout>
         <TextView
             android:autoLink="all"
             android:layout_width="wrap_content"

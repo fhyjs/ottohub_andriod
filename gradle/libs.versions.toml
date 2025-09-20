@@ -1,21 +1,21 @@
 [versions]
-activityVersion = "1.10.1"
-agp = "8.11.2"
+activityVersion = "1.11.0"
+agp = "8.13.0"
 akdanmaku = "1.0.3"
 ambilwarna = "2.0.1"
 desugar_jdk_libs = "2.1.5"
 drawerlayout = "1.2.0"
 flexmarkAll = "0.64.8"
-glide = "4.16.0"
-gson = "2.13.1"
+glide = "5.0.5"
+gson = "2.13.2"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
 appcompat = "1.7.1"
-libvlcAll = "4.0.0-eap20"
-lombok = "1.18.30"
-material = "1.12.0"
-activity = "1.10.1"
+libvlcAll = "4.0.0-eap22"
+lombok = "1.18.4"
+material = "1.13.0"
+activity = "1.11.0"
 constraintlayout = "2.2.1"
 media3Ui = "1.8.0"
 ottohub_api = "1.1.5"
@@ -23,13 +23,14 @@ pagingRuntime = "3.3.6"
 photoview = "2.3.0"
 preference = "1.2.1"
 preferenceVersion = "1.2.1"
+repluginHostLib = "3.1.0"
 supportAnnotations = "28.0.0"
 viewpager2 = "1.1.0"
 volley = "1.2.1"
 annotation = "1.9.1"
-lifecycleLivedataKtx = "2.9.2"
-lifecycleViewmodelKtx = "2.9.2"
-uiAndroidStubs = "1.8.3"
+lifecycleLivedataKtx = "2.9.4"
+lifecycleViewmodelKtx = "2.9.4"
+uiAndroidStubs = "1.9.1"
 
 [libraries]
 activity-v161 = { module = "androidx.activity:activity", version.ref = "activityVersion" }
@@ -59,6 +60,7 @@ paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "pag
 photoview = { module = "com.github.chrisbanes:PhotoView", version.ref = "photoview" }
 preference = { module = "androidx.preference:preference", version.ref = "preference" }
 preference-v120 = { module = "androidx.preference:preference", version.ref = "preferenceVersion" }
+replugin-host-lib = { module = "com.qihoo360.replugin:replugin-host-lib", version.ref = "repluginHostLib" }
 support-annotations = { module = "com.android.support:support-annotations", version.ref = "supportAnnotations" }
 viewpager2 = { module = "androidx.viewpager2:viewpager2", version.ref = "viewpager2" }
 volley = { module = "com.android.volley:volley", version.ref = "volley" }
