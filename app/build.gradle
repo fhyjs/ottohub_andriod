@@ -94,6 +94,7 @@ repluginHostConfig {
      * 不需要个性化配置时，无需添加
      */
     useAppCompat = true
+    useAndroidX = true
 }
 dependencies {
     implementation libs.replugin.host.lib
