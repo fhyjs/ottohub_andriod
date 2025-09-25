@@ -15,13 +15,17 @@ import static org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity.TYPE_AUD
 import static org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity.TYPE_VIEW;
 import static org.eu.hanana.reimu.ottohub_andriod.util.UiUtil.getScaleTypeVideoInt;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.graphics.Insets;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -33,8 +37,10 @@ import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowInsets;
@@ -47,6 +53,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,7 +64,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
-import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -85,19 +91,23 @@ import com.google.android.material.slider.Slider;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.gson.Gson;
 import com.kuaishou.akdanmaku.DanmakuConfig;
+import com.kuaishou.akdanmaku.data.DanmakuItem;
 import com.kuaishou.akdanmaku.data.DanmakuItemData;
 import com.kuaishou.akdanmaku.data.DataSource;
 import com.kuaishou.akdanmaku.render.SimpleRenderer;
 import com.kuaishou.akdanmaku.ui.DanmakuPlayer;
+import com.kuaishou.akdanmaku.ui.DanmakuView;
 
 import org.eu.hanana.reimu.lib.ottohub.api.ApiBase;
 import org.eu.hanana.reimu.lib.ottohub.api.ApiResultBase;
 import org.eu.hanana.reimu.lib.ottohub.api.common.EmptyResult;
 import org.eu.hanana.reimu.lib.ottohub.api.danmaku.DanmakuListResult;
+import org.eu.hanana.reimu.lib.ottohub.api.system.SlideshowResult;
 import org.eu.hanana.reimu.lib.ottohub.api.video.VideoResult;
 import org.eu.hanana.reimu.ottohub_andriod.MyApp;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.ui.audit.AuditVideoFragment;
+import org.eu.hanana.reimu.ottohub_andriod.ui.banner.BannerFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.UnlockedDanmakuRender;
 import org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase;
 import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoDescribeFragment;
@@ -127,6 +137,7 @@ public class VideoPlayerActivity extends BaseActivity {
     private static final String TAG = "VideoPlayerActivity";
     private ExoPlayer mediaPlayer;
     private PlayerView videoSurface;
+    private DanmakuView danmakuView;
     private DanmakuPlayer danmakuPlayer;
     private DanmakuConfig danmakuConfig;
     public int vid;
@@ -403,7 +414,7 @@ public class VideoPlayerActivity extends BaseActivity {
             Point size = new Point();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 WindowMetrics metrics = getWindowManager().getCurrentWindowMetrics();
-                android.graphics.Insets insets = metrics.getWindowInsets()
+                Insets insets = metrics.getWindowInsets()
                         .getInsetsIgnoringVisibility(WindowInsets.Type.systemBars());
                 int width = metrics.getBounds().width() - insets.left - insets.right;
                 int height = metrics.getBounds().height() - insets.top - insets.bottom;
@@ -466,11 +477,51 @@ public class VideoPlayerActivity extends BaseActivity {
             mediaPlayer=null;
         }
     }
+    // 调用系统方法创建 PopupWindow
+    private void showDanmakuFloatingPopup(View parent, float x, float y, DanmakuItem danmakuItem) {
+        // 使用 LayoutInflater 从 XML 构建视图
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        View popupView = inflater.inflate(R.layout.layout_popup_danmaku, getRoot(),false); // 替换成你的 XML
 
+        ((TextView) popupView.findViewById(R.id.tvContent)).setText(getText(R.string.danmaku)+": "+danmakuItem.getData().getContent());
+        popupView.findViewById(R.id.btn_report).setOnClickListener(v -> {
+            AlertUtil.showYesNo(v.getContext(), getString(R.string.report), getString(R.string.report_danmaku, danmakuItem.getData().getContent()), (dialog, which) -> {
+                Thread thread = new Thread(() -> {
+                    EmptyResult emptyResult = ApiUtil.getAppApi().getDanmakuApi().report_danmaku(danmakuItem.getData().getDanmakuId());
+                    ApiUtil.throwApiError(emptyResult);
+                    runOnUiThread(() -> {
+                        Toast.makeText(VideoPlayerActivity.this, R.string.ok, Toast.LENGTH_SHORT).show();
+                    });
+                });
+                thread.setUncaughtExceptionHandler(new AlertUtil.ThreadAlert(VideoPlayerActivity.this));
+                thread.start();
+            }, (dialog, which) -> {
+
+            }).show();
+        });
+        popupView.findViewById(R.id.btn_copy).setOnClickListener(v -> {
+            UiUtil.copyToClipboard(v.getContext(), danmakuItem.getData().getContent());
+        });
+
+        PopupWindow popup = new PopupWindow(popupView,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                true);
+
+        // 设置点击外部消失
+        popup.setOutsideTouchable(true);
+        popup.setBackgroundDrawable(new ColorDrawable(0x00000000));
+        popup.setOnDismissListener(() -> danmakuPlayer.hold(null));
+        // 在点击位置显示
+        popup.showAtLocation(parent, Gravity.NO_GRAVITY,
+                (int) x, (int) y);
+    }
+    @SuppressLint("ClickableViewAccessibility")
     @OptIn(markerClass = UnstableApi.class)
     private void initPlayer() {
         // 创建媒体播放器
         View fullscreenView = findViewById(R.id.video_view_wrapper);
+        danmakuView=findViewById(R.id.sv_danmaku);
         mediaPlayer = new ExoPlayer.Builder(this).build();
         runOnUiThread(()->{
             WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
@@ -485,6 +536,22 @@ public class VideoPlayerActivity extends BaseActivity {
 
             videoSurface.setResizeMode(getScaleTypeVideoInt(this));
             fullscreenView.setLayoutParams(new ViewGroup.LayoutParams(fullscreenView.getWidth(),(int) (UiUtil.getAppWindowHeight(VideoPlayerActivity.this)*0.354)));
+            danmakuView.setOnTouchListener((v, event) -> {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    var danmakus = danmakuPlayer.getDanmakusAtPoint(new Point((int) event.getX(), (int) event.getY()));
+                    if (danmakus==null||danmakus.isEmpty()){
+                        return false;
+                    }
+                    var danmaku = danmakus.get(0);
+                    danmakuPlayer.hold(null);
+                    danmakuPlayer.hold(danmaku);
+                    showDanmakuFloatingPopup(danmakuView,event.getRawX(),event.getRawY()+danmaku.getRect().height(),danmaku);
+                    // 响应点击逻辑
+                    Log.d("DanmakuView", "弹幕被点击了");
+                }
+                // 返回 false，让事件继续传递到下一层
+                return false;
+            });
         });
 
         mediaPlayer.addListener(new Player.Listener() {
@@ -505,6 +572,11 @@ public class VideoPlayerActivity extends BaseActivity {
                         danmakuPlayer.pause();
                     }
                 }
+            }
+
+            @Override
+            public void onPositionDiscontinuity(int reason) {
+                Player.Listener.super.onPositionDiscontinuity(reason);
             }
 
             @Override
@@ -678,7 +750,7 @@ public class VideoPlayerActivity extends BaseActivity {
                 Log.w(getClass().getName(),"Unknown danmaku type: "+data.mode);
             }
             danmakuPlayer.send(new DanmakuItemData(
-                    i,
+                    data.danmaku_id,
                     (long)(data.time*1000),
                     data.text,
                     mode,
@@ -690,6 +762,7 @@ public class VideoPlayerActivity extends BaseActivity {
                     null,
                     MERGED_TYPE_NORMAL
             ));
+            Log.d(TAG, "loadDanmaku: 添加弹幕:"+data.text);
             Log.d(TAG, "loadDanmaku: Color.parseColor(danmakuData.data.get(0).color): "+ Color.parseColor(data.color)+" raw: "+data.color);
         }
     }

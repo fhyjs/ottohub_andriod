@@ -92,7 +92,7 @@ public class CopyService extends Service {
                             updateNotification(progress, fileName, notificationId, total);
                             lastProgress = progress;
                         }
-                        if (progress == 100) {
+                        if (progress >= 100) {
                             showCompleteNotification(fileName, notificationId);
                         }
                     }

@@ -38,6 +38,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
@@ -56,11 +57,14 @@ public class ThemeUtil {
         dirty=true;
     }
     public static ThemeData getTheme(Context c){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
+        if (prefs.getBoolean("auto_dark",true)&&UiUtil.isDarkMode(c)){
+            return ThemeData.DARK;
+        }
         if (!dirty&&themeData!=null){
             return themeData;
         }
         Gson gson = new Gson();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
         if (!prefs.contains("user_color")){
             saveTheme(c,ThemeData.DEFAULT);
         }
@@ -186,6 +190,12 @@ public class ThemeUtil {
                     item.setIconTint(ColorStateList.valueOf(userColor.getColorPrimary()));
                     item.setTextColor(userColor.getColorPrimary());
                 }
+            }
+            if (view instanceof NavigationView){
+                var item = ((NavigationView) view);
+                item.getBackground().setTint(userColor.getColorBackground());
+                item.setItemIconTintList(ColorStateList.valueOf(userColor.getColorOnPrimary()));
+                item.setItemTextColor(ColorStateList.valueOf(userColor.getColorOnPrimary()));
             }
             if (view instanceof TextInputLayout){
                 var item = ((TextInputLayout) view);

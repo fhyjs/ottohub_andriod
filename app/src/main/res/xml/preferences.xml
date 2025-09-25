@@ -27,7 +27,12 @@
             android:key="language"
             android:summary="Change language,As shown in the title.\n更改应用语言"
             android:title="Language/语言" />
-
+        <SwitchPreference
+            android:icon="@drawable/tab_inactive_24dp"
+            android:defaultValue="true"
+            android:key="auto_dark"
+            android:summary="@string/auto_dark"
+            android:title="@string/auto_dark_title" />
         <SwitchPreference
             android:icon="@drawable/tab_inactive_24dp"
             android:defaultValue="true"

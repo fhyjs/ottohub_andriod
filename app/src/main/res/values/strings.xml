@@ -204,4 +204,15 @@
     <string name="back">Back</string>
     <string name="detailed">detailed</string>
     <string name="user_settings">User Settings</string>
+    <string name="app_crash_title">Whoops! This app has been crashed!</string>
+    <string name="app_crash_content">Do you want to restart this app?</string>
+    <string name="exit">Exit</string>
+    <string name="restart">Restart</string>
+    <string name="auto_dark">Dark theme follow system</string>
+    <string name="auto_dark_title">Follow system dark mode</string>
+    <string name="report_danmaku">Report danmaku %s ?</string>
+    <string name="copy">Copy</string>
+    <string name="baned">Baned</string>
+    <string name="baned_msg">Page fixed by hanana app</string>
+    <string name="chat_board">Comment board</string>
 </resources>

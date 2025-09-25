@@ -109,7 +109,7 @@ public class AlertUtil {
     public static BottomSheetDialog showInput(Context context, InputCallback callback) {
         BottomSheetDialog dialog = new BottomSheetDialog(context);
         View view = LayoutInflater.from(context).inflate(R.layout.dialog_input_bottom, null);
-
+        ThemeUtil.apply(view);
         EditText editText = view.findViewById(R.id.edit_input);
         view.findViewById(R.id.btn_confirm).setOnClickListener(v -> {
             if (callback != null) {

@@ -27,6 +27,15 @@
             android:text="@string/app_name"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
+        <TextView
+            android:textColor="@color/black"
+            android:textSize="21sp"
+            android:gravity="center"
+            android:textIsSelectable="true"
+            android:layout_gravity="center"
+            android:text="'OTTOhub滚幕网─=≡Σ((( つ•̀ω•́)つ衝刺～'\nottohub网站的第三方手机应用程序\n作者：fhyjs \nQQ：2729603989\n开源协议：MIT\n*永久免费开源,谨防上当受骗及恶意程序*"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

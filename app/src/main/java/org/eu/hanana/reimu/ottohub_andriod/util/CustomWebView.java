@@ -323,8 +323,18 @@ public class CustomWebView extends WebView {
                 return webResourceResponse;
 
             } catch (IOException e) {
-                // 资源未找到
-                return new WebResourceResponse(mimeType, "UTF-8", new ByteArrayInputStream(e.toString().getBytes(StandardCharsets.UTF_8)));
+                String mimeTyped = "text/plain"; // 或 "text/html" 如果你要返回 HTML
+                String encoding = "UTF-8";
+                String data = "资源未找到: " + e;
+                // API 21+ 可以设置状态码和原因
+                return new WebResourceResponse(
+                        mimeTyped,
+                        encoding,
+                        404,            // HTTP 状态码
+                        "Not Found",    // reasonPhrase
+                        null,           // headers
+                        new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8))
+                );
             }
         }
         @Override

@@ -37,6 +37,11 @@
         android:title="@string/content_manage"
         app:showAsAction="ifRoom" />
     <item
+        android:id="@+id/action_chat_board"
+        android:icon="@drawable/chat_24px"
+        android:title="@string/chat_board"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/action_settings"
         android:icon="@drawable/settings_24dp"
         android:title="@string/settings"

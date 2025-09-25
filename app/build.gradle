@@ -33,8 +33,8 @@ android {
         minSdk 21
         multiDexEnabled true
         targetSdk 36
-        versionCode 291
-        versionName "2.9.1_Code.Sanae"
+        versionCode 292
+        versionName "2.9.2_Code.Sanae"
         resConfigs "en", "zh" // Example: Support English and Spanish
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "BUILD_TIME", "\"${new Date().format("yyyy-MM-dd HH:mm:ss")}\""
@@ -76,6 +76,7 @@ android {
     }
     buildFeatures {
         viewBinding true
+        aidl true
     }
     androidResources{
         generateLocaleConfig true

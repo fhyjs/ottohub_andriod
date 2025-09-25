@@ -197,7 +197,10 @@ public class CommentCardAdapter extends CardAdapterBase<CommentCard, CommentCard
                     "  max-width: 100%;" +  // 保持原始宽度
                     "  object-fit: fill;" +
                     "}" +
-                    "</style></head><body>" +
+                    "</style>" +
+                    "<script src=\"https://android_asset/web/assets/jquery-3.7.1.min.js\"></script>" +
+                    "<script src=\"https://android_asset/web/comment/comment.js\"></script>" +
+                    "</head><body>" +
                     object.content +
                     "</body></html>";
             view.loadDataWithBaseURL("https://m.ottohub.com/",html,"text/html","utf-8",null);

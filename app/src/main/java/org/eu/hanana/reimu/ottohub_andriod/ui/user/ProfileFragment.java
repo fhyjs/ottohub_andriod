@@ -46,9 +46,12 @@ import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.android.material.button.MaterialButton;
 
+import org.eu.hanana.reimu.lib.ottohub.api.ApiResultBase;
+import org.eu.hanana.reimu.lib.ottohub.api.blog.BlogListResult;
 import org.eu.hanana.reimu.lib.ottohub.api.following.FollowStatusResult;
 import org.eu.hanana.reimu.lib.ottohub.api.profile.ProfileResult;
 import org.eu.hanana.reimu.lib.ottohub.api.user.UserResult;
+import org.eu.hanana.reimu.lib.ottohub.api.video.VideoListResult;
 import org.eu.hanana.reimu.ottohub_andriod.MyApp;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.activity.BaseActivity;
@@ -171,11 +174,59 @@ public class ProfileFragment extends BaseFragment {
             userResult.message=result.getMessage();
             ApiUtil.fetchMsgCount();
         }else {
-            userDataResult=MyApp.getInstance().getOttohubApi().getUserApi().get_user_detail(uid);
+            userDataResult=safeFatchUserData();
             userResult=new ProfileResult();
             ClassUtil.copyFields(ProfileResult.class,UserResult.class,userResult,userDataResult,false);
         }
         followStatus = MyApp.getInstance().getOttohubApi().getFollowingApi().follow_status(uid);
+    }
+
+    private UserResult safeFatchUserData() {
+        UserResult userDetail = MyApp.getInstance().getOttohubApi().getUserApi().get_user_detail(uid);
+        if (userDetail.isSuccess()){
+            return userDetail;
+        }
+        if (!userDetail.getMessage().contains("uid")) ApiUtil.throwApiError(userDetail);
+        VideoListResult videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().user_video_list(uid, 0, 12);
+        ApiUtil.throwApiError(videoListResult);
+        if (!videoListResult.video_list.isEmpty()){
+            var item = videoListResult.video_list.get(0);
+            var vl = ApiUtil.getAppApi().getVideoApi().get_video_detail(item.vid);
+            ApiUtil.throwApiError(vl);
+            userDetail=new UserResult();
+            userDetail.uid=uid;
+            userDetail.avatar_url=item.avatar_url;
+            userDetail.cover_url="";
+            userDetail.username=item.username;
+            userDetail.honour=getString(R.string.baned)+","+getString(R.string.baned_msg);
+            userDetail.experience=0;
+            userDetail.intro=vl.userintro;
+            userDetail.sex="棍母";
+            userDetail.status= ApiResultBase.SUCCESS;
+            return userDetail;
+        }
+
+        BlogListResult blogListResult = MyApp.getInstance().getOttohubApi().getBlogApi().user_blog_list(uid, 0, 12);
+        ApiUtil.throwApiError(videoListResult);
+        if (!blogListResult.blog_list.isEmpty()){
+            var item = blogListResult.blog_list.get(0);
+            var bl = ApiUtil.getAppApi().getBlogApi().get_blog_detail(item.bid);
+            ApiUtil.throwApiError(bl);
+            userDetail=new UserResult();
+            userDetail.uid=uid;
+            userDetail.avatar_url=item.avatar_url;
+            userDetail.cover_url="";
+            userDetail.username=bl.username;
+            userDetail.honour=getString(R.string.baned)+","+getString(R.string.baned_msg);
+            userDetail.experience=0;
+            userDetail.intro="Fixed by hanana oh app!";
+            userDetail.sex="棍母";
+            userDetail.status= ApiResultBase.SUCCESS;
+            return userDetail;
+        }
+
+        ApiUtil.throwApiError(userDetail);
+        return null;
     }
 
     @Override

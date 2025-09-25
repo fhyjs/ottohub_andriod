@@ -64,7 +64,7 @@ function matchLink(){
         var $el = $(this);
 
         // 跳过某些不能插入 HTML 的标签
-        if (this.tagName.match(/^(SCRIPT|STYLE|TEXTAREA|INPUT|BUTTON|A)$/i)) return;
+        if (this.tagName.match(/^(SCRIPT|STYLE|TEXTAREA|INPUT|IMG|BUTTON|A)$/i)) return;
 
         $el.contents().filter(function () {
           return this.nodeType === 3 && regex.test(this.nodeValue);

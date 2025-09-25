@@ -3,11 +3,14 @@ package org.eu.hanana.reimu.ottohub_andriod.util;
 import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
 
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.PermissionInfo;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -47,6 +50,18 @@ import java.util.List;
 import java.util.Locale;
 
 public class UiUtil {
+    public static void copyToClipboard(Context context, String text) {
+        ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+        if (clipboard != null) {
+            ClipData clip = ClipData.newPlainText("label", text);
+            clipboard.setPrimaryClip(clip);
+        }
+    }
+    public static boolean isDarkMode(Context context) {
+        int nightModeFlags = context.getResources().getConfiguration().uiMode
+                & Configuration.UI_MODE_NIGHT_MASK;
+        return nightModeFlags == Configuration.UI_MODE_NIGHT_YES;
+    }
     @OptIn(markerClass = UnstableApi.class)
     @AspectRatioFrameLayout.ResizeMode
     public static int getScaleTypeVideoInt(Context c) {

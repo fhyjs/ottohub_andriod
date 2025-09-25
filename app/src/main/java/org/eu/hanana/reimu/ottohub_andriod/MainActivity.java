@@ -63,6 +63,8 @@ import org.eu.hanana.reimu.ottohub_andriod.activity.MessageActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.UploadBlogActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.UploadVideoActivity;
 import org.eu.hanana.reimu.ottohub_andriod.ui.blog.BlogListFragment;
+import org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase;
+import org.eu.hanana.reimu.ottohub_andriod.ui.debug.DebugFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.settings.SettingsFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.user.ProfileFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment;
@@ -111,6 +113,7 @@ public class MainActivity extends BaseActivity {
     protected void onPause() {
         super.onPause();
         handler.removeCallbacks(fetchMsgCountRunnable);  // 停止任务，避免内存泄漏
+        debugTapCount=0;
     }
 
     @Override
@@ -125,6 +128,7 @@ public class MainActivity extends BaseActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
+
         if (!checkLauncher()) {
             startActivity(new Intent(this, LauncherActivity.class));
             finish();
@@ -135,6 +139,12 @@ public class MainActivity extends BaseActivity {
         navView = findViewById(R.id.nav_view);
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnItemSelectedListener(navListener);
+
+        ViewCompat.setOnApplyWindowInsetsListener(navView, (v, insets) -> {
+            var systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom);
+            return insets;
+        });
 
         // 默认加载第一个 Fragment
         getSupportFragmentManager().beginTransaction()
@@ -245,6 +255,11 @@ public class MainActivity extends BaseActivity {
             }
         } else if (item.getItemId()==R.id.action_settings){
             startActivity(FragActivity.create(this, SettingsFragment.class,null,getString(R.string.settings)));
+        } else if (item.getItemId()==R.id.action_chat_board){
+            Bundle bundle = new Bundle();
+            bundle.putInt(CommentFragmentBase.ARG_ID,5311);
+            bundle.putString(CommentFragmentBase.ARG_TYPE,CommentFragmentBase.TYPE_BLOG);
+            startActivity(FragActivity.create(this, CommentFragmentBase.class,bundle,getString(R.string.chat_board)));
         }
     }
 
@@ -309,7 +324,7 @@ public class MainActivity extends BaseActivity {
         prepareNavHeader(navHeader);
 
     }
-
+    private int debugTapCount=0;
     private final NavigationBarView.OnItemSelectedListener navListener =
             item -> {
                 Fragment selectedFragment = null;
@@ -330,8 +345,18 @@ public class MainActivity extends BaseActivity {
 
                 if (selectedFragment != null) {
                     if (getSupportFragmentManager().findFragmentById(R.id.fragment_container)!=null&&selectedFragment.getClass()==getSupportFragmentManager().findFragmentById(R.id.fragment_container).getClass()){
-                        return false;
+                        if (selectedFragment.getClass()== VideoListFragment.class){
+                            debugTapCount++;
+                            if (debugTapCount>5){
+                                selectedFragment = DebugFragment.newInstance();
+                            }else {
+                                return false;
+                            }
+                        }else {
+                            return false;
+                        }
                     }
+                    debugTapCount=0;
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fragment_container, selectedFragment)
                             .commit();

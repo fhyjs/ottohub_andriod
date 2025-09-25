@@ -11,6 +11,7 @@ import com.qihoo360.replugin.RePluginConfig;
 
 import org.eu.hanana.reimu.lib.ottohub.api.OttohubApi;
 import org.eu.hanana.reimu.ottohub_andriod.service.UpdateMessageCountBackgroundService;
+import org.eu.hanana.reimu.ottohub_andriod.util.CrashHandler;
 
 import lombok.Getter;
 
@@ -28,6 +29,7 @@ public class MyApp extends RePluginApplication {
         ottohubApi=new OttohubApi();
         Intent serviceIntent = new Intent(this, UpdateMessageCountBackgroundService.class);
         ContextCompat.startForegroundService(this, serviceIntent);
+        CrashHandler.init(this);
 
     }
 
