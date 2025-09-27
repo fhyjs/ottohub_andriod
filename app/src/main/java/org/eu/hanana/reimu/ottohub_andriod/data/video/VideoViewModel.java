@@ -93,17 +93,17 @@ public class VideoViewModel extends ViewModel {
             } else if (videoListFragment.selectedButton.getTag(R.id.btn_add_tag).equals(videoListFragment.buttonLabels[5])) {
                 videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().category_video_list(1, 12);
             } else if (videoListFragment.selectedButton.getTag(R.id.btn_add_tag).equals(videoListFragment.buttonLabels[6])) {
-                videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().category_video_list(2, 12);
-            } else if (videoListFragment.selectedButton.getTag(R.id.btn_add_tag).equals(videoListFragment.buttonLabels[7])) {
                 videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().category_video_list(3, 12);
-            } else if (videoListFragment.selectedButton.getTag(R.id.btn_add_tag).equals(videoListFragment.buttonLabels[8])) {
+            } else if (videoListFragment.selectedButton.getTag(R.id.btn_add_tag).equals(videoListFragment.buttonLabels[7])) {
                 videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().category_video_list(4, 12);
-            } else if (videoListFragment.selectedButton.getTag(R.id.btn_add_tag).equals(videoListFragment.buttonLabels[9])) {
+            } else if (videoListFragment.selectedButton.getTag(R.id.btn_add_tag).equals(videoListFragment.buttonLabels[8])) {
                 videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().category_video_list(5, 12);
-            } else if (videoListFragment.selectedButton.getTag(R.id.btn_add_tag).equals(videoListFragment.buttonLabels[10])) {
+            } else if (videoListFragment.selectedButton.getTag(R.id.btn_add_tag).equals(videoListFragment.buttonLabels[9])) {
                 videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().category_video_list(6, 12);
-            } else if (videoListFragment.selectedButton.getTag(R.id.btn_add_tag).equals(videoListFragment.buttonLabels[11])) {
+            } else if (videoListFragment.selectedButton.getTag(R.id.btn_add_tag).equals(videoListFragment.buttonLabels[10])) {
                 videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().category_video_list(7, 12);
+            } else if (videoListFragment.selectedButton.getTag(R.id.btn_add_tag).equals(videoListFragment.buttonLabels[11])) {
+                videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().category_video_list(0, 12);
             } else if (videoListFragment.selectedButton.getTag(R.id.btn_add_tag).equals(videoListFragment.buttonLabels[12])) {
                 videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().category_video_list(0, 12);
             }
@@ -122,7 +122,11 @@ public class VideoViewModel extends ViewModel {
                 if (videoListFragment.currentPage==0) {
                     videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().search_video_list(videoListFragment.data, 36);
                     if (videoListFragment.data.toLowerCase(Locale.ROOT).startsWith("ov")) {
-                        videoListResult.video_list.addAll(0,MyApp.getInstance().getOttohubApi().getVideoApi().id_video_list(Integer.parseInt(videoListFragment.data.substring(2))).video_list);
+                        try {
+                            videoListResult.video_list.addAll(0,MyApp.getInstance().getOttohubApi().getVideoApi().id_video_list(Integer.parseInt(videoListFragment.data.substring(2))).video_list);
+                        } catch (NumberFormatException ignored) {
+
+                        }
                     }
                 }else {
                     videoListResult = new VideoListResult();
@@ -135,6 +139,10 @@ public class VideoViewModel extends ViewModel {
             }else if (videoListFragment.action.equals(VideoListFragment.ACTION_MINE)){
                 videoListResult = MyApp.getInstance().getOttohubApi().getProfileApi().manage_video_list(videoListFragment.currentPage*12, 12);
                 if (videoListResult.video_list.isEmpty()) videoListFragment.hasMoreData=false;
+            }else if (videoListFragment.action.equals(VideoListFragment.ACTION_COLLECTION)){
+                var data = videoListFragment.data.split("\\$:\\$");
+                videoListResult = MyApp.getInstance().getOttohubApi().getCollectionApi().video_collection_list(Integer.parseInt(data[1]), data[0]);
+                videoListFragment.hasMoreData=false;
             }
         }
         if (videoListResult.video_list != null) {

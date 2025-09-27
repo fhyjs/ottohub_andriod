@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.data.base.ListViewModelBase;
+import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.InfiniteScrollListener;
 
 import java.util.ArrayList;
@@ -95,7 +96,10 @@ public abstract class ListFragmentBase<T extends CardAdapterBase<E,N>,N extends 
         error=true;
         // 检查 Fragment 是否已附加到 Activity
         if (getContext() == null || isDetached()) return;
-
+        if (true){
+            AlertUtil.showError(getContext(),message);
+            return;
+        }
         // 加载自定义布局
         View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_error, null);
 

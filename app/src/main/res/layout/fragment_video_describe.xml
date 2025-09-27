@@ -56,11 +56,12 @@
         android:layout_width="match_parent"
         android:nestedScrollingEnabled="true"
         android:orientation="vertical"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
             <TextView
                 android:textIsSelectable="true"
@@ -93,7 +94,12 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal" />
             </HorizontalScrollView>
-
+            <com.google.android.material.button.MaterialButton
+                android:visibility="gone"
+                android:id="@+id/btn_collection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/collection"/>
             <com.google.android.material.textview.MaterialTextView
                 android:textSize="22sp"
                 android:layout_width="wrap_content"
@@ -103,15 +109,16 @@
                 android:text="@string/recommend"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/scrollView" />
+
             <org.eu.hanana.reimu.ottohub_andriod.util.TouchInterceptFrameLayout
                 android:id="@+id/fragment_container"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="match_parent"
                 app:layout_constraintTop_toBottomOf="@id/mtv">
 
             </org.eu.hanana.reimu.ottohub_andriod.util.TouchInterceptFrameLayout>
-        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
 
     </LinearLayout>
 </LinearLayout>

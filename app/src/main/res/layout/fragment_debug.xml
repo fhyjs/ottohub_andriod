@@ -24,6 +24,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Crash Test"/>
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+
+                android:id="@+id/switch_enable_bugrep"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Bug Report" />
+            <com.google.android.material.materialswitch.MaterialSwitch
+
+                android:id="@+id/switch_rem_empty_collection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="rem_empty_collection" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

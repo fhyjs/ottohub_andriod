@@ -12,8 +12,10 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.OptIn;
 import androidx.core.view.MenuProvider;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.media3.common.util.UnstableApi;
 import androidx.recyclerview.widget.ConcatAdapter;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,6 +35,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.tabs.TabLayout;
 
 import org.eu.hanana.reimu.ottohub_andriod.MainActivity;
 import org.eu.hanana.reimu.ottohub_andriod.R;
@@ -71,6 +74,7 @@ public class VideoListFragment extends BaseFragment implements IScrollTopChecker
     public static final String ARG_ACTION = "action";
     public static final String ARG_DATA = "data";
     public static final String ACTION_BY_USER = "byuser";
+    public static final String ACTION_COLLECTION = "collection";
     public static final String ACTION_MINE = "mine";
     public static final String ACTION_DEFAULT = "def";
     public static final String ACTION_SEARCH = "search";
@@ -79,6 +83,7 @@ public class VideoListFragment extends BaseFragment implements IScrollTopChecker
     public String action=ACTION_DEFAULT;
     private HeaderAdapter headerAdapter;
     private boolean hideButtons;
+    public int videosInRow = 2;
 
     public VideoListFragment() {
         // Required empty public constructor
@@ -187,10 +192,36 @@ public class VideoListFragment extends BaseFragment implements IScrollTopChecker
         // Inflate the layout for this fragment
         View inflate = inflater.inflate(R.layout.fragment_video_list, container, false);
         LinearLayout button_area = inflate.findViewById(R.id.video_type_button_area);
+        var tabLayout = new TabLayout(inflate.getContext());
+        tabLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        tabLayout.setTag("themed");
+        button_area.addView(tabLayout);
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                if (tab.getTag()!=null) {
+                    ((Button) tab.getTag()).performClick();
+                }
+            }
 
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+        tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         for (int i = 0; i < buttonLabels.length; i++) {
+            var tab = tabLayout.newTab();
+            tabLayout.addTab(tab);
+            tab.setText(buttonLabels[i]);
             Button button = getTypeBtn(buttonLabels, i);
-            button_area.addView(button);
+            //button_area.addView(button);
+            tab.setTag(button);
             if (selectedButton==null){
                 selectedButton=button;
             }
@@ -246,12 +277,13 @@ public class VideoListFragment extends BaseFragment implements IScrollTopChecker
         }
     }
 
+    @OptIn(markerClass = UnstableApi.class)
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         this.view=view;
         recyclerView = view.findViewById(R.id.recyclerView);
-        var glm = new GridLayoutManager(getContext(), 2);
+        var glm = new GridLayoutManager(getContext(), videosInRow);
         recyclerView.setLayoutManager(glm);
         recyclerView.setItemAnimator(null);
         // 初始化适配器

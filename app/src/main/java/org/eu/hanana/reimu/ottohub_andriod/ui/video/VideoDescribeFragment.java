@@ -6,17 +6,13 @@ import static org.eu.hanana.reimu.ottohub_andriod.util.UiUtil.shareText;
 
 import android.annotation.SuppressLint;
 import android.app.Fragment;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
 
-import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -29,21 +25,22 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.media3.common.util.UnstableApi;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.card.MaterialCardView;
 import com.google.gson.Gson;
 
+import org.eu.hanana.reimu.lib.ottohub.api.collection.CollectionResult;
 import org.eu.hanana.reimu.lib.ottohub.api.common.EmptyResult;
 import org.eu.hanana.reimu.lib.ottohub.api.engagement.EngagementResult;
 import org.eu.hanana.reimu.lib.ottohub.api.video.VideoResult;
 import org.eu.hanana.reimu.ottohub_andriod.MyApp;
 import org.eu.hanana.reimu.ottohub_andriod.R;
-import org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.ProfileActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.SearchActivity;
+import org.eu.hanana.reimu.ottohub_andriod.activity.VideoPlayerActivity;
 import org.eu.hanana.reimu.ottohub_andriod.service.CopyService;
 import org.eu.hanana.reimu.ottohub_andriod.service.DownloadVideoForegroundService;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.BaseFragment;
@@ -62,6 +59,7 @@ import java.util.Locale;
  * Use the {@link VideoDescribeFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
+@UnstableApi
 public class VideoDescribeFragment extends BaseFragment {
     protected TouchInterceptFrameLayout frameLayout;
     // TODO: Rename parameter arguments, choose names that match
@@ -70,6 +68,7 @@ public class VideoDescribeFragment extends BaseFragment {
 
     private VideoResult vData;
     private View view;
+    private CollectionResult collectionResult;
 
     public VideoDescribeFragment() {
         // Required empty public constructor
@@ -81,7 +80,7 @@ public class VideoDescribeFragment extends BaseFragment {
         fragment.setArguments(args);
         return fragment;
     }
-
+    public VideoPlayerActivity videoPlayerActivity;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -120,9 +119,11 @@ public class VideoDescribeFragment extends BaseFragment {
             startActivity(intent);
         });
         // 默认加载第一个 Fragment
+        VideoListFragment videoListFragment = VideoListFragment.newInstance();
+        videoListFragment.videosInRow=1;
         getChildFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fragment_container, VideoListFragment.newInstance())
+                .replace(R.id.fragment_container,videoListFragment )
                 .commit();
 
 
@@ -246,7 +247,34 @@ public class VideoDescribeFragment extends BaseFragment {
         frameLayout.setInterceptMove(true);
         frameLayout.setTouchListener(onTouchListener);
         frameLayout.setInterceptTouchListener(onTouchListener);
+        view.post(()->{
+            frameLayout.setLayoutParams(new LinearLayout.LayoutParams(frameLayout.getWidth(), (int) (view.getHeight()*0.7f)));
+        });
+        Thread thread = new Thread(this::fetchCollectionData);
+        thread.setUncaughtExceptionHandler(new AlertUtil.ThreadAlert(getActivity()));
+        thread.start();
     }
+
+    private void fetchCollectionData() {
+        this.collectionResult = ApiUtil.getAppApi().getCollectionApi().get_video_collection(vData.vid);
+        if (!collectionResult.isSuccess() &&!collectionResult.getMessage().contains("video_not_in_collection")) {
+            ApiUtil.throwApiError(collectionResult);
+            collectionResult=null;
+            return;
+        }
+        if (collectionResult.getMessage()!=null&&collectionResult.getMessage().contains("video_not_in_collection")){
+            collectionResult=null;
+            return;
+        }
+        getActivity().runOnUiThread(this::renderCollectionData);
+    }
+
+    private void renderCollectionData() {
+        if (collectionResult==null||videoPlayerActivity==null) return;
+        videoPlayerActivity.dynamicFragmentAdapter.addFragment(CollectionFragment.newInstance(collectionResult.collection,vData.uid),getString(R.string.collection)+" "+collectionResult.collection);
+
+    }
+
     private void updateActionBtns() {
         ((TextView) view.findViewById(R.id.btn_like)).setText(String.format(Locale.getDefault(),"%d%s",vData.like_count,getString(R.string.like)));
         ((TextView) view.findViewById(R.id.btn_favourite)).setText(String.format(Locale.getDefault(),"%d%s",vData.favorite_count,getString(R.string.favourite)));

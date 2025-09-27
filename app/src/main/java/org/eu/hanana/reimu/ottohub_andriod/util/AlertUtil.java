@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -71,6 +72,7 @@ public class AlertUtil {
     }
     public static AlertDialog showError(Context context, String message) {
         if (context==null) return null;
+        Log.d("ALERT",message);
         AlertDialog alertDialog = showMsg(context, context.getString(R.string.error), message);
         alertDialog.show();
         if (true) return alertDialog;

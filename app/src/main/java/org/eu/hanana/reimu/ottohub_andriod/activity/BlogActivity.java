@@ -63,6 +63,7 @@ import androidx.preference.PreferenceManager;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.tabs.TabLayout;
 import com.google.gson.Gson;
 import com.vladsch.flexmark.ext.abbreviation.AbbreviationExtension;
 import com.vladsch.flexmark.ext.anchorlink.AnchorLinkExtension;
@@ -252,25 +253,41 @@ public class BlogActivity extends BaseActivity {
                 .commit();
         addMenuProvider(new MyMenuProvider(),this);
         currentPage = page1; // 初始为第一页
-        Button btn_comment = findViewById(R.id.btn_comment);
-        Button btn_blog = findViewById(R.id.btn_blog);
-        btn_comment.setEnabled(true);
+        TabLayout tabLayout = findViewById(R.id.tlPage);
+        var tab_comment = tabLayout.newTab();
+        var tab_blog = tabLayout.newTab();
+        tabLayout.addTab(tab_blog);
+        tab_blog.setText(R.string.blogs);
+        tabLayout.addTab(tab_comment);
+        tab_comment.setText(R.string.comment);
 
-        btn_comment.setOnClickListener(v -> {
-            v.setEnabled(false);
-            btn_blog.setEnabled(true);
-            switchPage(page2,true);
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                if (tab==tab_blog){
+                    switchPage(page1,false);
+                }else {
+                    switchPage(page2,true);
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
         });
-        btn_blog.setOnClickListener(v -> {
-            v.setEnabled(false);
-            btn_comment.setEnabled(true);
-            switchPage(page1,false);
-        });
+
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
                 if (currentPage==page2) {
-                    btn_blog.callOnClick();
+                    tabLayout.selectTab(tab_blog);
                 } else {
                     setEnabled(false); // 暂时释放拦截
                     getOnBackPressedDispatcher().onBackPressed(); // 调用系统默认行为
@@ -299,15 +316,14 @@ public class BlogActivity extends BaseActivity {
             },null).show();
         });
         if (TYPE_AUDIT.equals(type)) {
-            btn_comment.setVisibility(GONE);
+            tabLayout.setVisibility(GONE);
             setTitle(String.format(Locale.getDefault(),"%s - %s",getString(R.string.audit_title),getTitle()));
             findViewById(R.id.clAuthorInfo).setVisibility(GONE);
-            btn_blog.setVisibility(GONE);
+
             findViewById(R.id.group_user).setVisibility(GONE);
             findViewById(R.id.group_audit).setVisibility(VISIBLE);
         }else if (TYPE_PREVIEW.equals(type)) {
-            btn_comment.setVisibility(GONE);
-            btn_blog.setVisibility(GONE);
+            tabLayout.setVisibility(GONE);
             findViewById(R.id.ll_actionBar).setVisibility(GONE);
         }
         findViewById(R.id.btn_download).setOnClickListener(v -> {

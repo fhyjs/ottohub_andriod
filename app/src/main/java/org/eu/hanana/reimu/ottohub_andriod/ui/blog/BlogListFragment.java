@@ -36,6 +36,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.tabs.TabLayout;
 
 import org.eu.hanana.reimu.lib.ottohub.api.blog.BlogResult;
 import org.eu.hanana.reimu.ottohub_andriod.MainActivity;
@@ -46,6 +47,7 @@ import org.eu.hanana.reimu.ottohub_andriod.data.blog.BlogViewModel;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.BaseFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.IScrollTopChecker;
 import org.eu.hanana.reimu.ottohub_andriod.ui.user.ProfileFragment;
+import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.InfiniteScrollListener;
 
 import java.util.ArrayList;
@@ -144,6 +146,10 @@ public class BlogListFragment extends BaseFragment implements IScrollTopChecker 
 
     private void showError(String message) {
         error=true;
+        if (true){
+            AlertUtil.showError(getContext(),message);
+            return;
+        }
         // 检查 Fragment 是否已附加到 Activity
         if (getContext() == null || isDetached()) return;
 
@@ -183,11 +189,36 @@ public class BlogListFragment extends BaseFragment implements IScrollTopChecker 
         // Inflate the layout for this fragment
         View inflate = inflater.inflate(R.layout.fragment_blog_list, container, false);
         LinearLayout button_area = inflate.findViewById(R.id.video_type_button_area);
+        var tabLayout = new TabLayout(inflate.getContext());
+        tabLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        tabLayout.setTag("themed");
+        button_area.addView(tabLayout);
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                if (tab.getTag()!=null) {
+                    ((Button) tab.getTag()).performClick();
+                }
+            }
 
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+        tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         for (int i = 0; i < buttonLabels.length; i++) {
+            var tab = tabLayout.newTab();
+            tabLayout.addTab(tab);
+            tab.setText(buttonLabels[i]);
             Button button = getTypeBtn(buttonLabels, i);
-
-            button_area.addView(button);
+            //button_area.addView(button);
+            tab.setTag(button);
             if (selectedButton==null){
                 selectedButton=button;
             }

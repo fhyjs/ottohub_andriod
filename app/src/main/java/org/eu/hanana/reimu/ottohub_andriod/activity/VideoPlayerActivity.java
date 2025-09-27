@@ -17,9 +17,7 @@ import static org.eu.hanana.reimu.ottohub_andriod.util.UiUtil.getScaleTypeVideoI
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
-import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Insets;
@@ -46,13 +44,11 @@ import android.view.ViewGroup;
 import android.view.WindowInsets;
 import android.view.WindowManager;
 import android.view.WindowMetrics;
-import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -62,12 +58,11 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
-import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
+import androidx.fragment.app.Fragment;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.PlaybackException;
 import androidx.media3.common.PlaybackParameters;
@@ -81,44 +76,45 @@ import androidx.media3.exoplayer.source.MediaSource;
 import androidx.media3.exoplayer.source.ProgressiveMediaSource;
 import androidx.media3.ui.PlayerControlView;
 import androidx.media3.ui.PlayerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.internal.TextWatcherAdapter;
 import com.google.android.material.slider.Slider;
-import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.gson.Gson;
 import com.kuaishou.akdanmaku.DanmakuConfig;
 import com.kuaishou.akdanmaku.data.DanmakuItem;
 import com.kuaishou.akdanmaku.data.DanmakuItemData;
 import com.kuaishou.akdanmaku.data.DataSource;
-import com.kuaishou.akdanmaku.render.SimpleRenderer;
 import com.kuaishou.akdanmaku.ui.DanmakuPlayer;
 import com.kuaishou.akdanmaku.ui.DanmakuView;
 
-import org.eu.hanana.reimu.lib.ottohub.api.ApiBase;
 import org.eu.hanana.reimu.lib.ottohub.api.ApiResultBase;
 import org.eu.hanana.reimu.lib.ottohub.api.common.EmptyResult;
 import org.eu.hanana.reimu.lib.ottohub.api.danmaku.DanmakuListResult;
-import org.eu.hanana.reimu.lib.ottohub.api.system.SlideshowResult;
 import org.eu.hanana.reimu.lib.ottohub.api.video.VideoResult;
 import org.eu.hanana.reimu.ottohub_andriod.MyApp;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.ui.audit.AuditVideoFragment;
-import org.eu.hanana.reimu.ottohub_andriod.ui.banner.BannerFragment;
+import org.eu.hanana.reimu.ottohub_andriod.ui.base.FragmentFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.UnlockedDanmakuRender;
 import org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase;
 import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoDescribeFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
+import org.eu.hanana.reimu.ottohub_andriod.util.DynamicFragmentAdapter;
 import org.eu.hanana.reimu.ottohub_andriod.util.ThemeUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.UiUtil;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -150,6 +146,10 @@ public class VideoPlayerActivity extends BaseActivity {
     public String type = TYPE_VIEW;
     @Nullable
     public String data = null;
+    private ViewPager2 viewPager;
+    private TabLayout tabLayout;
+    public DynamicFragmentAdapter dynamicFragmentAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -177,21 +177,52 @@ public class VideoPlayerActivity extends BaseActivity {
         if (getIntent().getExtras().containsKey(KEY_TYPE)){
             type=getIntent().getExtras().getString(KEY_TYPE);
         }
-        findViewById(R.id.video_desc_btn).setOnClickListener(v -> {
-            v.setEnabled(false);
-            findViewById(R.id.video_comment_btn).setEnabled(true);
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, VideoDescribeFragment.newInstance(netData))
-                    .commit();
+
+        viewPager = findViewById(R.id.viewPager);
+        tabLayout = findViewById(R.id.tabLayout);
+        viewPager.setAdapter(dynamicFragmentAdapter=new DynamicFragmentAdapter(this));
+        viewPager.setOrientation(ViewPager2.ORIENTATION_HORIZONTAL);
+        Map<Fragment,Integer>  fragHeight= new HashMap<>();
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                Fragment fragment = dynamicFragmentAdapter.createFragment(position);
+                if (fragment instanceof FragmentFragment){
+                    viewPager.setLayoutParams(new LinearLayout.LayoutParams(viewPager.getWidth(),UiUtil.getAppWindowHeight(VideoPlayerActivity.this)-findViewById(R.id.horizontalScrollView).getHeight()));
+                    return;
+                }
+                var view = fragment.getView();
+                if (fragHeight.containsKey(fragment)){
+                    ViewGroup.LayoutParams lp = viewPager.getLayoutParams();
+                    lp.height = fragHeight.get(fragment);
+                    viewPager.setLayoutParams(lp);
+                    return;
+                }
+                if (view != null) {
+                    view.post(() -> {
+
+                        int wSpec = View.MeasureSpec.makeMeasureSpec(view.getWidth(), View.MeasureSpec.EXACTLY);
+                        int hSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+                        view.measure(wSpec, hSpec);
+
+                        ViewGroup.LayoutParams lp = viewPager.getLayoutParams();
+                        lp.height = view.getMeasuredHeight();
+                        viewPager.setLayoutParams(lp);
+                        fragHeight.put(fragment,view.getMeasuredHeight());
+                    });
+                }
+            }
         });
-        findViewById(R.id.video_comment_btn).setOnClickListener(v -> {
-            v.setEnabled(false);
-            findViewById(R.id.video_desc_btn).setEnabled(true);
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, CommentFragmentBase.newInstance(netData.vid,0,CommentFragmentBase.TYPE_VIDEO))
-                    .commit();
-        });
-        findViewById(R.id.video_desc_btn).setEnabled(false);
+        // 将 TabLayout 与 ViewPager2 绑定
+        new TabLayoutMediator(tabLayout, viewPager,
+                (tab, position) -> {
+                    if (position<dynamicFragmentAdapter.getItemCount()){
+                        tab.setText(dynamicFragmentAdapter.getTitle(position));
+                    }
+                }).attach();
+
+
         setDanmakuEnable(true);
     }
 
@@ -405,9 +436,8 @@ public class VideoPlayerActivity extends BaseActivity {
                     setDanmakuEnable(false);
                     findViewById(R.id.horizontalScrollView).setVisibility(GONE);
                     findViewById(R.id.horizontalScrollView).setVisibility(GONE);
-                    getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, AuditVideoFragment.newInstance(netData))
-                        .commit();
+                    dynamicFragmentAdapter.addFragment(AuditVideoFragment.newInstance(netData), getString(R.string.audit));
+
             });
         }
         runOnUiThread(()->{
@@ -427,7 +457,7 @@ public class VideoPlayerActivity extends BaseActivity {
             int orientation = getResources().getConfiguration().orientation;
 
             if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                findViewById(R.id.fragment_container).setVisibility(GONE);
+                viewPager.setVisibility(GONE);
                 findViewById(R.id.horizontalScrollView).setVisibility(GONE);
                 View fullscreenView = findViewById(R.id.video_view_wrapper);
                 ViewGroup.LayoutParams params = fullscreenView.getLayoutParams();
@@ -478,13 +508,18 @@ public class VideoPlayerActivity extends BaseActivity {
         }
     }
     // 调用系统方法创建 PopupWindow
+    @SuppressLint("SetTextI18n")
     private void showDanmakuFloatingPopup(View parent, float x, float y, DanmakuItem danmakuItem) {
         // 使用 LayoutInflater 从 XML 构建视图
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View popupView = inflater.inflate(R.layout.layout_popup_danmaku, getRoot(),false); // 替换成你的 XML
-
+        PopupWindow popup = new PopupWindow(popupView,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                true);
         ((TextView) popupView.findViewById(R.id.tvContent)).setText(getText(R.string.danmaku)+": "+danmakuItem.getData().getContent());
         popupView.findViewById(R.id.btn_report).setOnClickListener(v -> {
+            popup.dismiss();
             AlertUtil.showYesNo(v.getContext(), getString(R.string.report), getString(R.string.report_danmaku, danmakuItem.getData().getContent()), (dialog, which) -> {
                 Thread thread = new Thread(() -> {
                     EmptyResult emptyResult = ApiUtil.getAppApi().getDanmakuApi().report_danmaku(danmakuItem.getData().getDanmakuId());
@@ -500,13 +535,12 @@ public class VideoPlayerActivity extends BaseActivity {
             }).show();
         });
         popupView.findViewById(R.id.btn_copy).setOnClickListener(v -> {
+            popup.dismiss();
             UiUtil.copyToClipboard(v.getContext(), danmakuItem.getData().getContent());
+            Toast.makeText(this, R.string.copy, Toast.LENGTH_SHORT).show();
         });
 
-        PopupWindow popup = new PopupWindow(popupView,
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                true);
+
 
         // 设置点击外部消失
         popup.setOutsideTouchable(true);
@@ -535,7 +569,12 @@ public class VideoPlayerActivity extends BaseActivity {
             });
 
             videoSurface.setResizeMode(getScaleTypeVideoInt(this));
-            fullscreenView.setLayoutParams(new ViewGroup.LayoutParams(fullscreenView.getWidth(),(int) (UiUtil.getAppWindowHeight(VideoPlayerActivity.this)*0.354)));
+            getRoot().post(()->{
+                if (getResources().getConfiguration().orientation!= Configuration.ORIENTATION_LANDSCAPE) {
+                    fullscreenView.setLayoutParams(new LinearLayout.LayoutParams(fullscreenView.getWidth(), (int) (UiUtil.getAppWindowHeight(VideoPlayerActivity.this) * 0.354)));
+                    viewPager.setLayoutParams(new LinearLayout.LayoutParams(viewPager.getWidth(), UiUtil.getAppWindowHeight(VideoPlayerActivity.this) - findViewById(R.id.horizontalScrollView).getHeight()));
+                }
+            });
             danmakuView.setOnTouchListener((v, event) -> {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     var danmakus = danmakuPlayer.getDanmakusAtPoint(new Point((int) event.getX(), (int) event.getY()));
@@ -545,7 +584,7 @@ public class VideoPlayerActivity extends BaseActivity {
                     var danmaku = danmakus.get(0);
                     danmakuPlayer.hold(null);
                     danmakuPlayer.hold(danmaku);
-                    showDanmakuFloatingPopup(danmakuView,event.getRawX(),event.getRawY()+danmaku.getRect().height(),danmaku);
+                    showDanmakuFloatingPopup(danmakuView,event.getRawX(),event.getRawY(),danmaku);
                     // 响应点击逻辑
                     Log.d("DanmakuView", "弹幕被点击了");
                 }
@@ -600,7 +639,7 @@ public class VideoPlayerActivity extends BaseActivity {
                             var sizeH = fullscreenView.getHeight();
                             var nSizeH = ((float)sizeW)*videoSize.height/videoSize.width;
                             nSizeH = Math.clamp(nSizeH,sizeH, UiUtil.getAppWindowHeight(VideoPlayerActivity.this)*0.60f);
-                            fullscreenView.setLayoutParams(new ViewGroup.LayoutParams(sizeW,(int)nSizeH));
+                            fullscreenView.setLayoutParams(new LinearLayout.LayoutParams(sizeW,(int)nSizeH));
                             var pcH = (nSizeH/(float) sizeH);
                             if (pcH>0.8f&&pcH<0.98f){
                                 videoSurface.setResizeMode(RESIZE_MODE_FILL);
@@ -715,9 +754,10 @@ public class VideoPlayerActivity extends BaseActivity {
             if (mediaPlayer == null) return;
 
             if (type.equals(TYPE_VIEW)) {
-                getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, VideoDescribeFragment.newInstance(netData))
-                    .commit();
+                var vdf = VideoDescribeFragment.newInstance(netData);
+                vdf.videoPlayerActivity=this;
+                dynamicFragmentAdapter.addFragment(vdf, getString(R.string.describe));
+                dynamicFragmentAdapter.addFragment(FragmentFragment.newInstance(CommentFragmentBase.newInstance(netData.vid,0,CommentFragmentBase.TYPE_VIDEO)), getString(R.string.comment));
             }
             mediaPlayer.prepare();
             if (savedInstanceState.containsKey(KEY_PLAYER_TIME)){

@@ -13,12 +13,13 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="horizontal">
 
         <!-- 缩略图 + 播放按钮 + 时长 -->
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="150dp">
+            android:layout_width="150dp"
+            android:minHeight="134dp"
+            android:layout_height="match_parent">
 
             <!-- 视频缩略图 -->
             <ImageView

@@ -4,8 +4,7 @@
     android:layout_height="wrap_content"
     android:clipChildren="false"
     android:clickable="true"
-    android:focusable="true"
-    android:tag="themed|background">
+    android:focusable="true">
 
     <ImageView
         android:tintMode="src_in"

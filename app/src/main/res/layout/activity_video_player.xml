@@ -7,7 +7,8 @@
     android:tag="themed|background"
     android:fillViewport="true"
     xmlns:android="http://schemas.android.com/apk/res/android">
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
+        android:orientation="vertical"
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -49,23 +50,11 @@
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
 
-                <Button
+                <com.google.android.material.tabs.TabLayout
                     android:tag="themed"
-                    android:layout_marginEnd="1dp"
-                    android:id="@+id/video_desc_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/describe" />
-
-                <Button
-                    android:tag="themed"
-                    android:layout_marginEnd="1dp"
-                    android:id="@+id/video_comment_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/comment" />
+                    android:id="@+id/tabLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
                 <com.google.android.material.button.MaterialButton
                     android:tag="themed"
                     android:id="@+id/btnDanmaku"
@@ -74,7 +63,8 @@
                     android:text="@string/danmaku"
                     android:layout_weight="1"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content">
+                </com.google.android.material.button.MaterialButton>
                 <com.google.android.material.button.MaterialButton
                     android:tag="themed"
                     android:id="@+id/btnSend"
@@ -94,11 +84,14 @@
             </LinearLayout>
         </HorizontalScrollView>
 
-        <FrameLayout
-            android:id="@+id/fragment_container"
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPager"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
 </ScrollView>

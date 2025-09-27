@@ -215,4 +215,7 @@
     <string name="baned">Baned</string>
     <string name="baned_msg">Page fixed by hanana app</string>
     <string name="chat_board">Comment board</string>
+    <string name="collection">Collection</string>
+    <string name="collection_mgr">Manage Collection</string>
+    <string name="none">None</string>
 </resources>

@@ -96,7 +96,10 @@ public class BlogViewModel extends ViewModel {
             }else if(ACTION_SEARCH.equals(blogListFragment.action)){
                 listResult = MyApp.getInstance().getOttohubApi().getBlogApi().search_blog_list(blogListFragment.data, 36);
                 if (blogListFragment.data.toLowerCase(Locale.ROOT).startsWith("ob")) {
-                    listResult.blog_list.addAll(0,MyApp.getInstance().getOttohubApi().getBlogApi().id_blog_list(Integer.parseInt(blogListFragment.data.substring(2))).blog_list);
+                    try {
+                        listResult.blog_list.addAll(0,MyApp.getInstance().getOttohubApi().getBlogApi().id_blog_list(Integer.parseInt(blogListFragment.data.substring(2))).blog_list);
+                    } catch (NumberFormatException ignored) {
+                    }
                 }
             }else if(blogListFragment.action.equals(ACTION_FAVOURITE)){
                 listResult = MyApp.getInstance().getOttohubApi().getProfileApi().favorite_blog_list(blogListFragment.currentPage*12, 12);

@@ -14,7 +14,11 @@
         <item name="android:windowAnimationStyle">@style/ActivityAnimation</item>
 
     </style>
-
+    <style name="Preference.SwitchPreference">
+        <item name="android:widgetLayout">@layout/preference_widget_material_switch</item>
+        <item name="android:switchTextOn">@string/v7_preference_on</item>
+        <item name="android:switchTextOff">@string/v7_preference_off</item>
+    </style>
     <style name="ActivityAnimation">
         <item name="android:activityOpenEnterAnimation">@anim/slide_in_right</item>
         <item name="android:activityOpenExitAnimation">@anim/slide_out_left</item>

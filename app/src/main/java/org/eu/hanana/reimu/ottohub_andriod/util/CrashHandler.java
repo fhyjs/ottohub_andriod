@@ -8,6 +8,7 @@ import android.os.Build;
 import android.util.Log;
 
 import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
 
 import org.eu.hanana.reimu.ottohub_andriod.BuildConfig;
 import org.eu.hanana.reimu.ottohub_andriod.R;
@@ -38,6 +39,10 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
     @Override
     public void uncaughtException(Thread t, Throwable e) {
+        if (!PreferenceManager.getDefaultSharedPreferences(context).getBoolean("bug_rep",true)){
+            defaultHandler.uncaughtException(t, e);
+            return;
+        }
         // 1. 记录日志
         Log.e("CrashHandler", "App崩溃了: ", e);
 

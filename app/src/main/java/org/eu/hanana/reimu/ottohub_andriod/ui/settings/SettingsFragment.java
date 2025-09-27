@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -38,12 +39,23 @@ public class SettingsFragment extends PreferenceFragmentCompat implements IScrol
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view,savedInstanceState);
-        this.getView().setBackgroundColor(0xFFfdfdfd);
+        //this.getView().setBackgroundColor(0xFFfdfdfd);
+        ThemeUtil.onViewCreated(this);
     }
+
+    @NonNull
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = super.onCreateView(inflater, container, savedInstanceState);
+        view.setTag("themed|background");
+        return view;
+    }
+
     @Override
     public boolean atTop() {
         return !getListView().canScrollVertically(-1);
     }
+
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.preferences, rootKey);

@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,7 +31,12 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import org.eu.hanana.reimu.lib.ottohub.api.collection.CollectionListResult;
+import org.eu.hanana.reimu.lib.ottohub.api.collection.CollectionResult;
+import org.eu.hanana.reimu.lib.ottohub.api.comment.IfGetExpResult;
+import org.eu.hanana.reimu.lib.ottohub.api.common.EmptyResult;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.activity.VideoPlayerActivity;
 import org.eu.hanana.reimu.ottohub_andriod.data.video.VideoCard;
@@ -104,7 +110,7 @@ public class VideoCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             return new LoadingViewHolder(view);
         } else {
             View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_video_card, parent, false);
+                    .inflate(frag.videosInRow==1?R.layout.item_video_card_x:R.layout.item_video_card, parent, false);
             return new VideoCardViewHolder(view);
         }
     }
@@ -202,8 +208,89 @@ public class VideoCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     thread.start();
                 },null).show();
             });
+            var ctx = frag.getContext();
+            vcvHolder.itemView.findViewById(R.id.btn_collection).setOnClickListener(v -> {
+                var loadingDialog = AlertUtil.showLoading(frag.getContext(),getString(ctx,R.string.loading));
+                loadingDialog.show();
+                Thread thread = new Thread(()->{
+                    try {
+                        var current = ApiUtil.getAppApi().getCollectionApi().get_video_collection(video.getVid());
+                        if (!current.isSuccess()){
+                            if (!current.getMessage().contains("video_not_in_collection")){
+                                ApiUtil.throwApiError(current);
+                            }
+                            current=null;
+                        }
+                        var all = ApiUtil.getAppApi().getCollectionApi().get_user_video_collection(Integer.parseInt(ApiUtil.getAppApi().getLoginResult().uid));
+                        ApiUtil.throwApiError(all);
+                        org.eu.hanana.reimu.lib.ottohub.api.collection.CollectionResult finalCurrent = current;
+                        frag.requireActivity().runOnUiThread(()->{
+                            doSetCollection(finalCurrent,all,video);
+                        });
+                    }finally {
+                        frag.requireActivity().runOnUiThread(loadingDialog::dismiss);
+                    }
+                });
+                thread.setUncaughtExceptionHandler(new AlertUtil.ThreadAlert(frag.getActivity()));
+                thread.start();
+            });
         }
     }
+
+    private void doSetCollection(CollectionResult finalCurrent, CollectionListResult all, VideoCard video) {
+        var none = getString(frag.requireContext(),R.string.none);
+        var add = getString(frag.requireContext(),R.string.add);
+        all.collection_list.remove(add);
+        all.collection_list.remove(none);
+        all.collection_list.add(0,add);
+        all.collection_list.add(0,none);
+        var crr = -1;
+        if (finalCurrent==null||finalCurrent.collection.isEmpty()){
+            finalCurrent=new CollectionResult();
+            finalCurrent.collection=none;
+        }
+        try {
+            if (all.collection_list.contains(finalCurrent.collection)) {
+                crr = all.collection_list.indexOf(finalCurrent.collection);
+            }
+        }catch (Exception ignore){ }
+        new MaterialAlertDialogBuilder(frag.requireContext())
+                .setTitle(R.string.collection_mgr)
+                .setNegativeButton(R.string.cancel,(dialog, which) -> dialog.dismiss())
+                .setSingleChoiceItems(all.collection_list.toArray(new String[0]), crr, (dialog, which) -> {
+                    // 用户选择某个收藏夹
+                    String selectedCollection = all.collection_list.get(which);
+                    dialog.dismiss();
+                    Thread thread1 = new Thread(()-> {
+                        var target=selectedCollection;
+                        if (target.equals(none)){
+                            //target="";
+                        }
+                        if (target.equals(add)){
+                            target="";
+                            frag.requireActivity().runOnUiThread(()->addNewCollection(video));
+                            return;
+                        }
+                        EmptyResult emptyResult = ApiUtil.getAppApi().getCollectionApi().set_video_collection(video.getVid(), target);
+                        ApiUtil.throwApiError(emptyResult);
+                    });
+                    thread1.setUncaughtExceptionHandler(new AlertUtil.ThreadAlert(frag.getActivity()));
+                    thread1.start();
+                })
+                .show();
+    }
+
+    private void addNewCollection(VideoCard video) {
+        AlertUtil.showInput(frag.getContext(),input -> {
+            Thread thread = new Thread(() -> {
+                EmptyResult emptyResult = ApiUtil.getAppApi().getCollectionApi().set_video_collection(video.getVid(), input);
+                ApiUtil.throwApiError(emptyResult);
+            });
+            thread.setUncaughtExceptionHandler(new AlertUtil.ThreadAlert(frag.getActivity()));
+            thread.start();
+        }).show();
+    }
+
     private void shareText(Context c, String text) {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain"); // 分享纯文本

@@ -2,12 +2,12 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
         android:title="@string/common">
-        <Preference
+        <org.eu.hanana.reimu.ottohub_andriod.ui.preference.M3Preference
             android:icon="@drawable/palette_24dp"
             android:key="theme"
             android:title="@string/theme_color"
             android:summary="Set the main color of this app" />
-        <ListPreference
+        <org.eu.hanana.reimu.ottohub_andriod.ui.preference.MaterialListPreference
             android:defaultValue="sys"
             android:entries="@array/languages_setting"
             android:entryValues="@array/languages_setting_val"
@@ -15,11 +15,11 @@
             android:key="language"
             android:summary="Change language,As shown in the title.\n更改应用语言"
             android:title="Language/语言" />
-        <Preference
+        <org.eu.hanana.reimu.ottohub_andriod.ui.preference.M3Preference
             android:icon="@drawable/update_24dp_"
             android:key="update_now"
             android:title="@string/update_check" />
-        <ListPreference
+        <org.eu.hanana.reimu.ottohub_andriod.ui.preference.MaterialListPreference
             android:defaultValue="sys"
             android:entries="@array/languages_setting"
             android:entryValues="@array/languages_setting_val"
@@ -27,35 +27,35 @@
             android:key="language"
             android:summary="Change language,As shown in the title.\n更改应用语言"
             android:title="Language/语言" />
-        <SwitchPreference
+        <org.eu.hanana.reimu.ottohub_andriod.ui.preference.M3SwitchPreference
             android:icon="@drawable/tab_inactive_24dp"
             android:defaultValue="true"
             android:key="auto_dark"
             android:summary="@string/auto_dark"
             android:title="@string/auto_dark_title" />
-        <SwitchPreference
+        <org.eu.hanana.reimu.ottohub_andriod.ui.preference.M3SwitchPreference
             android:icon="@drawable/tab_inactive_24dp"
             android:defaultValue="true"
             android:key="force_background"
             android:summary="@string/show_message"
             android:title="@string/force_service_running" />
-        <SwitchPreference
+        <org.eu.hanana.reimu.ottohub_andriod.ui.preference.M3SwitchPreference
             android:icon="@drawable/shield_toggle_24dp"
             android:defaultValue="true"
             android:key="permission_check"
             android:title="@string/permissionCheck"
             android:summary="Check permissions before start" />
-        <Preference
+        <org.eu.hanana.reimu.ottohub_andriod.ui.preference.M3Preference
             android:icon="@drawable/cleaning_services_24dp"
             android:key="clear_cache"
             android:title="@string/clear_cache"
             android:summary="Click to clear cache" />
-        <Preference
+        <org.eu.hanana.reimu.ottohub_andriod.ui.preference.M3Preference
             android:icon="@drawable/info_24dp"
             android:key="about"
             android:title="@string/about"
             android:summary="About this app" />
-        <Preference
+        <org.eu.hanana.reimu.ottohub_andriod.ui.preference.M3Preference
             android:icon="@drawable/reset_settings_24dp"
             android:key="reset"
             android:title="@string/reset"
@@ -63,25 +63,25 @@
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/user">
-        <SwitchPreference
+        <org.eu.hanana.reimu.ottohub_andriod.ui.preference.M3SwitchPreference
             android:icon="@drawable/login_24dp"
             android:defaultValue="true"
             android:key="auto_login"
             android:title="@string/auto_login" />
-        <SwitchPreference
+        <org.eu.hanana.reimu.ottohub_andriod.ui.preference.M3SwitchPreference
             android:icon="@drawable/account_circle_off"
             android:defaultValue="true"
             android:key="remove_account"
             android:summary="@string/remove_account_from_list"
             android:title="@string/remove_account" />
-        <Preference
+        <org.eu.hanana.reimu.ottohub_andriod.ui.preference.M3Preference
             android:icon="@drawable/logout_24dp"
             android:key="logout"
             android:title="@string/logout"
             android:summary="Click to logout account" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/blogs">
-        <SwitchPreference
+        <org.eu.hanana.reimu.ottohub_andriod.ui.preference.M3SwitchPreference
             android:icon="@drawable/markdown_24dp"
             android:defaultValue="false"
             android:key="java_md"
@@ -89,7 +89,7 @@
             android:summary="@string/markdown_java_summary" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/videos">
-        <ListPreference
+        <org.eu.hanana.reimu.ottohub_andriod.ui.preference.MaterialListPreference
             android:icon="@drawable/aspect_ratio_24dp"
             android:defaultValue="auto"
             android:key="scale_type"

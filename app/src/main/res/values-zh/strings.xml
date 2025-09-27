@@ -200,4 +200,7 @@
     <string name="baned">已被封禁</string>
     <string name="baned_msg">已被hanana软件修复!</string>
     <string name="chat_board">留言板</string>
+    <string name="collection">合集</string>
+    <string name="collection_mgr">合集管理</string>
+    <string name="none">无</string>
 </resources>

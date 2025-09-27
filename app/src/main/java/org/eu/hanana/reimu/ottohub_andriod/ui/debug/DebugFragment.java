@@ -5,10 +5,13 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.android.material.materialswitch.MaterialSwitch;
 
 import org.eu.hanana.reimu.ottohub_andriod.R;
 
@@ -55,5 +58,16 @@ public class DebugFragment extends Fragment {
         view.findViewById(R.id.btn_crash).setOnClickListener(v -> {
             throw new RuntimeException("Crash Test");
         });
+
+        ((MaterialSwitch) view.findViewById(R.id.switch_enable_bugrep)).setChecked(PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("bug_rep",true));
+        ((MaterialSwitch) view.findViewById(R.id.switch_enable_bugrep)).setOnCheckedChangeListener((buttonView, isChecked) -> {
+            PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean("bug_rep",isChecked).apply();
+        });
+
+        ((MaterialSwitch) view.findViewById(R.id.switch_rem_empty_collection)).setChecked(PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("rem_empty_collection",true));
+        ((MaterialSwitch) view.findViewById(R.id.switch_rem_empty_collection)).setOnCheckedChangeListener((buttonView, isChecked) -> {
+            PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean("rem_empty_collection",isChecked).apply();
+        });
+
     }
 }

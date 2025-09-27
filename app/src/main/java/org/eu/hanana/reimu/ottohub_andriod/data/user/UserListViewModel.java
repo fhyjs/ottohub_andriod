@@ -32,7 +32,9 @@ public class UserListViewModel extends ListViewModelBase<UserCard> {
         if (frag.type.equals(UserListFragment.TYPE_SEARCH)){
             userListResult= ApiUtil.getAppApi().getUserApi().search_user_list(frag.data,36);
             if (frag.data.toLowerCase(Locale.ROOT).startsWith("uid")) {
-                userListResult.user_list.addAll(0, MyApp.getInstance().getOttohubApi().getUserApi().id_user_list(Integer.parseInt(frag.data.substring(3))).user_list);
+                try {
+                    userListResult.user_list.addAll(0, MyApp.getInstance().getOttohubApi().getUserApi().id_user_list(Integer.parseInt(frag.data.substring(3))).user_list);
+                }catch (Exception ignored){}
             }
             frag.hasMoreData=false;
         } else if (frag.type.equals(UserListFragment.TYPE_SWITCH_ACCOUNT)) {

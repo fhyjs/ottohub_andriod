@@ -14,6 +14,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
         <TextView
+            android:layout_margin="8dp"
             android:tag="themed"
             android:id="@+id/tvContent"
             android:text="CONTENT"

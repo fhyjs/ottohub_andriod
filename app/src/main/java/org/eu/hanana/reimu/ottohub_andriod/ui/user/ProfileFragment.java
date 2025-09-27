@@ -1,6 +1,8 @@
 package org.eu.hanana.reimu.ottohub_andriod.ui.user;
 
+import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
+import static com.google.android.material.tabs.TabLayout.MODE_SCROLLABLE;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment.ACTION_BY_USER;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment.ARG_ACTION;
 
@@ -45,6 +47,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.tabs.TabLayout;
 
 import org.eu.hanana.reimu.lib.ottohub.api.ApiResultBase;
 import org.eu.hanana.reimu.lib.ottohub.api.blog.BlogListResult;
@@ -62,6 +65,7 @@ import org.eu.hanana.reimu.ottohub_andriod.activity.UserSettingsActivity;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.BaseFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.IScrollTopChecker;
 import org.eu.hanana.reimu.ottohub_andriod.ui.blog.BlogListFragment;
+import org.eu.hanana.reimu.ottohub_andriod.ui.collection.CollectionListFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.message.SendMessageFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.settings.SettingsFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment;
@@ -103,6 +107,7 @@ public class ProfileFragment extends BaseFragment {
     protected TextView tvIntro;
     protected TextView tvDetail;
     private View view;
+    private TabLayout tlPage;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -283,12 +288,7 @@ public class ProfileFragment extends BaseFragment {
         }else {
             updateFollowStatus(followStatus.follow_status);
         }
-        addPageBtn();
-        for (int i = 0; i < pageBtnArea.getChildCount(); i++) {
-            var child = pageBtnArea.getChildAt(i);
-            child.setOnClickListener(buttonClicked -> setPage((Button) buttonClicked));
-        }
-        setPage((Button) pageBtnArea.getChildAt(0));
+
 
         tvIntro.setText(userResult.intro);
         tvDetail.setText(String.format(Locale.getDefault(),"%s:%s %s:%s",getString(R.string.sex),userResult.sex,getString(R.string.register_time),userResult.time));
@@ -393,7 +393,7 @@ public class ProfileFragment extends BaseFragment {
                             pta.setLayoutParams(lp);
                         }
                         if (newHeight<=minHeight){
-                            pta.setVisibility(View.GONE);
+                            pta.setVisibility(GONE);
                             frameLayout.setInterceptMove(false);
                         }else {
                             if (frag instanceof IScrollTopChecker){
@@ -421,7 +421,7 @@ public class ProfileFragment extends BaseFragment {
                                 @Override
                                 public void onAnimationEnd(Animator animation) {
                                     if (lp.height<maxHeight*0.5) {
-                                        pta.setVisibility(View.GONE);
+                                        pta.setVisibility(GONE);
                                         visible=false;
                                         frameLayout.setInterceptMove(false);
                                     }else {
@@ -451,7 +451,7 @@ public class ProfileFragment extends BaseFragment {
                             @Override
                             public void onAnimationEnd(Animator animation) {
                                 if (lp.height<maxHeight*0.5) {
-                                    pta.setVisibility(View.GONE);
+                                    pta.setVisibility(GONE);
                                     visible=false;
                                     frameLayout.setInterceptMove(false);
                                 }else {
@@ -470,6 +470,35 @@ public class ProfileFragment extends BaseFragment {
         frameLayout.setInterceptMove(true);
         frameLayout.setTouchListener(onTouchListener);
         frameLayout.setInterceptTouchListener(onTouchListener);
+        tlPage = view.findViewById(R.id.tlPage);
+        tlPage.setTag("themed");
+        tlPage.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                var btn = ((Button) tab.getTag());
+                if (btn!=null) btn.performClick();
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+        tlPage.setTabMode(MODE_SCROLLABLE);
+
+        addPageBtn();
+        for (int i = 0; i < pageBtnArea.getChildCount(); i++) {
+            var child = pageBtnArea.getChildAt(i);
+            if (child instanceof Button) {
+                child.setOnClickListener(buttonClicked -> setPage((Button) buttonClicked));
+            }
+        }
+        setPage((Button) tlPage.getTabAt(0).getTag());
     }
     private void addMenu() {
         getActivity().addMenuProvider(new MenuProvider() {
@@ -483,7 +512,7 @@ public class ProfileFragment extends BaseFragment {
                 if (isSelf()){
                     Drawable drawable = AppCompatResources.getDrawable(getContext(), R.drawable.mail_24dp);
                     drawable.setTintList(ContextCompat.getColorStateList(getContext(),R.color.black));
-                    menu.add(Menu.NONE,10,Menu.NONE,getString(R.string.mail)).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+                    menu.add(Menu.NONE,100023,Menu.NONE,getString(R.string.mail)).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
                 }
                 menuInflater.inflate(R.menu.menu_action_profile,menu);
@@ -495,7 +524,7 @@ public class ProfileFragment extends BaseFragment {
             @Override
             public void onPrepareMenu(@NonNull Menu menu) {
                 // 找到对应菜单项
-                MenuItem menuItem = menu.findItem(10);
+                MenuItem menuItem = menu.findItem(100023);
                 if (menuItem!=null) {
                     // 创建自定义的角标视图
                     FrameLayout actionView = (FrameLayout) getLayoutInflater().inflate(R.layout.menu_item_badge, (ViewGroup) view.getRootView(), false);
@@ -508,7 +537,7 @@ public class ProfileFragment extends BaseFragment {
                     TextView badgeTextView = actionView.findViewById(R.id.badge_text_view);
                     var number =ApiUtil.getNewMegCount();
                     badgeTextView.setText(number>99?"99+":String.valueOf(number));   // 角标数字
-                    badgeTextView.setVisibility(ApiUtil.getNewMegCount()>0? VISIBLE:View.GONE);
+                    badgeTextView.setVisibility(ApiUtil.getNewMegCount()>0? VISIBLE: GONE);
                     ThemeUtil.apply(actionView);
                     actionView.setBackgroundColor(ThemeUtil.getTheme(getContext()).getColorActionBar());
 
@@ -517,7 +546,7 @@ public class ProfileFragment extends BaseFragment {
 
             @Override
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
-                if (menuItem.getItemId()==10){
+                if (menuItem.getItemId()==100023){
                     Intent intent = new Intent(getContext(), MessageActivity.class);
                     startActivity(intent);
                     return true;
@@ -549,6 +578,9 @@ public class ProfileFragment extends BaseFragment {
     }
 
     protected void addPageBtn() {
+        pageBtnArea.addView(makeButton(getString(R.string.videos)));
+        pageBtnArea.addView(makeButton(getString(R.string.blogs)));
+        pageBtnArea.addView(makeButton(getString(R.string.collection)));
         if (isSelf()){
             pageBtnArea.addView(makeButton(getString(R.string.history)));
             pageBtnArea.addView(makeButton(getString(R.string.settings)));
@@ -571,6 +603,12 @@ public class ProfileFragment extends BaseFragment {
 
         params.setMargins(0, params.topMargin, marginInPx, params.bottomMargin);
         button.setLayoutParams(params);
+        button.setVisibility(GONE);
+
+        var tab = tlPage.newTab();
+        tlPage.addTab(tab);
+        tab.setText(text);
+        tab.setTag(button);
         return button;
     }
     public void setPage(Button buttonClicked){
@@ -597,6 +635,10 @@ public class ProfileFragment extends BaseFragment {
             getChildFragmentManager().beginTransaction().replace(R.id.fragment_container, listFragment).commit();
         }else if (buttonClicked.getText().equals(getString(R.string.settings))){
             var fragment = new SettingsFragment();
+            getChildFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
+        }else if (buttonClicked.getText().equals(getString(R.string.collection))){
+            var fragment = new CollectionListFragment();
+            fragment.uid=uid;
             getChildFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
         }
     }

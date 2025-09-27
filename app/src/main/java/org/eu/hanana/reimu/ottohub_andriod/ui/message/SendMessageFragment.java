@@ -18,10 +18,11 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import org.eu.hanana.reimu.lib.ottohub.api.common.EmptyResult;
 import org.eu.hanana.reimu.ottohub_andriod.R;
+import org.eu.hanana.reimu.ottohub_andriod.ui.base.BaseFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 
-public class SendMessageFragment extends Fragment {
+public class SendMessageFragment extends BaseFragment {
     private static final String TAG = "SendMessageFragment";
     private EditText etReceiverUid;
     private MaterialButton btnSend;
