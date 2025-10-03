@@ -8,10 +8,10 @@
         }
     }
     function scheduleUpdate() {
-        if (typeof timeoutId !== 'undefined' && timeoutId) return; // 已经在等待更新
-        timeoutId = setTimeout(() => {
+        setTimeout(() => {
             updateHeight();
-            timeoutId = null;
+            console.log("reload height");
+            scheduleUpdate();
         }, 500); // 每 500ms 更新一次
     }
 
