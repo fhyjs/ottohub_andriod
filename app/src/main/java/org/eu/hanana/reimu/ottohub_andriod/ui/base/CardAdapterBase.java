@@ -1,27 +1,17 @@
 package org.eu.hanana.reimu.ottohub_andriod.ui.base;
 
 import static android.view.View.GONE;
-import static androidx.core.content.ContextCompat.startActivity;
 
-import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-
 import org.eu.hanana.reimu.ottohub_andriod.R;
-import org.eu.hanana.reimu.ottohub_andriod.activity.VideoPlayerActivity;
-import org.eu.hanana.reimu.ottohub_andriod.data.video.VideoCard;
 import org.eu.hanana.reimu.ottohub_andriod.util.ThemeUtil;
 
 import java.util.List;

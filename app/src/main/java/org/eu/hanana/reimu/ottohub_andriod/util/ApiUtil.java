@@ -1,10 +1,8 @@
 package org.eu.hanana.reimu.ottohub_andriod.util;
 
 import static android.content.Context.MODE_PRIVATE;
-import static android.content.Context.MODE_WORLD_READABLE;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
@@ -22,6 +20,7 @@ import org.eu.hanana.reimu.lib.ottohub.api.OttohubApi;
 import org.eu.hanana.reimu.lib.ottohub.api.auth.LoginResult;
 import org.eu.hanana.reimu.lib.ottohub.api.im.NewMessageNumResult;
 import org.eu.hanana.reimu.ottohub_andriod.MyApp;
+import org.eu.hanana.reimu.ottohub_andriod.MyAppApplicationLike;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.data.api.DataSerializerEntity;
 
@@ -29,19 +28,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import lombok.Getter;
-import lombok.SneakyThrows;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -152,7 +147,7 @@ public class ApiUtil {
         }
     }
     public static OttohubApi getAppApi(){
-        return MyApp.getInstance().getOttohubApi();
+        return MyAppApplicationLike.getInstance().getOttohubApi();
     }
 
     public static boolean isLogin() {

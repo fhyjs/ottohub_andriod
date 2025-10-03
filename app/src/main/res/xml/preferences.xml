@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory
         android:title="@string/common">
         <org.eu.hanana.reimu.ottohub_andriod.ui.preference.M3Preference
@@ -36,6 +37,7 @@
         <org.eu.hanana.reimu.ottohub_andriod.ui.preference.M3SwitchPreference
             android:icon="@drawable/tab_inactive_24dp"
             android:defaultValue="true"
+            app:isPreferenceVisible="false"
             android:key="force_background"
             android:summary="@string/show_message"
             android:title="@string/force_service_running" />

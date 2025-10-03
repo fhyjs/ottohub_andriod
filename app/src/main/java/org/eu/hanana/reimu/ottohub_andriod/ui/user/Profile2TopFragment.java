@@ -1,9 +1,5 @@
 package org.eu.hanana.reimu.ottohub_andriod.ui.user;
 
-import static org.eu.hanana.reimu.ottohub_andriod.ui.user.ProfileFragment2.Arg_Uid;
-import static org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment.ACTION_BY_USER;
-import static org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment.ARG_ACTION;
-
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -28,7 +24,6 @@ import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
 import androidx.core.view.MenuProvider;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
 
 import com.bumptech.glide.Glide;
@@ -39,17 +34,12 @@ import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.android.material.button.MaterialButton;
 
-import org.eu.hanana.reimu.lib.ottohub.api.profile.ProfileResult;
-import org.eu.hanana.reimu.lib.ottohub.api.user.UserResult;
-import org.eu.hanana.reimu.ottohub_andriod.MyApp;
+import org.eu.hanana.reimu.ottohub_andriod.MyAppApplicationLike;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.activity.FragActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.ImageViewActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.MessageActivity;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.BaseFragment;
-import org.eu.hanana.reimu.ottohub_andriod.ui.blog.BlogListFragment;
-import org.eu.hanana.reimu.ottohub_andriod.ui.settings.SettingsFragment;
-import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ProfileUtil;
@@ -107,7 +97,7 @@ public class Profile2TopFragment extends BaseFragment {
     private void initUI() {
         if (getActivity()==null) return;
         Glide.with(getContext())
-                .load(isSelf()? MyApp.getInstance().getOttohubApi().getLoginResult().avatar_url:pf2.userDataResult.avatar_url)
+                .load(isSelf()? MyAppApplicationLike.getInstance().getOttohubApi().getLoginResult().avatar_url:pf2.userDataResult.avatar_url)
                 .placeholder(R.drawable.ic_launcher_background)  // 占位图
                 .error(R.drawable.error_48px)        // 错误图
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC) // 缓存策略
@@ -170,7 +160,7 @@ public class Profile2TopFragment extends BaseFragment {
         var colorMask = ThemeUtil.getTheme(getContext()).getColorBackground();
         //将封面作为卡片背景
         Glide.with(this)
-                .load(isSelf()?MyApp.getInstance().getOttohubApi().getLoginResult().cover_url:pf2.userDataResult.cover_url)
+                .load(isSelf()?MyAppApplicationLike.getInstance().getOttohubApi().getLoginResult().cover_url:pf2.userDataResult.cover_url)
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC) // 缓存策略
                 .apply(RequestOptions.bitmapTransform( new MultiTransformation<>(
                         new HardwareToSoftwareTransformation(),
@@ -257,9 +247,9 @@ public class Profile2TopFragment extends BaseFragment {
                     }
                     return true;
                 } else if (menuItem.getItemId() == R.id.btn_view_avatar) {
-                    ImageViewActivity.start(getContext(),isSelf()?MyApp.getInstance().getOttohubApi().getLoginResult().avatar_url:pf2.userDataResult.avatar_url);
+                    ImageViewActivity.start(getContext(),isSelf()?MyAppApplicationLike.getInstance().getOttohubApi().getLoginResult().avatar_url:pf2.userDataResult.avatar_url);
                 } else if (menuItem.getItemId() == R.id.btn_view_cover) {
-                    ImageViewActivity.start(getContext(),isSelf()?MyApp.getInstance().getOttohubApi().getLoginResult().cover_url:pf2.userDataResult.cover_url);
+                    ImageViewActivity.start(getContext(),isSelf()?MyAppApplicationLike.getInstance().getOttohubApi().getLoginResult().cover_url:pf2.userDataResult.cover_url);
                 }
                 return false;
             }
@@ -295,7 +285,7 @@ public class Profile2TopFragment extends BaseFragment {
     }
     public void doFollow(){
         Thread thread = new Thread(()->{
-            pf2.followStatus= MyApp.getInstance().getOttohubApi().getFollowingApi().follow(pf2.uid);
+            pf2.followStatus= MyAppApplicationLike.getInstance().getOttohubApi().getFollowingApi().follow(pf2.uid);
             getActivity().runOnUiThread(()->{
                 tvFollower.setText(String.valueOf(pf2.followStatus.new_fans_count));
                 updateFollowStatus(pf2.followStatus.follow_status);

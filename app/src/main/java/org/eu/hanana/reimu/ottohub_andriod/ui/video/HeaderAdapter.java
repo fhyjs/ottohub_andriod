@@ -36,7 +36,7 @@ public class HeaderAdapter extends RecyclerView.Adapter<HeaderAdapter.HeaderView
         super.onViewAttachedToWindow(holder);
         holder.itemView.post(()->{
             if (!holder.itemView.isAttachedToWindow()) return;
-            frag.getChildFragmentManager().beginTransaction().replace(holder.itemView.getId(), new BannerFragment()).commit();
+            frag.getChildFragmentManager().beginTransaction().replace(holder.itemView.getId(), new BannerFragment()).commitAllowingStateLoss();
         });
     }
 

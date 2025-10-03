@@ -2,8 +2,6 @@ package org.eu.hanana.reimu.ottohub_andriod.activity;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static androidx.core.content.ContextCompat.startActivity;
-
 import static org.eu.hanana.reimu.ottohub_andriod.activity.FragActivity.ARG_DATA;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.audit.AuditAdapter.ARG_RESULT;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.audit.AuditAdapter.ARG_TARGET;
@@ -11,20 +9,13 @@ import static org.eu.hanana.reimu.ottohub_andriod.ui.audit.AuditFragment.TYPE_BL
 import static org.eu.hanana.reimu.ottohub_andriod.ui.message.MessageListFragment.ARG_TYPE;
 import static org.eu.hanana.reimu.ottohub_andriod.util.UiUtil.shareText;
 
-import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.res.ColorStateList;
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -32,32 +23,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
 import android.webkit.JavascriptInterface;
-import android.webkit.JsResult;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.WindowDecorActionBar;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.ContextCompat;
-import androidx.core.graphics.Insets;
 import androidx.core.view.MenuProvider;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.preference.PreferenceManager;
 
 import com.bumptech.glide.Glide;
@@ -85,13 +62,12 @@ import com.vladsch.flexmark.util.data.MutableDataSet;
 import org.eu.hanana.reimu.lib.ottohub.api.blog.BlogResult;
 import org.eu.hanana.reimu.lib.ottohub.api.common.EmptyResult;
 import org.eu.hanana.reimu.lib.ottohub.api.engagement.EngagementResult;
-import org.eu.hanana.reimu.ottohub_andriod.MainActivity;
 import org.eu.hanana.reimu.ottohub_andriod.MyApp;
+import org.eu.hanana.reimu.ottohub_andriod.MyAppApplicationLike;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.service.CopyService;
 import org.eu.hanana.reimu.ottohub_andriod.ui.audit.AuditAdapter;
 import org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase;
-import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ClipboardUtil;
@@ -151,7 +127,7 @@ public class BlogActivity extends BaseActivity {
         inited=true;
         Thread thread = new Thread(() -> {
             if (TYPE_VIEW.equals(type)) {
-                blogResult = MyApp.getInstance().getOttohubApi().getBlogApi().get_blog_detail(bid);
+                blogResult = MyAppApplicationLike.getInstance().getOttohubApi().getBlogApi().get_blog_detail(bid);
             }else if (TYPE_AUDIT.equals(type)|TYPE_PREVIEW.equals(type)) {
                 blogResult = new Gson().fromJson(data,BlogResult.class);
             }
@@ -202,12 +178,12 @@ public class BlogActivity extends BaseActivity {
             shareText(v.getContext(),txt);
         });
         findViewById(R.id.btn_like).setOnClickListener(v -> {
-            if (MyApp.getInstance().getOttohubApi().getLoginToken()==null) {
+            if (MyAppApplicationLike.getInstance().getOttohubApi().getLoginToken()==null) {
                 AlertUtil.showError(this,getString(R.string.not_login)).show();
                 return;
             }
             Thread thread = new Thread(() -> {
-                EngagementResult engagementResult = MyApp.getInstance().getOttohubApi().getEngagementApi().like_blog(bid);
+                EngagementResult engagementResult = MyAppApplicationLike.getInstance().getOttohubApi().getEngagementApi().like_blog(bid);
                 ApiUtil.throwApiError(engagementResult);
                 blogResult.like_count=engagementResult.like_count;
                 blogResult.if_like=engagementResult.if_like;
@@ -217,12 +193,12 @@ public class BlogActivity extends BaseActivity {
             thread.start();
         });
         findViewById(R.id.btn_favourite).setOnClickListener(v -> {
-            if (MyApp.getInstance().getOttohubApi().getLoginToken()==null) {
+            if (MyAppApplicationLike.getInstance().getOttohubApi().getLoginToken()==null) {
                 AlertUtil.showError(this,getString(R.string.not_login)).show();
                 return;
             }
             Thread thread = new Thread(() -> {
-                EngagementResult engagementResult = MyApp.getInstance().getOttohubApi().getEngagementApi().favorite_blog(bid);
+                EngagementResult engagementResult = MyAppApplicationLike.getInstance().getOttohubApi().getEngagementApi().favorite_blog(bid);
                 ApiUtil.throwApiError(engagementResult);
                 blogResult.favorite_count=engagementResult.favorite_count;
                 blogResult.if_favorite=engagementResult.if_favorite;
@@ -232,12 +208,12 @@ public class BlogActivity extends BaseActivity {
             thread.start();
         });
         findViewById(R.id.btn_report).setOnClickListener(v -> {
-            if (MyApp.getInstance().getOttohubApi().getLoginToken()==null) {
+            if (MyAppApplicationLike.getInstance().getOttohubApi().getLoginToken()==null) {
                 AlertUtil.showError(this,getString(R.string.not_login)).show();
                 return;
             }
             Thread thread = new Thread(() -> {
-                EmptyResult emptyResult = MyApp.getInstance().getOttohubApi().getModerationApi().report_blog(bid);
+                EmptyResult emptyResult = MyAppApplicationLike.getInstance().getOttohubApi().getModerationApi().report_blog(bid);
                 ApiUtil.throwApiError(emptyResult);
                 runOnUiThread(()->{
                     AlertUtil.showMsg(this, getString(R.string.report), getString(R.string.ok)).show();

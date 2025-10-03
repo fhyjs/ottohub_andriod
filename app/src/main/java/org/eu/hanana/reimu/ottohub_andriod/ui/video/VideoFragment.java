@@ -10,6 +10,11 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,13 +32,6 @@ import androidx.media3.exoplayer.source.MediaSource;
 import androidx.media3.exoplayer.source.ProgressiveMediaSource;
 import androidx.media3.ui.PlayerView;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
-
 import com.google.android.material.button.MaterialButton;
 import com.kuaishou.akdanmaku.DanmakuConfig;
 import com.kuaishou.akdanmaku.data.DanmakuItemData;
@@ -43,7 +41,7 @@ import com.kuaishou.akdanmaku.ui.DanmakuPlayer;
 import org.eu.hanana.reimu.lib.ottohub.api.danmaku.DanmakuListResult;
 import org.eu.hanana.reimu.lib.ottohub.api.engagement.EngagementResult;
 import org.eu.hanana.reimu.lib.ottohub.api.video.VideoResult;
-import org.eu.hanana.reimu.ottohub_andriod.MyApp;
+import org.eu.hanana.reimu.ottohub_andriod.MyAppApplicationLike;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.activity.ProfileActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.VideoPlayerActivity;
@@ -57,7 +55,6 @@ import org.eu.hanana.reimu.ottohub_andriod.util.UiUtil;
 
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -114,12 +111,12 @@ public class VideoFragment extends Fragment {
             startActivity(intent);
         });
         view.findViewById(R.id.btn_like).setOnClickListener(v -> {
-            if (MyApp.getInstance().getOttohubApi().getLoginToken()==null) {
+            if (MyAppApplicationLike.getInstance().getOttohubApi().getLoginToken()==null) {
                 AlertUtil.showError(getActivity(),getString(R.string.not_login)).show();
                 return;
             }
             Thread thread = new Thread(() -> {
-                EngagementResult engagementResult = MyApp.getInstance().getOttohubApi().getEngagementApi().like_video(videoResult.vid);
+                EngagementResult engagementResult = MyAppApplicationLike.getInstance().getOttohubApi().getEngagementApi().like_video(videoResult.vid);
                 ApiUtil.throwApiError(engagementResult);
                 videoResult.like_count=engagementResult.like_count;
                 videoResult.if_like=engagementResult.if_like;
@@ -129,12 +126,12 @@ public class VideoFragment extends Fragment {
             thread.start();
         });
         view.findViewById(R.id.btn_favorite).setOnClickListener(v -> {
-            if (MyApp.getInstance().getOttohubApi().getLoginToken()==null) {
+            if (MyAppApplicationLike.getInstance().getOttohubApi().getLoginToken()==null) {
                 AlertUtil.showError(getContext(),getString(R.string.not_login)).show();
                 return;
             }
             Thread thread = new Thread(() -> {
-                EngagementResult engagementResult = MyApp.getInstance().getOttohubApi().getEngagementApi().favorite_video(videoResult.vid);
+                EngagementResult engagementResult = MyAppApplicationLike.getInstance().getOttohubApi().getEngagementApi().favorite_video(videoResult.vid);
                 ApiUtil.throwApiError(engagementResult);
                 videoResult.favorite_count=engagementResult.favorite_count;
                 videoResult.if_favorite=engagementResult.if_favorite;
@@ -259,7 +256,7 @@ public class VideoFragment extends Fragment {
 
     private void initDanmaku() {
         Thread thread = new Thread(()->{
-            danmakuData = MyApp.getInstance().getOttohubApi().getDanmakuApi().get_danmaku(videoResult.vid);
+            danmakuData = MyAppApplicationLike.getInstance().getOttohubApi().getDanmakuApi().get_danmaku(videoResult.vid);
             ApiUtil.throwApiError(danmakuData);
             loadDanmaku();
         });

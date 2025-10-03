@@ -23,16 +23,12 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import org.eu.hanana.reimu.lib.ottohub.api.system.SlidesResult;
 import org.eu.hanana.reimu.lib.ottohub.api.system.SlideshowResult;
 import org.eu.hanana.reimu.ottohub_andriod.R;
-import org.eu.hanana.reimu.ottohub_andriod.activity.VideoPlayerActivity;
-import org.eu.hanana.reimu.ottohub_andriod.ui.banner.BannerAdapter;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ThemeUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.UiUtil;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class BannerFragment extends Fragment {
 

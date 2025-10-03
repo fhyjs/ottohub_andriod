@@ -1,8 +1,6 @@
 package org.eu.hanana.reimu.ottohub_andriod.data.comment;
 
-import org.eu.hanana.reimu.lib.ottohub.api.OttohubApi;
 import org.eu.hanana.reimu.lib.ottohub.api.comment.CommentListResult;
-import org.eu.hanana.reimu.ottohub_andriod.MyApp;
 import org.eu.hanana.reimu.ottohub_andriod.data.base.ListViewModelBase;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.ListFragmentBase;
 import org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentCard;
@@ -12,7 +10,6 @@ import org.eu.hanana.reimu.ottohub_andriod.util.EmojiUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class CommentViewModel extends ListViewModelBase<CommentCard> {

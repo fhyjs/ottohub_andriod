@@ -1,9 +1,6 @@
 package org.eu.hanana.reimu.ottohub_andriod.ui.comment;
 
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
 import static androidx.core.content.ContextCompat.startActivity;
-
 import static org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase.ARG_PARENT_DATA;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase.TYPE_BLOG;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase.TYPE_VIDEO;
@@ -18,16 +15,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -38,7 +32,6 @@ import org.eu.hanana.reimu.lib.ottohub.api.comment.IfGetExpResult;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.activity.ProfileActivity;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.CardAdapterBase;
-import org.eu.hanana.reimu.ottohub_andriod.ui.blog.BlogListFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.CustomWebView;

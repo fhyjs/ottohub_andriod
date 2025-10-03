@@ -7,8 +7,6 @@ import org.eu.hanana.reimu.ottohub_andriod.activity.FragActivity;
 import org.eu.hanana.reimu.ottohub_andriod.data.base.text.TextCard;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.list.TextCardAdapter;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.list.TextCardViewHolder;
-import org.eu.hanana.reimu.ottohub_andriod.ui.base.list.TextListFragmentBase;
-import org.eu.hanana.reimu.ottohub_andriod.ui.message.SendMessageFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.video.CollectionFragment;
 
 import java.util.List;

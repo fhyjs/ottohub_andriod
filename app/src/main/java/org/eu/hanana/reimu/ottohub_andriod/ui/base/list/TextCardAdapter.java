@@ -1,20 +1,11 @@
 package org.eu.hanana.reimu.ottohub_andriod.ui.base.list;
 
-import android.content.Intent;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-
 import org.eu.hanana.reimu.ottohub_andriod.R;
-import org.eu.hanana.reimu.ottohub_andriod.activity.MessageReaderActivity;
 import org.eu.hanana.reimu.ottohub_andriod.data.base.text.TextCard;
-import org.eu.hanana.reimu.ottohub_andriod.data.message.MessageCard;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.CardAdapterBase;
-import org.eu.hanana.reimu.ottohub_andriod.ui.message.MessageCardViewHolder;
-import org.eu.hanana.reimu.ottohub_andriod.ui.message.MessageListFragment;
 
 import java.util.List;
 

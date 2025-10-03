@@ -6,12 +6,9 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.text.TextPaint;
 
-import androidx.annotation.NonNull;
-
 import com.kuaishou.akdanmaku.DanmakuConfig;
 import com.kuaishou.akdanmaku.data.DanmakuItem;
 import com.kuaishou.akdanmaku.data.DanmakuItemData;
-import com.kuaishou.akdanmaku.render.DanmakuRenderer;
 import com.kuaishou.akdanmaku.render.SimpleRenderer;
 import com.kuaishou.akdanmaku.ui.DanmakuDisplayer;
 import com.kuaishou.akdanmaku.utils.Size;

@@ -1,24 +1,17 @@
 package org.eu.hanana.reimu.ottohub_andriod.data.user;
 
 import org.eu.hanana.reimu.lib.ottohub.api.ApiResultBase;
-import org.eu.hanana.reimu.lib.ottohub.api.OttohubApi;
 import org.eu.hanana.reimu.lib.ottohub.api.auth.LoginResult;
-import org.eu.hanana.reimu.lib.ottohub.api.comment.CommentListResult;
 import org.eu.hanana.reimu.lib.ottohub.api.user.UserListResult;
-import org.eu.hanana.reimu.lib.ottohub.api.user.UserResult;
-import org.eu.hanana.reimu.ottohub_andriod.MyApp;
+import org.eu.hanana.reimu.ottohub_andriod.MyAppApplicationLike;
 import org.eu.hanana.reimu.ottohub_andriod.data.base.ListViewModelBase;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.ListFragmentBase;
-import org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentCard;
-import org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase;
 import org.eu.hanana.reimu.ottohub_andriod.ui.user.UserCard;
 import org.eu.hanana.reimu.ottohub_andriod.ui.user.UserListFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
-import org.eu.hanana.reimu.ottohub_andriod.util.ClassUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -33,7 +26,7 @@ public class UserListViewModel extends ListViewModelBase<UserCard> {
             userListResult= ApiUtil.getAppApi().getUserApi().search_user_list(frag.data,36);
             if (frag.data.toLowerCase(Locale.ROOT).startsWith("uid")) {
                 try {
-                    userListResult.user_list.addAll(0, MyApp.getInstance().getOttohubApi().getUserApi().id_user_list(Integer.parseInt(frag.data.substring(3))).user_list);
+                    userListResult.user_list.addAll(0, MyAppApplicationLike.getInstance().getOttohubApi().getUserApi().id_user_list(Integer.parseInt(frag.data.substring(3))).user_list);
                 }catch (Exception ignored){}
             }
             frag.hasMoreData=false;

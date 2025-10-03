@@ -1,21 +1,15 @@
 package org.eu.hanana.reimu.ottohub_andriod.data.audit;
 
-import android.widget.Toast;
-
-import org.eu.hanana.reimu.lib.ottohub.api.blog.BlogListResult;
-import org.eu.hanana.reimu.lib.ottohub.api.video.VideoListResult;
-import org.eu.hanana.reimu.ottohub_andriod.MyApp;
+import org.eu.hanana.reimu.ottohub_andriod.MyAppApplicationLike;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.data.base.text.TextCard;
 import org.eu.hanana.reimu.ottohub_andriod.data.base.text.TextViewModel;
 import org.eu.hanana.reimu.ottohub_andriod.ui.audit.AuditFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.ListFragmentBase;
-import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class AuditTextViewModel extends TextViewModel {
@@ -24,7 +18,7 @@ public class AuditTextViewModel extends TextViewModel {
         var frag = ((AuditFragment) videoListFragment);
         List<TextCard> result = new ArrayList<>();
         if (AuditFragment.TYPE_AVATAR.equals(frag.type)){
-            var result1 = MyApp.getInstance().getOttohubApi().getProfileApi().audit_avatar_list(12 * frag.currentPage, 12);
+            var result1 = MyAppApplicationLike.getInstance().getOttohubApi().getProfileApi().audit_avatar_list(12 * frag.currentPage, 12);
             ApiUtil.throwApiError(result1);
             result1.avatar_list.stream().forEach(data -> {
                 var tc = new TextCard(data.username);
@@ -32,7 +26,7 @@ public class AuditTextViewModel extends TextViewModel {
                 result.add(tc) ;
             });
         }else if (AuditFragment.TYPE_COVER.equals(frag.type)){
-            var result1 = MyApp.getInstance().getOttohubApi().getProfileApi().audit_cover_list(12 * frag.currentPage, 12);
+            var result1 = MyAppApplicationLike.getInstance().getOttohubApi().getProfileApi().audit_cover_list(12 * frag.currentPage, 12);
             ApiUtil.throwApiError(result1);
             result1.cover_list.stream().forEach(data -> {
                 var tc = new TextCard(data.username);
@@ -40,7 +34,7 @@ public class AuditTextViewModel extends TextViewModel {
                 result.add(tc) ;
             });
         }else if (AuditFragment.TYPE_VIDEO.equals(frag.type)){
-            var result1 = MyApp.getInstance().getOttohubApi().getVideoApi().audit_video_list(12 * frag.currentPage, 12);
+            var result1 = MyAppApplicationLike.getInstance().getOttohubApi().getVideoApi().audit_video_list(12 * frag.currentPage, 12);
             ApiUtil.throwApiError(result1);
             result1.video_list.stream().forEach(data -> {
                 var tc = new TextCard(data.title);
@@ -48,7 +42,7 @@ public class AuditTextViewModel extends TextViewModel {
                 result.add(tc) ;
             });
         }else if (AuditFragment.TYPE_BLOG.equals(frag.type)){
-            var result1 = MyApp.getInstance().getOttohubApi().getBlogApi().audit_blog_list(12 * frag.currentPage, 12);
+            var result1 = MyAppApplicationLike.getInstance().getOttohubApi().getBlogApi().audit_blog_list(12 * frag.currentPage, 12);
             ApiUtil.throwApiError(result1);
             result1.blog_list.stream().forEach(data -> {
                 var tc = new TextCard(data.title);

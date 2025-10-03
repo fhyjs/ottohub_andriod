@@ -21,7 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.eu.hanana.reimu.lib.ottohub.api.following.FollowStatusResult;
 import org.eu.hanana.reimu.lib.ottohub.api.profile.ProfileResult;
 import org.eu.hanana.reimu.lib.ottohub.api.user.UserResult;
-import org.eu.hanana.reimu.ottohub_andriod.MyApp;
+import org.eu.hanana.reimu.ottohub_andriod.MyAppApplicationLike;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.BaseFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.FragmentAdapter;
@@ -69,7 +69,7 @@ public class ProfileFragment2 extends BaseFragment {
             if (getArguments().containsKey(Arg_Uid)){
                 uid=getArguments().getInt(Arg_Uid);
             }else {
-                uid= Integer.parseInt(MyApp.getInstance().getOttohubApi().getLoginResult().uid);
+                uid= Integer.parseInt(MyAppApplicationLike.getInstance().getOttohubApi().getLoginResult().uid);
             }
         }
     }
@@ -98,18 +98,18 @@ public class ProfileFragment2 extends BaseFragment {
     }
     protected void fetchData() throws Exception{
         if (isSelf()){
-            var result= MyApp.getInstance().getOttohubApi().getProfileApi().user_profile();
-            userDataResult= MyApp.getInstance().getOttohubApi().getProfileApi().user_data();
+            var result= MyAppApplicationLike.getInstance().getOttohubApi().getProfileApi().user_profile();
+            userDataResult= MyAppApplicationLike.getInstance().getOttohubApi().getProfileApi().user_data();
             userResult=result.profile;
             userResult.status=result.status;
             userResult.message=result.getMessage();
             ApiUtil.fetchMsgCount();
         }else {
-            userDataResult=MyApp.getInstance().getOttohubApi().getUserApi().get_user_detail(uid);
+            userDataResult=MyAppApplicationLike.getInstance().getOttohubApi().getUserApi().get_user_detail(uid);
             userResult=new ProfileResult();
             ClassUtil.copyFields(ProfileResult.class,UserResult.class,userResult,userDataResult,false);
         }
-        followStatus = MyApp.getInstance().getOttohubApi().getFollowingApi().follow_status(uid);
+        followStatus = MyAppApplicationLike.getInstance().getOttohubApi().getFollowingApi().follow_status(uid);
     }
 
     @Override
@@ -119,11 +119,11 @@ public class ProfileFragment2 extends BaseFragment {
     }
 
     protected void init() {
-        if (MyApp.getInstance().getOttohubApi().getLoginResult()==null){
+        if (MyAppApplicationLike.getInstance().getOttohubApi().getLoginResult()==null){
             self=false;
             login=false;
         }else {
-            this.self = uid == Integer.parseInt(MyApp.getInstance().getOttohubApi().getLoginResult().uid);
+            this.self = uid == Integer.parseInt(MyAppApplicationLike.getInstance().getOttohubApi().getLoginResult().uid);
         }
         try {
             fetchData();

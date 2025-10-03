@@ -1,7 +1,5 @@
 package org.eu.hanana.reimu.ottohub_andriod.ui.message;
 
-import static org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase.ARG_TYPE;
-
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,13 +13,10 @@ import androidx.annotation.Nullable;
 import androidx.core.view.MenuProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.gson.Gson;
-
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.data.message.MessageCard;
 import org.eu.hanana.reimu.ottohub_andriod.data.message.MessageViewModel;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.ListFragmentBase;
-import org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentCard;
 import org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase;
 
 import java.util.List;

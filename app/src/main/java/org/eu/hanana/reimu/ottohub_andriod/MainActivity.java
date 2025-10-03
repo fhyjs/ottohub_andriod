@@ -1,37 +1,23 @@
 package org.eu.hanana.reimu.ottohub_andriod;
 
 import static android.widget.Toast.LENGTH_SHORT;
-import static androidx.core.content.ContextCompat.startActivity;
 
-import static org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity.TYPE_PREVIEW;
-
-import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -40,20 +26,15 @@ import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.material.badge.BadgeDrawable;
-import com.google.android.material.badge.BadgeUtils;
 import com.google.android.material.badge.ExperimentalBadgeUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.color.MaterialColors;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
-import com.google.gson.Gson;
 
 import org.eu.hanana.reimu.lib.ottohub.api.auth.LoginResult;
-import org.eu.hanana.reimu.lib.ottohub.api.blog.BlogResult;
 import org.eu.hanana.reimu.ottohub_andriod.activity.AccountListActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.AuditActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.BaseActivity;
-import org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.ContentManageActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.FavouriteActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.FragActivity;
@@ -62,6 +43,7 @@ import org.eu.hanana.reimu.ottohub_andriod.activity.LoginActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.MessageActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.UploadBlogActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.UploadVideoActivity;
+import org.eu.hanana.reimu.ottohub_andriod.service.UpdateMessageCountBackgroundService;
 import org.eu.hanana.reimu.ottohub_andriod.ui.blog.BlogListFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase;
 import org.eu.hanana.reimu.ottohub_andriod.ui.debug.DebugFragment;
@@ -70,16 +52,22 @@ import org.eu.hanana.reimu.ottohub_andriod.ui.user.ProfileFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
+import org.eu.hanana.reimu.ottohub_andriod.util.ClipboardUtil;
+import org.eu.hanana.reimu.ottohub_andriod.util.CrashHandler;
 import org.eu.hanana.reimu.ottohub_andriod.util.SharedPreferencesKeys;
 import org.eu.hanana.reimu.ottohub_andriod.util.ThemeUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.UiUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.UpdateUtil;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MainActivity extends BaseActivity {
     private final Handler handler = new Handler(Looper.getMainLooper());
+    private String lastCopiedText="";
     private Runnable fetchMsgCountRunnable = new Runnable() {
         @Override
         public void run() {
@@ -107,6 +95,7 @@ public class MainActivity extends BaseActivity {
         super.onResume();
         handler.post(fetchMsgCountRunnable);  // 启动定时任务
         prepareNavHeader(navHeader);
+        handler.post(this::checkShareLink);  // 启动定时任务
     }
 
     @Override
@@ -134,6 +123,10 @@ public class MainActivity extends BaseActivity {
             finish();
             return;
         }
+
+        Intent serviceIntent = new Intent(this, UpdateMessageCountBackgroundService.class);
+        ContextCompat.startForegroundService(this, serviceIntent);
+        CrashHandler.init(this);
 
         drawerLayout = findViewById(R.id.drawer_layout);
         navView = findViewById(R.id.nav_view);
@@ -178,6 +171,53 @@ public class MainActivity extends BaseActivity {
         prepareNavHeader(navHeader);
         Thread threadCheckUpdate = getUpdater();
         threadCheckUpdate.start();
+    }
+
+    private void checkShareLink() {
+        String text = ClipboardUtil.getText(this);
+        if (text==null||text.isEmpty()) return;
+        if (lastCopiedText.equals(text)) return;
+        lastCopiedText=text;
+        text = text.replaceAll("ottohub\\.cn/b/","ob").replaceAll("ottohub\\.cn/v/","ov").replaceAll("ottohub\\.cn/u/","uid").toLowerCase(Locale.ROOT);
+        // 匹配 ob 后跟 1 位或多位数字
+        Pattern pattern = Pattern.compile("ob\\d+");
+        Matcher matcher = pattern.matcher(text);
+
+        List<String> obResults = new ArrayList<>();
+        while (matcher.find()) {
+            obResults.add(matcher.group());
+        }
+
+        // 匹配 ob 后跟 1 位或多位数字
+        pattern = Pattern.compile("ov\\d+");
+        matcher = pattern.matcher(text);
+
+        List<String> ovResults = new ArrayList<>();
+        while (matcher.find()) {
+            ovResults.add(matcher.group());
+        }
+
+        // 匹配 ob 后跟 1 位或多位数字
+        pattern = Pattern.compile("uid\\d+");
+        matcher = pattern.matcher(text);
+
+        List<String> uidResults = new ArrayList<>();
+        while (matcher.find()) {
+            uidResults.add(matcher.group());
+        }
+
+        var all = new ArrayList<String>();
+        all.addAll(obResults);
+        all.addAll(ovResults);
+        all.addAll(uidResults);
+
+        if (all.isEmpty()) return;
+
+        if (all.size()==1){
+            UiUtil.openUrl(this,all.get(0).replaceAll("ob","ottohub.cn/b/").replaceAll("ov","ottohub.cn/v/").replaceAll("uid","ottohub.cn/u/"));
+            return;
+        }
+
     }
 
     @NonNull
@@ -288,11 +328,11 @@ public class MainActivity extends BaseActivity {
         var alertDialog = AlertUtil.showLoading(this, getString(R.string.auto_login));
         alertDialog.show();
         Thread thread = new Thread(() -> {
-            LoginResult login = MyApp.getInstance().getOttohubApi().getAuthApi().login(un, pw);
+            LoginResult login = MyAppApplicationLike.getInstance().getOttohubApi().getAuthApi().login(un, pw);
             if (!login.isSuccess()){
                 var msg = login.getMessage();
                 if (msg.contains("error_password")){
-                    msg=MyApp.getInstance().getString(R.string.error_password);
+                    msg=getString(R.string.error_password);
                 }
                 throw new IllegalStateException(msg);
             }
@@ -335,7 +375,7 @@ public class MainActivity extends BaseActivity {
                 } else if (itemId == R.id.nav_blog) {
                     selectedFragment = BlogListFragment.newInstance();
                 } else if (itemId == R.id.nav_user) {
-                    if (MyApp.getInstance().getOttohubApi().getLoginToken()==null){
+                    if (MyAppApplicationLike.getInstance().getOttohubApi().getLoginToken()==null){
                         tipNoLogin();
                         return false;
                     }else {

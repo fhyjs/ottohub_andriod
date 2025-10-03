@@ -1,6 +1,5 @@
 package org.eu.hanana.reimu.ottohub_andriod.data.message;
 
-import org.eu.hanana.reimu.lib.ottohub.api.comment.CommentResult;
 import org.eu.hanana.reimu.lib.ottohub.api.im.MessageResult;
 
 import lombok.Getter;

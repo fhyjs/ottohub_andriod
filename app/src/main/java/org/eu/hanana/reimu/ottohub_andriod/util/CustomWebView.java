@@ -3,14 +3,13 @@ package org.eu.hanana.reimu.ottohub_andriod.util;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Message;
 import android.util.AttributeSet;
 import android.view.View;
@@ -37,12 +36,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.eu.hanana.reimu.ottohub_andriod.MyApp;
 import org.eu.hanana.reimu.ottohub_andriod.R;
-import org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity;
-import org.eu.hanana.reimu.ottohub_andriod.activity.ProfileActivity;
-import org.eu.hanana.reimu.ottohub_andriod.activity.VideoPlayerActivity;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -61,6 +56,15 @@ public class CustomWebView extends WebView {
     private ValueCallback<Uri[]> filePathCallback;
     private FileChooserListener fileChooserListener;
 
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+    }
+
+    @Override
+    public void invalidate() {
+        super.invalidate();
+    }
 
     public CustomWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -70,12 +74,27 @@ public class CustomWebView extends WebView {
         this(context,null);
     }
 
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    }
+
+    @Override
+    public int getContentHeight() {
+        return super.getContentHeight();
+    }
+    @Override
+    protected void measureChildWithMargins(View child, int parentWidthMeasureSpec, int widthUsed, int parentHeightMeasureSpec, int heightUsed) {
+        super.measureChildWithMargins(child, parentWidthMeasureSpec, widthUsed, parentHeightMeasureSpec, heightUsed);
+    }
+
     private void init(Context context) {
         // 添加进度条
         progressBar = new ProgressBar(context, null, android.R.attr.progressBarStyleHorizontal);
         progressBar.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 10, 0, 0));
         addView(progressBar);
-        
+
+        setLayerType(View.LAYER_TYPE_HARDWARE, null);
         // 基础设置
         settings = super.getSettings();
         settings.setJavaScriptEnabled(true);
@@ -117,7 +136,11 @@ public class CustomWebView extends WebView {
                     if (hv == lastHeight) return; // 防止重复设置
                     lastHeight = hv;
 
-                    setMinimumHeight(hv);
+                    ViewGroup.LayoutParams layoutParams = getLayoutParams();
+                    layoutParams.height=hv;
+                    measure(getWidth(),hv);
+                    setLayoutParams(layoutParams);
+                    requestLayout();
                 });
             }
             @JavascriptInterface

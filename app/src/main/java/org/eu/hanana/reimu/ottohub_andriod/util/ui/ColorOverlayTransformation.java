@@ -2,7 +2,6 @@ package org.eu.hanana.reimu.ottohub_andriod.util.ui;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.HardwareRenderer;
 import android.graphics.Paint;
 
 import androidx.annotation.NonNull;

@@ -11,11 +11,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceViewHolder;
 import androidx.preference.SwitchPreference;
-import androidx.preference.SwitchPreferenceCompat;
 
 import com.google.android.material.materialswitch.MaterialSwitch;
 
-import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.data.ui.ThemeData;
 import org.eu.hanana.reimu.ottohub_andriod.util.ThemeUtil;
 
@@ -70,5 +68,8 @@ public class M3SwitchPreference extends SwitchPreference {
                         Color.GRAY
                 });
         ms.setTrackTintList(trackColors);
+        ms.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            setChecked(isChecked);
+        });
     }
 }

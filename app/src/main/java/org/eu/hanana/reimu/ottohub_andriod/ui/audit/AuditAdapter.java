@@ -1,7 +1,6 @@
 package org.eu.hanana.reimu.ottohub_andriod.ui.audit;
 
 
-
 import static org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity.TYPE_AUDIT;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.audit.AuditFragment.TYPE_AVATAR;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.audit.AuditFragment.TYPE_BLOG;
@@ -20,7 +19,6 @@ import androidx.media3.common.util.UnstableApi;
 import com.google.gson.Gson;
 
 import org.eu.hanana.reimu.lib.ottohub.api.blog.BlogResult;
-import org.eu.hanana.reimu.lib.ottohub.api.profile.AvatarListResult;
 import org.eu.hanana.reimu.lib.ottohub.api.user.UserResult;
 import org.eu.hanana.reimu.lib.ottohub.api.video.VideoResult;
 import org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity;

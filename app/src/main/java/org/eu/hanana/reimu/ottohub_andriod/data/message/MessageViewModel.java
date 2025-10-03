@@ -2,12 +2,9 @@ package org.eu.hanana.reimu.ottohub_andriod.data.message;
 
 import static org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil.throwApiError;
 
-import org.eu.hanana.reimu.lib.ottohub.api.comment.CommentListResult;
 import org.eu.hanana.reimu.lib.ottohub.api.im.MessageListResult;
 import org.eu.hanana.reimu.ottohub_andriod.data.base.ListViewModelBase;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.ListFragmentBase;
-import org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentCard;
-import org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase;
 import org.eu.hanana.reimu.ottohub_andriod.ui.message.MessageListFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 

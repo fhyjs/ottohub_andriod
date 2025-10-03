@@ -1,7 +1,6 @@
 package org.eu.hanana.reimu.ottohub_andriod.ui.base.list;
 
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;

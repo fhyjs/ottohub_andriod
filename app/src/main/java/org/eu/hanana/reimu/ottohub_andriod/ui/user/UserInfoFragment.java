@@ -1,12 +1,11 @@
 package org.eu.hanana.reimu.ottohub_andriod.ui.user;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.fragment.app.Fragment;
 
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.jetbrains.annotations.Nullable;

@@ -6,14 +6,11 @@ import org.eu.hanana.reimu.lib.ottohub.api.collection.CollectionListResult;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.data.base.text.TextCard;
 import org.eu.hanana.reimu.ottohub_andriod.data.base.text.TextViewModel;
-import org.eu.hanana.reimu.ottohub_andriod.ui.audit.AuditFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.ListFragmentBase;
-import org.eu.hanana.reimu.ottohub_andriod.ui.base.list.TextListFragmentBase;
 import org.eu.hanana.reimu.ottohub_andriod.ui.collection.CollectionListFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 
 public class CollectionListViewModel extends TextViewModel {

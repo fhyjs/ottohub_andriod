@@ -11,12 +11,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.eu.hanana.reimu.lib.ottohub.api.system.SlidesResult;
 import org.eu.hanana.reimu.ottohub_andriod.R;
-import org.eu.hanana.reimu.ottohub_andriod.util.CustomWebView;
 import org.eu.hanana.reimu.ottohub_andriod.util.UiUtil;
 
 import java.util.List;
-import java.util.Locale;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class BannerAdapter extends RecyclerView.Adapter<BannerAdapter.BannerViewHolder> {
 

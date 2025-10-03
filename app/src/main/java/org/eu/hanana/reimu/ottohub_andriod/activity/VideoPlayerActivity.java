@@ -9,8 +9,6 @@ import static com.kuaishou.akdanmaku.data.DanmakuItemData.DANMAKU_MODE_ROLLING;
 import static com.kuaishou.akdanmaku.data.DanmakuItemData.DANMAKU_STYLE_NONE;
 import static com.kuaishou.akdanmaku.data.DanmakuItemData.DANMAKU_STYLE_SELF_SEND;
 import static com.kuaishou.akdanmaku.data.DanmakuItemData.MERGED_TYPE_NORMAL;
-
-
 import static org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity.TYPE_AUDIT;
 import static org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity.TYPE_VIEW;
 import static org.eu.hanana.reimu.ottohub_andriod.util.UiUtil.getScaleTypeVideoInt;
@@ -78,7 +76,6 @@ import androidx.media3.ui.PlayerControlView;
 import androidx.media3.ui.PlayerView;
 import androidx.viewpager2.widget.ViewPager2;
 
-
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -97,7 +94,7 @@ import org.eu.hanana.reimu.lib.ottohub.api.ApiResultBase;
 import org.eu.hanana.reimu.lib.ottohub.api.common.EmptyResult;
 import org.eu.hanana.reimu.lib.ottohub.api.danmaku.DanmakuListResult;
 import org.eu.hanana.reimu.lib.ottohub.api.video.VideoResult;
-import org.eu.hanana.reimu.ottohub_andriod.MyApp;
+import org.eu.hanana.reimu.ottohub_andriod.MyAppApplicationLike;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.ui.audit.AuditVideoFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.FragmentFragment;
@@ -114,7 +111,6 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -322,7 +318,7 @@ public class VideoPlayerActivity extends BaseActivity {
                 String color = Integer.toHexString(i).substring(2);
                 var time = mediaPlayer.getCurrentPosition();
                 Thread thread = new Thread(() -> {
-                    EmptyResult emptyResult = MyApp.getInstance().getOttohubApi().getDanmakuApi().send_danmaku(vid, input,  time/ 1000d, atomicDanmakuType.get(),color, atomicTextSize.get() +"px", "");
+                    EmptyResult emptyResult = MyAppApplicationLike.getInstance().getOttohubApi().getDanmakuApi().send_danmaku(vid, input,  time/ 1000d, atomicDanmakuType.get(),color, atomicTextSize.get() +"px", "");
                     ApiUtil.throwApiError(emptyResult);
                     var local_type=-1;
                     if (atomicDanmakuType.get().equals("scroll")){
@@ -714,7 +710,7 @@ public class VideoPlayerActivity extends BaseActivity {
                 var gson = new Gson();
                 if (!savedInstanceState.containsKey(KEY_NET_DATA)) {
                     if (type.equals(TYPE_VIEW)) {
-                        netData = MyApp.getInstance().getOttohubApi().getVideoApi().get_video_detail(vid);
+                        netData = MyAppApplicationLike.getInstance().getOttohubApi().getVideoApi().get_video_detail(vid);
                     } else if (type.equals(TYPE_AUDIT)) {
                         netData = new Gson().fromJson(data, VideoResult.class);
                         netData.status= ApiResultBase.SUCCESS;
@@ -724,7 +720,7 @@ public class VideoPlayerActivity extends BaseActivity {
                     Log.d(TAG, "loadData: net data from storage");
                 }
                 if (!savedInstanceState.containsKey(KEY_DANMAKU_DATA)) {
-                    danmakuData = MyApp.getInstance().getOttohubApi().getDanmakuApi().get_danmaku(vid);
+                    danmakuData = MyAppApplicationLike.getInstance().getOttohubApi().getDanmakuApi().get_danmaku(vid);
                     if (type.equals(TYPE_AUDIT)) {
                         danmakuData.status= ApiResultBase.SUCCESS;
                     }

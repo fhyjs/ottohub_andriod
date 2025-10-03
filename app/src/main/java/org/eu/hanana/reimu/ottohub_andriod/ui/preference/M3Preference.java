@@ -10,9 +10,6 @@ import androidx.annotation.Nullable;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceViewHolder;
 
-import com.google.android.material.materialswitch.MaterialSwitch;
-
-import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.data.ui.ThemeData;
 import org.eu.hanana.reimu.ottohub_andriod.util.ThemeUtil;
 

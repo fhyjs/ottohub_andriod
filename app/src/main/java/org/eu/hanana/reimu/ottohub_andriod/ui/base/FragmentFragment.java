@@ -1,17 +1,15 @@
 package org.eu.hanana.reimu.ottohub_andriod.ui.base;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import org.eu.hanana.reimu.ottohub_andriod.R;
-import org.eu.hanana.reimu.ottohub_andriod.ui.audit.AuditVideoFragment;
 
 /**
  * A simple {@link Fragment} subclass.

@@ -17,7 +17,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -35,7 +34,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.eu.hanana.reimu.lib.ottohub.api.collection.CollectionListResult;
 import org.eu.hanana.reimu.lib.ottohub.api.collection.CollectionResult;
-import org.eu.hanana.reimu.lib.ottohub.api.comment.IfGetExpResult;
 import org.eu.hanana.reimu.lib.ottohub.api.common.EmptyResult;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.activity.VideoPlayerActivity;

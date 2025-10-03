@@ -24,6 +24,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Crash Test"/>
+            <Button
+                android:id="@+id/btn_load_patch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Load Patch"/>
+            <Button
+                android:id="@+id/btn_enable_tinker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Enable Tinker"/>
 
             <com.google.android.material.materialswitch.MaterialSwitch
 

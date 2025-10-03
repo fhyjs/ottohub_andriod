@@ -1,7 +1,5 @@
 package org.eu.hanana.reimu.ottohub_andriod.util;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -11,8 +9,6 @@ import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
 import org.eu.hanana.reimu.ottohub_andriod.BuildConfig;
-import org.eu.hanana.reimu.ottohub_andriod.R;
-import org.eu.hanana.reimu.ottohub_andriod.activity.CrashActivity;
 import org.eu.hanana.reimu.ottohub_andriod.service.CrashService;
 
 import java.io.File;

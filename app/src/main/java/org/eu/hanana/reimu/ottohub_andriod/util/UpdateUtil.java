@@ -15,8 +15,6 @@ import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity;
 import org.eu.hanana.reimu.ottohub_andriod.data.api.UpdateDataEntry;
 
-import java.io.IOException;
-import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -28,12 +26,16 @@ public class UpdateUtil {
             String s = new String(ApiUtil.downloadFile(update_data_endpoint));
             var ude = new Gson().fromJson(s, UpdateDataEntry.class);
             ude.change_log=new String(ApiUtil.downloadFile(ude.change_log_url), StandardCharsets.UTF_8);
-            var hasUpd = ude.version> BuildConfig.VERSION_CODE;
+            var hasUpd = ude.version> getVersionCode();
             checkResult.onResult(hasUpd,ude);
         }catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
+    }
+    public static int getVersionCode(){
+        //Toast.makeText(MyApp.getInstance(), "TESTGetVerCodeInvoked", Toast.LENGTH_SHORT).show();
+        return BuildConfig.VERSION_CODE;
     }
     public static Thread getUpdaterChecker(Activity activity) {
         Thread threadCheckUpdate = new Thread(() -> {

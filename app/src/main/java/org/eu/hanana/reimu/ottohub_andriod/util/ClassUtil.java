@@ -2,9 +2,6 @@ package org.eu.hanana.reimu.ottohub_andriod.util;
 
 import androidx.annotation.Nullable;
 
-import org.eu.hanana.reimu.lib.ottohub.api.profile.ProfileResult;
-import org.eu.hanana.reimu.lib.ottohub.api.user.UserResult;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;

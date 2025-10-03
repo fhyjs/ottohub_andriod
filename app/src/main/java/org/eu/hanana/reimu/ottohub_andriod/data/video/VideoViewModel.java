@@ -1,20 +1,17 @@
 package org.eu.hanana.reimu.ottohub_andriod.data.video;
 
-import static android.widget.Toast.LENGTH_LONG;
-
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Build;
-import android.widget.Toast;
 
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import org.eu.hanana.reimu.lib.ottohub.api.video.VideoListResult;
 import org.eu.hanana.reimu.lib.ottohub.api.video.VideoResult;
-import org.eu.hanana.reimu.ottohub_andriod.MyApp;
+import org.eu.hanana.reimu.ottohub_andriod.MyAppApplicationLike;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment;
 
@@ -58,7 +55,7 @@ public class VideoViewModel extends ViewModel {
 
     public void loadVideos(VideoListFragment videoListFragment) {
         if (videoListFragment.error) return;
-        if (!isNetworkAvailable()) {
+        if (!isNetworkAvailable(videoListFragment)) {
             videos.postValue(Resource.error("网络不可用"));
             return;
         }
@@ -81,38 +78,38 @@ public class VideoViewModel extends ViewModel {
         VideoListResult videoListResult = null;
         if (videoListFragment.action.equals(VideoListFragment.ACTION_DEFAULT)) {
             if (videoListFragment.selectedButton.getTag(R.id.btn_add_tag).equals(videoListFragment.buttonLabels[0])) {
-                videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().random_video_list(12);
+                videoListResult = MyAppApplicationLike.getInstance().getOttohubApi().getVideoApi().random_video_list(12);
             } else if (videoListFragment.selectedButton.getTag(R.id.btn_add_tag).equals(videoListFragment.buttonLabels[1])) {
-                videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().new_video_list(videoListFragment.currentPage * 12, 12);
+                videoListResult = MyAppApplicationLike.getInstance().getOttohubApi().getVideoApi().new_video_list(videoListFragment.currentPage * 12, 12);
             } else if (videoListFragment.selectedButton.getTag(R.id.btn_add_tag).equals(videoListFragment.buttonLabels[2])) {
-                videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().popular_video_list(7, videoListFragment.currentPage * 12, 12);
+                videoListResult = MyAppApplicationLike.getInstance().getOttohubApi().getVideoApi().popular_video_list(7, videoListFragment.currentPage * 12, 12);
             } else if (videoListFragment.selectedButton.getTag(R.id.btn_add_tag).equals(videoListFragment.buttonLabels[3])) {
-                videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().popular_video_list(30, videoListFragment.currentPage * 12, 12);
+                videoListResult = MyAppApplicationLike.getInstance().getOttohubApi().getVideoApi().popular_video_list(30, videoListFragment.currentPage * 12, 12);
             } else if (videoListFragment.selectedButton.getTag(R.id.btn_add_tag).equals(videoListFragment.buttonLabels[4])) {
-                videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().popular_video_list(90, videoListFragment.currentPage * 12, 12);
+                videoListResult = MyAppApplicationLike.getInstance().getOttohubApi().getVideoApi().popular_video_list(90, videoListFragment.currentPage * 12, 12);
             } else if (videoListFragment.selectedButton.getTag(R.id.btn_add_tag).equals(videoListFragment.buttonLabels[5])) {
-                videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().category_video_list(1, 12);
+                videoListResult = MyAppApplicationLike.getInstance().getOttohubApi().getVideoApi().category_video_list(1, 12);
             } else if (videoListFragment.selectedButton.getTag(R.id.btn_add_tag).equals(videoListFragment.buttonLabels[6])) {
-                videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().category_video_list(3, 12);
+                videoListResult = MyAppApplicationLike.getInstance().getOttohubApi().getVideoApi().category_video_list(3, 12);
             } else if (videoListFragment.selectedButton.getTag(R.id.btn_add_tag).equals(videoListFragment.buttonLabels[7])) {
-                videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().category_video_list(4, 12);
+                videoListResult = MyAppApplicationLike.getInstance().getOttohubApi().getVideoApi().category_video_list(4, 12);
             } else if (videoListFragment.selectedButton.getTag(R.id.btn_add_tag).equals(videoListFragment.buttonLabels[8])) {
-                videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().category_video_list(5, 12);
+                videoListResult = MyAppApplicationLike.getInstance().getOttohubApi().getVideoApi().category_video_list(5, 12);
             } else if (videoListFragment.selectedButton.getTag(R.id.btn_add_tag).equals(videoListFragment.buttonLabels[9])) {
-                videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().category_video_list(6, 12);
+                videoListResult = MyAppApplicationLike.getInstance().getOttohubApi().getVideoApi().category_video_list(6, 12);
             } else if (videoListFragment.selectedButton.getTag(R.id.btn_add_tag).equals(videoListFragment.buttonLabels[10])) {
-                videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().category_video_list(7, 12);
+                videoListResult = MyAppApplicationLike.getInstance().getOttohubApi().getVideoApi().category_video_list(7, 12);
             } else if (videoListFragment.selectedButton.getTag(R.id.btn_add_tag).equals(videoListFragment.buttonLabels[11])) {
-                videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().category_video_list(0, 12);
+                videoListResult = MyAppApplicationLike.getInstance().getOttohubApi().getVideoApi().category_video_list(0, 12);
             } else if (videoListFragment.selectedButton.getTag(R.id.btn_add_tag).equals(videoListFragment.buttonLabels[12])) {
-                videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().category_video_list(0, 12);
+                videoListResult = MyAppApplicationLike.getInstance().getOttohubApi().getVideoApi().category_video_list(0, 12);
             }
         }else {
             if (videoListFragment.action.equals(VideoListFragment.ACTION_BY_USER)) {
-                videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().user_video_list(videoListFragment.uid, videoListFragment.currentPage * 12, 12);
+                videoListResult = MyAppApplicationLike.getInstance().getOttohubApi().getVideoApi().user_video_list(videoListFragment.uid, videoListFragment.currentPage * 12, 12);
             }else if (videoListFragment.action.equals(VideoListFragment.ACTION_HISTORY)){
                 if (videoListFragment.currentPage==0)
-                    videoListResult = MyApp.getInstance().getOttohubApi().getProfileApi().history_video_list();
+                    videoListResult = MyAppApplicationLike.getInstance().getOttohubApi().getProfileApi().history_video_list();
                 else {
                     videoListResult = new VideoListResult();
                     videoListResult.status="success";
@@ -120,10 +117,10 @@ public class VideoViewModel extends ViewModel {
                 }
             }else if (videoListFragment.action.equals(VideoListFragment.ACTION_SEARCH)){
                 if (videoListFragment.currentPage==0) {
-                    videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().search_video_list(videoListFragment.data, 36);
+                    videoListResult = MyAppApplicationLike.getInstance().getOttohubApi().getVideoApi().search_video_list(videoListFragment.data, 36);
                     if (videoListFragment.data.toLowerCase(Locale.ROOT).startsWith("ov")) {
                         try {
-                            videoListResult.video_list.addAll(0,MyApp.getInstance().getOttohubApi().getVideoApi().id_video_list(Integer.parseInt(videoListFragment.data.substring(2))).video_list);
+                            videoListResult.video_list.addAll(0,MyAppApplicationLike.getInstance().getOttohubApi().getVideoApi().id_video_list(Integer.parseInt(videoListFragment.data.substring(2))).video_list);
                         } catch (NumberFormatException ignored) {
 
                         }
@@ -134,14 +131,14 @@ public class VideoViewModel extends ViewModel {
                     videoListResult.video_list=List.of();
                 }
             }else if (videoListFragment.action.equals(VideoListFragment.ACTION_FAVOURITE)){
-                videoListResult = MyApp.getInstance().getOttohubApi().getProfileApi().favorite_video_list(videoListFragment.currentPage*12, 12);
+                videoListResult = MyAppApplicationLike.getInstance().getOttohubApi().getProfileApi().favorite_video_list(videoListFragment.currentPage*12, 12);
                 if (videoListResult.video_list.isEmpty()) videoListFragment.hasMoreData=false;
             }else if (videoListFragment.action.equals(VideoListFragment.ACTION_MINE)){
-                videoListResult = MyApp.getInstance().getOttohubApi().getProfileApi().manage_video_list(videoListFragment.currentPage*12, 12);
+                videoListResult = MyAppApplicationLike.getInstance().getOttohubApi().getProfileApi().manage_video_list(videoListFragment.currentPage*12, 12);
                 if (videoListResult.video_list.isEmpty()) videoListFragment.hasMoreData=false;
             }else if (videoListFragment.action.equals(VideoListFragment.ACTION_COLLECTION)){
                 var data = videoListFragment.data.split("\\$:\\$");
-                videoListResult = MyApp.getInstance().getOttohubApi().getCollectionApi().video_collection_list(Integer.parseInt(data[1]), data[0]);
+                videoListResult = MyAppApplicationLike.getInstance().getOttohubApi().getCollectionApi().video_collection_list(Integer.parseInt(data[1]), data[0]);
                 videoListFragment.hasMoreData=false;
             }
         }
@@ -162,9 +159,9 @@ public class VideoViewModel extends ViewModel {
         return objects;
     }
 
-    private boolean isNetworkAvailable() {
+    private boolean isNetworkAvailable(Fragment fragment) {
         ConnectivityManager cm = (ConnectivityManager)
-                MyApp.getInstance().getSystemService(Context.CONNECTIVITY_SERVICE);
+                fragment.requireContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null && activeNetwork.isConnected();
     }

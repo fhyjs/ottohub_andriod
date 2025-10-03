@@ -2,6 +2,7 @@
 buildscript {
     dependencies {
         classpath 'com.qihoo360.replugin:replugin-host-gradle:3.1.0'
+        classpath ('com.tencent.tinker:tinker-patch-gradle-plugin:1.9.15.2')
     }
 }
 plugins {

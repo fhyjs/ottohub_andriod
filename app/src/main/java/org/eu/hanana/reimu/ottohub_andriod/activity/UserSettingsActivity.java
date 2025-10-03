@@ -1,23 +1,13 @@
 package org.eu.hanana.reimu.ottohub_andriod.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 
 import org.eu.hanana.reimu.ottohub_andriod.R;
-import org.eu.hanana.reimu.ottohub_andriod.data.ui.ThemeData;
 import org.eu.hanana.reimu.ottohub_andriod.util.CustomWebView;
-import org.eu.hanana.reimu.ottohub_andriod.util.ThemeUtil;
-import org.eu.hanana.reimu.ottohub_andriod.util.UiUtil;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class UserSettingsActivity extends BaseActivity {
     protected String blogPage = CustomWebView.internal+"web/setting/index.html";

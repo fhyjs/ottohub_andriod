@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModel;
 import org.eu.hanana.reimu.lib.ottohub.api.blog.BlogListResult;
 import org.eu.hanana.reimu.lib.ottohub.api.blog.BlogResult;
 import org.eu.hanana.reimu.ottohub_andriod.MyApp;
+import org.eu.hanana.reimu.ottohub_andriod.MyAppApplicationLike;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.ui.blog.BlogListFragment;
 
@@ -80,33 +81,33 @@ public class BlogViewModel extends ViewModel {
         BlogListResult listResult = null;
         if (blogListFragment.uid==null&&blogListFragment.data==null&&blogListFragment.action==null) {
             if (blogListFragment.selectedButton.getTag(R.id.btn_add_tag).equals(blogListFragment.buttonLabels[0])) {
-                listResult = MyApp.getInstance().getOttohubApi().getBlogApi().random_blog_list(12);
+                listResult = MyAppApplicationLike.getInstance().getOttohubApi().getBlogApi().random_blog_list(12);
             } else if (blogListFragment.selectedButton.getTag(R.id.btn_add_tag).equals(blogListFragment.buttonLabels[1])) {
-                listResult = MyApp.getInstance().getOttohubApi().getBlogApi().new_blog_list(blogListFragment.currentPage * 12, 12);
+                listResult = MyAppApplicationLike.getInstance().getOttohubApi().getBlogApi().new_blog_list(blogListFragment.currentPage * 12, 12);
             } else if (blogListFragment.selectedButton.getTag(R.id.btn_add_tag).equals(blogListFragment.buttonLabels[2])) {
-                listResult = MyApp.getInstance().getOttohubApi().getBlogApi().popular_blog_list(7, blogListFragment.currentPage * 12, 12);
+                listResult = MyAppApplicationLike.getInstance().getOttohubApi().getBlogApi().popular_blog_list(7, blogListFragment.currentPage * 12, 12);
             } else if (blogListFragment.selectedButton.getTag(R.id.btn_add_tag).equals(blogListFragment.buttonLabels[3])) {
-                listResult = MyApp.getInstance().getOttohubApi().getBlogApi().popular_blog_list(30, blogListFragment.currentPage * 12, 12);
+                listResult = MyAppApplicationLike.getInstance().getOttohubApi().getBlogApi().popular_blog_list(30, blogListFragment.currentPage * 12, 12);
             } else if (blogListFragment.selectedButton.getTag(R.id.btn_add_tag).equals(blogListFragment.buttonLabels[4])) {
-                listResult = MyApp.getInstance().getOttohubApi().getBlogApi().popular_blog_list(90, blogListFragment.currentPage * 12, 12);
+                listResult = MyAppApplicationLike.getInstance().getOttohubApi().getBlogApi().popular_blog_list(90, blogListFragment.currentPage * 12, 12);
             }
         }else {
             if(blogListFragment.uid!=null) {
-                listResult = MyApp.getInstance().getOttohubApi().getBlogApi().user_blog_list(blogListFragment.uid, blogListFragment.currentPage * 12, 12);
+                listResult = MyAppApplicationLike.getInstance().getOttohubApi().getBlogApi().user_blog_list(blogListFragment.uid, blogListFragment.currentPage * 12, 12);
             }else if(ACTION_SEARCH.equals(blogListFragment.action)){
-                listResult = MyApp.getInstance().getOttohubApi().getBlogApi().search_blog_list(blogListFragment.data, 36);
+                listResult = MyAppApplicationLike.getInstance().getOttohubApi().getBlogApi().search_blog_list(blogListFragment.data, 36);
                 if (blogListFragment.data.toLowerCase(Locale.ROOT).startsWith("ob")) {
                     try {
-                        listResult.blog_list.addAll(0,MyApp.getInstance().getOttohubApi().getBlogApi().id_blog_list(Integer.parseInt(blogListFragment.data.substring(2))).blog_list);
+                        listResult.blog_list.addAll(0,MyAppApplicationLike.getInstance().getOttohubApi().getBlogApi().id_blog_list(Integer.parseInt(blogListFragment.data.substring(2))).blog_list);
                     } catch (NumberFormatException ignored) {
                     }
                 }
             }else if(blogListFragment.action.equals(ACTION_FAVOURITE)){
-                listResult = MyApp.getInstance().getOttohubApi().getProfileApi().favorite_blog_list(blogListFragment.currentPage*12, 12);
+                listResult = MyAppApplicationLike.getInstance().getOttohubApi().getProfileApi().favorite_blog_list(blogListFragment.currentPage*12, 12);
                 if (listResult.blog_list.isEmpty()) blogListFragment.hasMoreData=false;
             }
             else if(blogListFragment.action.equals(ACTION_MINE)){
-                listResult = MyApp.getInstance().getOttohubApi().getProfileApi().manage_blog_list(blogListFragment.currentPage*12, 12);
+                listResult = MyAppApplicationLike.getInstance().getOttohubApi().getProfileApi().manage_blog_list(blogListFragment.currentPage*12, 12);
                 if (listResult.blog_list.isEmpty()) blogListFragment.hasMoreData=false;
             }
         }

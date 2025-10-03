@@ -7,8 +7,6 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.eu.hanana.reimu.ottohub_andriod.ui.banner.BannerFragment;
-
 public class FragmentAdapter extends RecyclerView.Adapter<FragmentAdapter.HeaderViewHolder> {
 
     private final View headerView;

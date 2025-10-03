@@ -1,11 +1,7 @@
 package org.eu.hanana.reimu.ottohub_andriod.ui.user;
 
 import static android.content.Context.MODE_PRIVATE;
-import static org.eu.hanana.reimu.ottohub_andriod.activity.ProfileActivity.KEY_UID;
-import static org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase.ARG_TYPE;
-import static org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase.TYPE_VIDEO;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
@@ -13,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.content.res.AppCompatResources;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -21,9 +16,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import org.eu.hanana.reimu.ottohub_andriod.MyApp;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.activity.ProfileActivity;
-import org.eu.hanana.reimu.ottohub_andriod.activity.SearchActivity;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.CardAdapterBase;
-import org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentCardViewHolder;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.SharedPreferencesKeys;
@@ -32,7 +25,6 @@ import org.eu.hanana.reimu.ottohub_andriod.util.VibrateUtil;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
 public class UserListCardAdapter extends CardAdapterBase<UserCard, UserCardViewHolder> {
     private final UserListFragment userListFragment;

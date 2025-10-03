@@ -1,7 +1,5 @@
 package org.eu.hanana.reimu.ottohub_andriod.util;
 
-import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
-
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -30,7 +28,6 @@ import android.widget.ImageView;
 import androidx.annotation.OptIn;
 import androidx.annotation.Px;
 import androidx.fragment.app.Fragment;
-import androidx.media3.common.C;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.ui.AspectRatioFrameLayout;
 import androidx.preference.PreferenceManager;

@@ -15,10 +15,8 @@ import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
 
-import org.eu.hanana.reimu.lib.ottohub.api.ApiBase;
 import org.eu.hanana.reimu.lib.ottohub.api.blog.BlogResult;
 import org.eu.hanana.reimu.lib.ottohub.api.danmaku.DanmakuListResult;
-import org.eu.hanana.reimu.lib.ottohub.api.danmaku.DanmakuResult;
 import org.eu.hanana.reimu.lib.ottohub.api.video.VideoResult;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 

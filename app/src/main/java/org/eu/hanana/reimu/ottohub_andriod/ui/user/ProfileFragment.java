@@ -15,18 +15,6 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.content.res.AppCompatResources;
-import androidx.core.content.ContextCompat;
-import androidx.core.graphics.ColorUtils;
-import androidx.core.view.MenuProvider;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.Lifecycle;
-
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -39,6 +27,15 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.ColorUtils;
+import androidx.core.view.MenuProvider;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.MultiTransformation;
@@ -55,9 +52,8 @@ import org.eu.hanana.reimu.lib.ottohub.api.following.FollowStatusResult;
 import org.eu.hanana.reimu.lib.ottohub.api.profile.ProfileResult;
 import org.eu.hanana.reimu.lib.ottohub.api.user.UserResult;
 import org.eu.hanana.reimu.lib.ottohub.api.video.VideoListResult;
-import org.eu.hanana.reimu.ottohub_andriod.MyApp;
+import org.eu.hanana.reimu.ottohub_andriod.MyAppApplicationLike;
 import org.eu.hanana.reimu.ottohub_andriod.R;
-import org.eu.hanana.reimu.ottohub_andriod.activity.BaseActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.FragActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.ImageViewActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.MessageActivity;
@@ -70,7 +66,6 @@ import org.eu.hanana.reimu.ottohub_andriod.ui.message.SendMessageFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.settings.SettingsFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
-import org.eu.hanana.reimu.ottohub_andriod.util.ApiException;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ClassUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ProfileUtil;
@@ -128,7 +123,7 @@ public class ProfileFragment extends BaseFragment {
             if (getArguments().containsKey(Arg_Uid)){
                 uid=getArguments().getInt(Arg_Uid);
             }else {
-                uid= Integer.parseInt(MyApp.getInstance().getOttohubApi().getLoginResult().uid);
+                uid= Integer.parseInt(MyAppApplicationLike.getInstance().getOttohubApi().getLoginResult().uid);
             }
         }
     }
@@ -172,8 +167,8 @@ public class ProfileFragment extends BaseFragment {
     }
     protected void fetchData() throws Exception{
         if (isSelf()){
-            var result= MyApp.getInstance().getOttohubApi().getProfileApi().user_profile();
-            userDataResult= MyApp.getInstance().getOttohubApi().getProfileApi().user_data();
+            var result= MyAppApplicationLike.getInstance().getOttohubApi().getProfileApi().user_profile();
+            userDataResult= MyAppApplicationLike.getInstance().getOttohubApi().getProfileApi().user_data();
             userResult=result.profile;
             userResult.status=result.status;
             userResult.message=result.getMessage();
@@ -183,16 +178,16 @@ public class ProfileFragment extends BaseFragment {
             userResult=new ProfileResult();
             ClassUtil.copyFields(ProfileResult.class,UserResult.class,userResult,userDataResult,false);
         }
-        followStatus = MyApp.getInstance().getOttohubApi().getFollowingApi().follow_status(uid);
+        followStatus = MyAppApplicationLike.getInstance().getOttohubApi().getFollowingApi().follow_status(uid);
     }
 
     private UserResult safeFatchUserData() {
-        UserResult userDetail = MyApp.getInstance().getOttohubApi().getUserApi().get_user_detail(uid);
+        UserResult userDetail = MyAppApplicationLike.getInstance().getOttohubApi().getUserApi().get_user_detail(uid);
         if (userDetail.isSuccess()){
             return userDetail;
         }
         if (!userDetail.getMessage().contains("uid")) ApiUtil.throwApiError(userDetail);
-        VideoListResult videoListResult = MyApp.getInstance().getOttohubApi().getVideoApi().user_video_list(uid, 0, 12);
+        VideoListResult videoListResult = MyAppApplicationLike.getInstance().getOttohubApi().getVideoApi().user_video_list(uid, 0, 12);
         ApiUtil.throwApiError(videoListResult);
         if (!videoListResult.video_list.isEmpty()){
             var item = videoListResult.video_list.get(0);
@@ -211,7 +206,7 @@ public class ProfileFragment extends BaseFragment {
             return userDetail;
         }
 
-        BlogListResult blogListResult = MyApp.getInstance().getOttohubApi().getBlogApi().user_blog_list(uid, 0, 12);
+        BlogListResult blogListResult = MyAppApplicationLike.getInstance().getOttohubApi().getBlogApi().user_blog_list(uid, 0, 12);
         ApiUtil.throwApiError(videoListResult);
         if (!blogListResult.blog_list.isEmpty()){
             var item = blogListResult.blog_list.get(0);
@@ -241,11 +236,11 @@ public class ProfileFragment extends BaseFragment {
     }
 
     protected void init() {
-        if (MyApp.getInstance().getOttohubApi().getLoginResult()==null){
+        if (MyAppApplicationLike.getInstance().getOttohubApi().getLoginResult()==null){
             self=false;
             login=false;
         }else {
-            this.self = uid == Integer.parseInt(MyApp.getInstance().getOttohubApi().getLoginResult().uid);
+            this.self = uid == Integer.parseInt(MyAppApplicationLike.getInstance().getOttohubApi().getLoginResult().uid);
         }
         try {
             fetchData();
@@ -263,7 +258,7 @@ public class ProfileFragment extends BaseFragment {
     protected void initUI() {
         if (getActivity()==null) return;
         Glide.with(getContext())
-                .load(isSelf()?MyApp.getInstance().getOttohubApi().getLoginResult().avatar_url:userDataResult.avatar_url)
+                .load(isSelf()?MyAppApplicationLike.getInstance().getOttohubApi().getLoginResult().avatar_url:userDataResult.avatar_url)
                 .placeholder(R.drawable.ic_launcher_background)  // 占位图
                 .error(R.drawable.error_48px)        // 错误图
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC) // 缓存策略
@@ -321,7 +316,7 @@ public class ProfileFragment extends BaseFragment {
         var colorMask = ThemeUtil.getTheme(getContext()).getColorBackground();
         //将封面作为卡片背景
         Glide.with(this)
-                .load(isSelf()?MyApp.getInstance().getOttohubApi().getLoginResult().cover_url:userDataResult.cover_url)
+                .load(isSelf()?MyAppApplicationLike.getInstance().getOttohubApi().getLoginResult().cover_url:userDataResult.cover_url)
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC) // 缓存策略
                 .apply(RequestOptions.bitmapTransform( new MultiTransformation<>(
                         new HardwareToSoftwareTransformation(),
@@ -561,9 +556,9 @@ public class ProfileFragment extends BaseFragment {
                     }
                     return true;
                 } else if (menuItem.getItemId() == R.id.btn_view_avatar) {
-                    ImageViewActivity.start(getContext(),isSelf()?MyApp.getInstance().getOttohubApi().getLoginResult().avatar_url:userDataResult.avatar_url);
+                    ImageViewActivity.start(getContext(),isSelf()?MyAppApplicationLike.getInstance().getOttohubApi().getLoginResult().avatar_url:userDataResult.avatar_url);
                 } else if (menuItem.getItemId() == R.id.btn_view_cover) {
-                    ImageViewActivity.start(getContext(),isSelf()?MyApp.getInstance().getOttohubApi().getLoginResult().cover_url:userDataResult.cover_url);
+                    ImageViewActivity.start(getContext(),isSelf()?MyAppApplicationLike.getInstance().getOttohubApi().getLoginResult().cover_url:userDataResult.cover_url);
                 } else if (menuItem.getItemId() == R.id.btn_send_message) {
                     Bundle bundle = new Bundle();
                     bundle.putInt("receiver",getUid());
@@ -644,7 +639,7 @@ public class ProfileFragment extends BaseFragment {
     }
     public void doFollow(){
         Thread thread = new Thread(()->{
-            followStatus= MyApp.getInstance().getOttohubApi().getFollowingApi().follow(uid);
+            followStatus= MyAppApplicationLike.getInstance().getOttohubApi().getFollowingApi().follow(uid);
             getActivity().runOnUiThread(()->{
                 tvFollower.setText(String.valueOf(followStatus.new_fans_count));
                 updateFollowStatus(followStatus.follow_status);

@@ -5,13 +5,8 @@ import android.view.MenuItem;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import org.eu.hanana.reimu.ottohub_andriod.R;
-import org.eu.hanana.reimu.ottohub_andriod.ui.user.ProfileFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.user.UserListFragment;
 
 public class AccountListActivity extends BaseActivity {

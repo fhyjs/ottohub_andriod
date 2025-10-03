@@ -1,6 +1,5 @@
 package org.eu.hanana.reimu.ottohub_andriod.ui.user;
 
-import org.eu.hanana.reimu.lib.ottohub.api.comment.CommentResult;
 import org.eu.hanana.reimu.lib.ottohub.api.user.UserResult;
 
 import lombok.Getter;

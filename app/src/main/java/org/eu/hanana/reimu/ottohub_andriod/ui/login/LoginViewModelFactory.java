@@ -1,8 +1,8 @@
 package org.eu.hanana.reimu.ottohub_andriod.ui.login;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.annotation.NonNull;
 
 import org.eu.hanana.reimu.ottohub_andriod.data.login.LoginDataSource;
 import org.eu.hanana.reimu.ottohub_andriod.data.login.LoginRepository;

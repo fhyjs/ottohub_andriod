@@ -1,7 +1,5 @@
 package org.eu.hanana.reimu.ottohub_andriod.util;
 
-import static android.content.DialogInterface.BUTTON_POSITIVE;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -20,11 +18,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.DialogTitle;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.dialog.MaterialDialogs;
 
 import org.eu.hanana.reimu.ottohub_andriod.R;
 

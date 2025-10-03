@@ -11,8 +11,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-
-
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -36,7 +34,7 @@ import org.eu.hanana.reimu.lib.ottohub.api.collection.CollectionResult;
 import org.eu.hanana.reimu.lib.ottohub.api.common.EmptyResult;
 import org.eu.hanana.reimu.lib.ottohub.api.engagement.EngagementResult;
 import org.eu.hanana.reimu.lib.ottohub.api.video.VideoResult;
-import org.eu.hanana.reimu.ottohub_andriod.MyApp;
+import org.eu.hanana.reimu.ottohub_andriod.MyAppApplicationLike;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.activity.ProfileActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.SearchActivity;
@@ -129,12 +127,12 @@ public class VideoDescribeFragment extends BaseFragment {
 
         updateActionBtns();
         view.findViewById(R.id.btn_like).setOnClickListener(v -> {
-            if (MyApp.getInstance().getOttohubApi().getLoginToken()==null) {
+            if (MyAppApplicationLike.getInstance().getOttohubApi().getLoginToken()==null) {
                 AlertUtil.showError(getActivity(),getString(R.string.not_login)).show();
                 return;
             }
             Thread thread = new Thread(() -> {
-                EngagementResult engagementResult = MyApp.getInstance().getOttohubApi().getEngagementApi().like_video(vData.vid);
+                EngagementResult engagementResult = MyAppApplicationLike.getInstance().getOttohubApi().getEngagementApi().like_video(vData.vid);
                 ApiUtil.throwApiError(engagementResult);
                 vData.like_count=engagementResult.like_count;
                 vData.if_like=engagementResult.if_like;
@@ -144,12 +142,12 @@ public class VideoDescribeFragment extends BaseFragment {
             thread.start();
         });
         view.findViewById(R.id.btn_favourite).setOnClickListener(v -> {
-            if (MyApp.getInstance().getOttohubApi().getLoginToken()==null) {
+            if (MyAppApplicationLike.getInstance().getOttohubApi().getLoginToken()==null) {
                 AlertUtil.showError(getContext(),getString(R.string.not_login)).show();
                 return;
             }
             Thread thread = new Thread(() -> {
-                EngagementResult engagementResult = MyApp.getInstance().getOttohubApi().getEngagementApi().favorite_video(vData.vid);
+                EngagementResult engagementResult = MyAppApplicationLike.getInstance().getOttohubApi().getEngagementApi().favorite_video(vData.vid);
                 ApiUtil.throwApiError(engagementResult);
                 vData.favorite_count=engagementResult.favorite_count;
                 vData.if_favorite=engagementResult.if_favorite;
@@ -159,12 +157,12 @@ public class VideoDescribeFragment extends BaseFragment {
             thread.start();
         });
         view.findViewById(R.id.btn_report).setOnClickListener(v -> {
-            if (MyApp.getInstance().getOttohubApi().getLoginToken()==null) {
+            if (MyAppApplicationLike.getInstance().getOttohubApi().getLoginToken()==null) {
                 AlertUtil.showError(getContext(),getString(R.string.not_login)).show();
                 return;
             }
             Thread thread = new Thread(() -> {
-                EmptyResult emptyResult = MyApp.getInstance().getOttohubApi().getModerationApi().report_video(vData.vid);
+                EmptyResult emptyResult = MyAppApplicationLike.getInstance().getOttohubApi().getModerationApi().report_video(vData.vid);
                 ApiUtil.throwApiError(emptyResult);
                 getActivity().runOnUiThread(()->{
                     AlertUtil.showMsg(getContext(), getString(R.string.report), getString(R.string.ok)).show();

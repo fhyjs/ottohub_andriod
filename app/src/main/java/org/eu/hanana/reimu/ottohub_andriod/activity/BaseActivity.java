@@ -1,7 +1,5 @@
 package org.eu.hanana.reimu.ottohub_andriod.activity;
 
-import static org.eu.hanana.reimu.ottohub_andriod.util.UiUtil.dpToPx;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.util.TypedValue;
@@ -11,18 +9,14 @@ import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.appbar.MaterialToolbar;
 
 import org.eu.hanana.reimu.ottohub_andriod.MainActivity;
-import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.util.LocaleUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ThemeUtil;
-
-import java.util.Locale;
 
 public abstract class BaseActivity extends AppCompatActivity {
     public  MaterialToolbar toolbar;

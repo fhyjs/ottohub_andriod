@@ -21,7 +21,8 @@
         tools:context=".activity.BlogActivity">
 
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
+            android:orientation="vertical"
             android:nestedScrollingEnabled="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -53,10 +54,10 @@
                         app:shapeAppearanceOverlay="@style/CircleImageViewStyle" />
 
                     <TextView
-                        android:tag="themed"
                         android:id="@+id/tvAuthor"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:tag="themed"
                         android:text="@string/app_name"
                         android:textColor="@color/black"
                         android:textSize="25sp"
@@ -82,7 +83,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
     </ScrollView>
 
     <FrameLayout

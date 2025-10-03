@@ -1,9 +1,5 @@
 package org.eu.hanana.reimu.ottohub_andriod.ui.settings;
 
-import static android.content.Intent.getIntent;
-
-import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,13 +9,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 import androidx.preference.SwitchPreference;
-import androidx.preference.SwitchPreferenceCompat;
-import androidx.recyclerview.widget.RecyclerView;
 
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.activity.AboutActivity;
@@ -28,12 +21,8 @@ import org.eu.hanana.reimu.ottohub_andriod.ui.base.IScrollTopChecker;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.CacheUtil;
-import org.eu.hanana.reimu.ottohub_andriod.util.LocaleHelper;
 import org.eu.hanana.reimu.ottohub_andriod.util.ThemeUtil;
-import org.eu.hanana.reimu.ottohub_andriod.util.UiUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.UpdateUtil;
-
-import java.util.List;
 
 public class SettingsFragment extends PreferenceFragmentCompat implements IScrollTopChecker {
     @Override
