@@ -34,8 +34,8 @@ android {
         multiDexEnabled true
         multiDexKeepProguard file("tinker_multidexkeep.pro")
         targetSdk 36
-        versionCode 294
-        versionName "2.9.4_Code.Sanae"
+        versionCode 295
+        versionName "2.9.5_Code.Sanae"
         resConfigs "en", "zh" // Example: Support English and Spanish
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "BUILD_TIME", "\"${new Date().format("yyyy-MM-dd HH:mm:ss")}\""
