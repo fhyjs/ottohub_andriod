@@ -100,7 +100,7 @@ public class BlogActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_blog);
+        setContentView(R.layout.activity_blog_2);
 
         // 启用返回按钮
         if (getSupportActionBar() != null) {
@@ -459,7 +459,7 @@ public class BlogActivity extends BaseActivity {
         // 设置目标页起始位置
         nextPage.setTranslationX(toFromX);
         nextPage.setVisibility(VISIBLE);
-
+        nextPage.postInvalidate();
         // 动画：当前页滑出，目标页滑入
         ViewPropertyAnimator hideAnim = currentPage.animate().translationX(fromToX).setDuration(300);
         ViewPropertyAnimator showAnim = nextPage.animate().translationX(0).setDuration(300);

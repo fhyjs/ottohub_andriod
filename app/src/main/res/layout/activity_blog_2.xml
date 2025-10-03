@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:tag="themed|background"
+    tools:context=".activity.BlogActivity">
+
+    <!-- 顶部 TabLayout -->
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tlPage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:tag="themed"/>
+
+    <!-- 内容区: 作者信息 + WebView + actionBar -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- 作者信息 -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/clAuthorInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="5dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/ivAvatar"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    android:src="@drawable/ic_launcher_background"
+                    app:shapeAppearanceOverlay="@style/CircleImageViewStyle"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+                <TextView
+                    android:id="@+id/tvAuthor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_name"
+                    android:textColor="@color/black"
+                    android:textSize="25sp"
+                    android:tag="themed"
+                    app:layout_constraintStart_toEndOf="@id/ivAvatar"
+                    app:layout_constraintBottom_toBottomOf="@id/ivAvatar"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- WebView 内容 -->
+            <org.eu.hanana.reimu.ottohub_andriod.util.CustomWebView
+                android:id="@+id/wvContent"
+                android:layout_width="match_parent"
+                android:layout_height="500dp"/>
+
+            <!-- actionBar -->
+            <include
+                android:id="@+id/ll_actionBar"
+                layout="@layout/action_bar_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- 可选 fragment 容器 -->
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+</LinearLayout>

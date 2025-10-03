@@ -56,15 +56,6 @@ public class CustomWebView extends WebView {
     private ValueCallback<Uri[]> filePathCallback;
     private FileChooserListener fileChooserListener;
 
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-    }
-
-    @Override
-    public void invalidate() {
-        super.invalidate();
-    }
 
     public CustomWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -74,19 +65,6 @@ public class CustomWebView extends WebView {
         this(context,null);
     }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-    }
-
-    @Override
-    public int getContentHeight() {
-        return super.getContentHeight();
-    }
-    @Override
-    protected void measureChildWithMargins(View child, int parentWidthMeasureSpec, int widthUsed, int parentHeightMeasureSpec, int heightUsed) {
-        super.measureChildWithMargins(child, parentWidthMeasureSpec, widthUsed, parentHeightMeasureSpec, heightUsed);
-    }
 
     private void init(Context context) {
         // 添加进度条
@@ -94,7 +72,7 @@ public class CustomWebView extends WebView {
         progressBar.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 10, 0, 0));
         addView(progressBar);
 
-        setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        //setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         // 基础设置
         settings = super.getSettings();
         settings.setJavaScriptEnabled(true);
@@ -140,7 +118,6 @@ public class CustomWebView extends WebView {
                     layoutParams.height=hv;
                     measure(getWidth(),hv);
                     setLayoutParams(layoutParams);
-                    requestLayout();
                 });
             }
             @JavascriptInterface
