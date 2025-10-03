@@ -44,8 +44,8 @@ public class LoginActivity extends BaseActivity {
         loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
 
-         usernameEditText = ((TextInputEditText) binding.username);
-         passwordEditText = ((TextInputEditText) binding.password);
+         usernameEditText = ((EditText) binding.username);
+         passwordEditText = ((EditText) binding.password);
         final Button loginButton = binding.login;
         loadingProgressBar = binding.loading;
 

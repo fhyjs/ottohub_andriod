@@ -27,6 +27,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -123,6 +124,10 @@ public class ProfileFragment extends BaseFragment {
             if (getArguments().containsKey(Arg_Uid)){
                 uid=getArguments().getInt(Arg_Uid);
             }else {
+                if (MyAppApplicationLike.getInstance().getOttohubApi().getLoginResult()==null){
+                    Toast.makeText(getContext(), "请重新登录.Please relogin!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 uid= Integer.parseInt(MyAppApplicationLike.getInstance().getOttohubApi().getLoginResult().uid);
             }
         }

@@ -83,7 +83,7 @@ public class UpdateMessageCountBackgroundService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         // 显示前台通知（必须）
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("force_background",true)) {
+            if (true&&PreferenceManager.getDefaultSharedPreferences(this).getBoolean("force_background",true)) {
                 startForeground(1, buildNotification());
             }else {
                 //startForeground(1, buildNotification());
