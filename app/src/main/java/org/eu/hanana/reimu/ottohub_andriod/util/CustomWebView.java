@@ -55,6 +55,7 @@ public class CustomWebView extends WebView {
     @Setter
     private ValueCallback<Uri[]> filePathCallback;
     private FileChooserListener fileChooserListener;
+    public boolean allowJsHeightAuto=true;
 
 
     public CustomWebView(Context context, AttributeSet attrs) {
@@ -108,6 +109,7 @@ public class CustomWebView extends WebView {
 
             @JavascriptInterface
             public void setHeight(int height){
+                if (!allowJsHeightAuto) return;
                 post(()->{
                     var hv = height;
                     hv=(int) (hv * getScale());

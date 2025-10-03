@@ -87,7 +87,7 @@ public class BlogActivity extends BaseActivity {
     public static final String TYPE_AUDIT="a";
     public static final String TYPE_PREVIEW="p";
     public int bid;
-    private WebView webView;
+    private CustomWebView webView;
     protected String blogPage = CustomWebView.internal+"web/blog/index.html";
     protected BlogResult blogResult;
     protected boolean inited=false;
@@ -100,7 +100,7 @@ public class BlogActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_blog_2);
+        setContentView(R.layout.activity_blog);
 
         // 启用返回按钮
         if (getSupportActionBar() != null) {
@@ -116,6 +116,7 @@ public class BlogActivity extends BaseActivity {
 
         bid=getIntent().getExtras().getInt(KEY_BID);
         webView = findViewById(R.id.wvContent);
+        //webView.allowJsHeightAuto=false;
         webView.addJavascriptInterface(new JsBridge(this), "blog"); // "AndroidBridge" 是 JS 调用的对象名
         webView.loadUrl(blogPage);
 
