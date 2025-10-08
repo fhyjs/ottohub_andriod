@@ -24,6 +24,7 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.AbsoluteLayout;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -70,7 +71,7 @@ public class CustomWebView extends WebView {
     private void init(Context context) {
         // 添加进度条
         progressBar = new ProgressBar(context, null, android.R.attr.progressBarStyleHorizontal);
-        progressBar.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 10, 0, 0));
+        progressBar.setLayoutParams(new ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT, 10));
         addView(progressBar);
 
         //setLayerType(View.LAYER_TYPE_SOFTWARE, null);
@@ -106,10 +107,17 @@ public class CustomWebView extends WebView {
 
                 return String.format(Locale.getDefault(),"rgba(%d, %d, %d, %.2f)", r, g, b, alpha);
             }
-
+            @JavascriptInterface
+            public void setAllowJsHeightAuto(boolean allow){
+                allowJsHeightAuto=allow;
+            }
+            @JavascriptInterface
+            public boolean getAllowJsHeightAuto(){
+                return allowJsHeightAuto;
+            }
             @JavascriptInterface
             public void setHeight(int height){
-                if (!allowJsHeightAuto) return;
+                //if (!allowJsHeightAuto) return;
                 post(()->{
                     var hv = height;
                     hv=(int) (hv * getScale());
@@ -127,8 +135,27 @@ public class CustomWebView extends WebView {
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
             }
             @JavascriptInterface
+            public static String colorToHex(int color) {
+                int r = (color >> 16) & 0xFF;
+                int g = (color >> 8) & 0xFF;
+                int b = color & 0xFF;
+                return String.format("#%02X%02X%02X", r, g, b);
+            }
+            @JavascriptInterface
             public int getBgColor() {
                 return ThemeUtil.getTheme(getContext()).getColorBackground();
+            }
+            @JavascriptInterface
+            public String colorToHexWithAlpha(int color) {
+                int a = (color >> 24) & 0xFF;
+                int r = (color >> 16) & 0xFF;
+                int g = (color >> 8) & 0xFF;
+                int b = color & 0xFF;
+                return String.format("#%02X%02X%02X%02X", a, r, g, b);
+            }
+            @JavascriptInterface
+            public int getColorPrimary() {
+                return ThemeUtil.getTheme(getContext()).getColorPrimary();
             }
             @JavascriptInterface
             public int getTextColor() {
@@ -300,13 +327,7 @@ public class CustomWebView extends WebView {
                 return super.shouldInterceptRequest(view, request);
             // 拦截请求并返回本地资源
             String url = request.getUrl().toString();
-            String contentType = null;
-            try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    contentType = Files.probeContentType(Paths.get(url));
-                }
-            } catch (IOException ignored) {
-            }
+            String contentType = ApiUtil.getMimeType(url).split(";")[0];
             // 处理文件
             return getWebResourceResponseFromAssets(url, contentType);
         }
@@ -344,6 +365,7 @@ public class CustomWebView extends WebView {
             // 处理本地链接
             String url = request.getUrl().toString();
             if (url.startsWith(internal)) {
+                view.loadUrl(url);
                 return true; // WebView 处理
             }
             return super.shouldOverrideUrlLoading(view, request);

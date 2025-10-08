@@ -11,6 +11,7 @@ import com.google.android.material.tabs.TabLayout;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.ui.message.MessageListFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.message.SendMessageFragment;
+import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 
 public class MessageActivity extends BaseActivity {
@@ -33,7 +34,9 @@ public class MessageActivity extends BaseActivity {
         }
         msgType = findViewById(R.id.tlMessageType);
         msgType.setEnabled(false);
-        new Thread(this::init).start();
+        Thread thread = new Thread(this::init);
+        thread.setUncaughtExceptionHandler(new AlertUtil.ThreadAlert(this));
+        thread.start();
         setTitle(getString(R.string.loading));
     }
     protected void init(){

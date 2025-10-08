@@ -1,6 +1,9 @@
 package org.eu.hanana.reimu.ottohub_andriod.util;
 
+import static android.view.View.GONE;
+
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
@@ -21,13 +24,20 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.gson.JsonParseException;
 
 import org.eu.hanana.reimu.ottohub_andriod.R;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
+import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 import lombok.AllArgsConstructor;
 
 public class AlertUtil {
-    public static androidx.appcompat.app.AlertDialog showYesNo(Context context, String title, String msg, DialogInterface.OnClickListener yes, DialogInterface.OnClickListener no) {
+    public static AlertDialog showYesNo(Context context, String title, String msg, DialogInterface.OnClickListener yes, DialogInterface.OnClickListener no) {
         if (context==null) return null;
         return new MaterialAlertDialogBuilder(context)
                 .setTitle(title)
@@ -36,7 +46,7 @@ public class AlertUtil {
                 .setNegativeButton(R.string.cancel,no)
                 .create();
     }
-    public static androidx.appcompat.app.AlertDialog showMsg(Context context, String title, String msg) {
+    public static AlertDialog showMsg(Context context, String title, String msg) {
         if (context==null) return null;
         return new MaterialAlertDialogBuilder(context)
                 .setTitle(title)
@@ -44,7 +54,7 @@ public class AlertUtil {
                 .setPositiveButton(R.string.ok, null)
                 .create();
     }
-    public static androidx.appcompat.app.AlertDialog showLoading(Context context, String title){
+    public static AlertDialog showLoading(Context context, String title){
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
         builder.setTitle(title).setCancelable(false); // 禁止返回键取消
 
@@ -69,9 +79,7 @@ public class AlertUtil {
     public static AlertDialog showError(Context context, String message) {
         if (context==null) return null;
         Log.d("ALERT",message);
-        AlertDialog alertDialog = showMsg(context, context.getString(R.string.error), message);
-        alertDialog.show();
-        if (true) return alertDialog;
+        if (true) return showErrorWithThrowable(context,new UnknownError(message));;
 
         // 加载自定义布局
         View view = LayoutInflater.from(context).inflate(R.layout.dialog_error, null);
@@ -119,6 +127,53 @@ public class AlertUtil {
         dialog.setContentView(view);
         return dialog;
     }
+    public static AlertDialog showAdvanceErrorDialog(Context context,@NonNull String errTitle,@NonNull String errType,@NonNull String errMessage,@NonNull String errStack){
+        if (context==null) return null;
+        var dialog = LayoutInflater.from(context).inflate(R.layout.advance_error_window,null);
+        var dialogB = new MaterialAlertDialogBuilder(context).setView(dialog).create();
+        ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.tv_title))).setText(errTitle);
+        ((Button) Objects.requireNonNull(dialog.findViewById(R.id.btn_type))).setText(errType);
+        ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.tv_message))).setText(errMessage);
+        ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.tv_stack))).setText(errStack);
+        dialog.findViewById(R.id.ll_detail).setVisibility(GONE);
+        ((Button) Objects.requireNonNull(dialog.findViewById(R.id.btn_detail))).setOnClickListener(v -> {
+            UiUtil.animateView(dialog.findViewById(R.id.ll_detail),dialog.findViewById(R.id.ll_detail).getVisibility()== GONE);
+        });
+        dialogB.show();
+        ((Button) Objects.requireNonNull(dialog.findViewById(R.id.btn_confirm))).setOnClickListener(v -> dialogB.dismiss());
+        return dialogB;
+    }
+    public static AlertDialog showErrorWithThrowable(Context activity, Throwable e){
+        e.printStackTrace();
+        if (activity==null) return null;
+        var type = activity.getString(R.string.unknown_error);
+        var title = activity.getString(R.string.error);
+        var msg = e.getLocalizedMessage();
+        if (e instanceof UnknownHostException){
+            type=activity.getString(R.string.network_error);
+            if(!ApiUtil.isNetworkConnected(activity)){
+                title=activity.getString(R.string.no_network_avable);
+            }
+            msg=activity.getString(R.string.pls_check_network);
+        }else if (e instanceof ApiException){
+            type=activity.getString(R.string.operation_error);
+            msg=e.getMessage();
+        }else if (e instanceof JsonParseException){
+            type=activity.getString(R.string.server_error);
+            msg=activity.getString(R.string.server_error_msg);
+        }
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintWriter pw = new PrintWriter(os);
+
+        // 打印异常堆栈
+        e.printStackTrace(pw);
+        pw.flush(); // ⚠️ 必须 flush()，确保内容写入 ByteArrayOutputStream
+
+        String finalType = type;
+        String finalTitle = title;
+        String finalMsg = msg;
+        return AlertUtil.showAdvanceErrorDialog(activity, finalTitle, finalType, finalMsg,new String(os.toByteArray(), StandardCharsets.UTF_8));
+    }
     public interface InputCallback {
         void onInput(String input);
     }
@@ -127,9 +182,7 @@ public class AlertUtil {
         protected Activity activity;
         @Override
         public void uncaughtException(@NonNull Thread t, @NonNull Throwable e) {
-            e.printStackTrace();
-            if (activity==null||activity.isFinishing()||activity.isDestroyed()) return;
-            activity.runOnUiThread(()->AlertUtil.showMsg(activity,activity.getString(R.string.error),"ERROR:"+e+" at "+t.getName()).show());
+            activity.runOnUiThread(()->AlertUtil.showErrorWithThrowable(activity,e));
         }
     }
 }

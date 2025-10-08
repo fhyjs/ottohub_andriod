@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="../assets/jquery-3.7.1.min.js"></script>
+    <script src="../assets/sweetalert2.js"></script>
+
+    <script type="importmap">
+        {
+          "imports": {
+            "@material/web/": "https://esm.run/@material/web/"
+          }
+        }
+    </script>
+    <script type="module">
+        import '@material/web/all.js';
+        import {styles as typescaleStyles} from '@material/web/typography/md-typescale-styles.js';
+
+        document.adoptedStyleSheets.push(typescaleStyles.styleSheet);
+    </script>
+</head>
+<body>
+    <h1>转载</h1>
+    <h2>视频信息</h2>
+    <hr>
+    标题:<span id="title">LOADING...</span><br>
+    av号:<span id="avid">LOADING...</span><br>
+    up主:<a target="_blank" id="up">LOADING...</a><br>
+    <label for="desc">简介:</label><br><textarea rows="12" cols="70" disabled="disabled" id="desc">LOADING...</textarea><br>
+    封面:<br><img id="pic" alt="pic" style="max-width: 700px; overflow-clip-margin: content-box; overflow: clip;"><br>
+    <hr>
+    <h2>选择分集</h2>
+    <div id="parts"></div>
+    <br>
+    <button id="next">下一步</button>
+    <script>
+        function getQueryParam(key) {
+            return new URLSearchParams(window.location.search).get(key);
+        }
+
+        var data = $.parseJSON(ft.getVidInfo(getQueryParam("type"),getQueryParam("vid")));
+        $("#title").text(data.data.title);
+        $("#avid").text(data.data.aid);
+        $("#desc").val(data.data.desc);
+        $("#pic").attr("src",data.data.pic);
+        $("#up").attr("href","https://space.bilibili.com/"+data.data.owner.mid);
+        $("#up").text(data.data.owner.name);
+        $.each(data.data.pages, function(index,value) {
+            $("#parts").append(`
+                <label>
+                    <input type="radio" class="vpart" name="vpart" select value="${value.cid}"> ${value.part}
+                </label><br>
+            `);
+        });
+        $("#next").click(function(){
+            var selectedValue = $("input[name='vpart']:checked").val();
+            console.log(selectedValue);
+            if ( typeof selectedValue == "undefined"){
+                Swal.fire({
+                    title: "ERROR",
+                    text: "没选分集",
+                    icon: "error"
+                });
+                return;
+            }
+            window.location.href=`3.html?cid=${selectedValue}&aid=${data.data.aid}`;
+        });
+    </script>
+</body>
+</html>

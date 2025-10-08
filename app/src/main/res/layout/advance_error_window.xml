@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_marginHorizontal="14dp"
+    app:cardCornerRadius="30dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_margin="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_gravity="center_horizontal"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:src="@drawable/error_48px"
+            app:tint="#ffff0000" />
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_gravity="center_horizontal"
+            android:textStyle="bold"
+            android:textSize="25sp"
+            android:text="@string/placeholder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_type"
+            android:focusable="false"
+            android:paddingHorizontal="5dp"
+            android:paddingVertical="3dp"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:layout_gravity="center_horizontal"
+            android:backgroundTint="@android:color/holo_red_light"
+            android:text="@string/placeholder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/tv_message"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/placeholder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <LinearLayout
+            android:id="@+id/ll_detail"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@android:color/darker_gray" />
+            <com.google.android.material.textview.MaterialTextView
+                android:text="@string/stack_track"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/teal_200">
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_stack"
+                    android:layout_margin="10dp"
+                    android:textIsSelectable="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/placeholder" />
+
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_detail"
+            android:layout_gravity="center_horizontal"
+            app:iconTint="@color/teal_200"
+            app:iconGravity="end"
+            app:icon="@drawable/search_24dp"
+            android:paddingVertical="0dp"
+            android:minHeight="0dp"
+            android:textColor="@color/teal_200"
+            android:text="@string/show_details"
+            android:layout_width="wrap_content"
+            android:background="@android:color/transparent"
+            android:layout_height="wrap_content"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_confirm"
+                app:cornerRadius="10dp"
+                android:text="@string/conform"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:backgroundTint="@android:color/transparent"
+                android:textColor="@color/black"
+                android:layout_marginEnd="10dp"
+                android:layout_height="wrap_content"/>
+            <com.google.android.material.button.MaterialButton
+                app:cornerRadius="10dp"
+                android:id="@+id/btn_retry"
+                android:text="@string/retry"
+                android:visibility="gone"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

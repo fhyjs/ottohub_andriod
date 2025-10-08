@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="../../webui/assets/jquery-3.7.1.min.js"></script>
+    <script src="../../webui/assets/sweetalert2.js"></script>
+    <script src="../../webui/assets/app.js"></script>
+    <script src="../../webui/assets/page.js"></script>
+    <style>
+        .circle {
+            width: 4vh;
+            height: 4vh;
+        }
+    </style>
+</head>
+<body>
+    <h1>转载</h1>
+    <h2>登录ottohub</h2>
+    <h3></h3><button id="next">下一步</button><button id="quic">快速登录(已经登录ottohub官网时)</button>
+    <hr>
+    <input type="text" id="un" placeholder="账号"><br>
+    <input type="text" id="pw" placeholder="密码"><br>
+    <button id="login">账密登录</button><button id="logout">退出</button><br>
+    <hr>
+    访问令牌: <span id="token"></span><br>
+    用户名: <span id="username"></span><br>
+    uid: <span id="uid"></span>
+    <img class="circle">
+    <script>
+        window.location.href=`4.html?cid=${getQueryParam("cid")}&aid=${getQueryParam("aid")}`;
+       function getQueryParam(key) {
+           return new URLSearchParams(window.location.search).get(key);
+       }
+       var oa = app.userData.data.ottohub_account;
+       if (typeof oa == 'undefined'){
+           $("h3").text("未登录");
+       }else{
+           $("h3").text("已经登录");
+           $("#uid").text(oa.uid);
+           $("#username").text(oa.profile.profile.username);
+           $("#token").text(oa.token);
+           $(".circle").attr("src",oa.avatar_url);
+       }
+
+       $("#login").click(function(){
+           var data = $.parseJSON(synchronousPostRequest(`../../../../data/ohupd/login.json?act=login&un=${$("#un").val()}&pw=${$("#pw").val()}`,""));
+           Swal.fire({
+               title: data.status,
+               text: data.msg,
+               icon: data.status
+           });
+           if (data.status=="error") return;
+           if (data.status=="success") {
+               parent.app.getUserData();
+               window.location.reload();
+           }
+       });
+       $("#quic").click(function(){
+           var func = `
+$("#title").html("Loading.. Loging in to HANANA WebUI!");
+$.getScript("https://cdn.jsdelivr.net/npm/jquery.cookie@1.4.1/jquery.cookie.min.js")
+ .then(() => {
+   var userlogin = $.cookie("uid")+":"+$.cookie("password")
+   console.log(userlogin);
+   $("#infod").html(userlogin);
+   $("#title").html("Success!!");
+   window.location.href="${location.origin}/dynamic/ohupd/quic_login.html?login="+userlogin;
+ });
+           `;
+           var url="https://m.ottohub.cn/b/24107#eval(atob(\""+btoa(func)+"\"))";
+           universalOpen(url);
+           console.log(url);
+           var tip = Swal.mixin({
+               title: '完成后按ok',
+               text: "在弹出的页面完成登录",
+               allowOutsideClick: false,
+               allowEscapeKey: false,
+           });
+           tip.fire().then(function(){
+               app.getUserData();
+               if (typeof app.userData.data.ottohub_password === 'undefined'){
+                  Swal.fire({
+                       title: '登录笑传之尝常败',
+                       text: "还是密码登录吧",
+                       icon: "error"
+                   });
+                   return;
+               }
+               if (app.userData.data.ottohub_password==="undefined:undefined"){
+                   Swal.fire({
+                       title: '登录笑传之尝常败',
+                       text: "您没有登录ottohub官网!",
+                       icon: "error"
+                   });
+                   return;
+               }
+               $("#un").val(app.userData.data.ottohub_password.split(":")[0]);
+               $("#pw").val(app.userData.data.ottohub_password.split(":")[1]);
+               $("#login").click();
+           });
+       });
+       $("#logout").click(function(){
+           var data = $.parseJSON(synchronousPostRequest(`../../../../data/ohupd/login.json?act=logout`,""));
+           parent.app.getUserData();
+           window.location.reload();
+
+       });
+       $("#next").click(function(){
+           if (typeof oa == 'undefined'){
+               Swal.fire({
+                   title: 'error',
+                   text: '还没登录',
+                   icon: 'error'
+               });
+               return;
+           }
+           if(getQueryParam("href")!=null){
+               window.location.href=getQueryParam("href");
+           }else{
+               window.location.href=`4.html?cid=${getQueryParam("cid")}&aid=${getQueryParam("aid")}`;
+           }
+       });
+       function universalOpen(url) {
+           try {
+               // 现代浏览器方案
+               const a = document.createElement('a');
+               a.href = url;
+               a.rel = 'noopener noreferrer';
+               a.target = '_blank';
+
+               // 兼容旧版 Firefox
+               const event = new MouseEvent('click', {
+                   view: window,
+                   bubbles: true,
+                   cancelable: true
+               });
+
+               a.dispatchEvent(event);
+           } catch (e) {
+               // 降级方案
+               window.open(url, '_blank', 'noopener,noreferrer');
+           }
+       }
+    </script>
+    <hr/>
+    <h2>登录BILIBILI(下载高画质视频,不登录最高720p)</h2>
+    <h4><a id="login_bili" href="bili_login.html">点击登录</a><button id="logout_b">退出</button></h4>
+    <hr>
+    访问令牌: <span id="token_bili"></span><br>
+    <script>
+        $("#logout_b").click(function(){
+            synchronousPostRequest(`../../../../data/ohupd/bili/save_login.php`,"");
+            parent.app.getUserData();
+            window.location.reload();
+
+        });
+        var ba = app.userData.data.bilibili_sess;
+        $("#token_bili").text(ba);
+        $("a").each(function() {
+            const $this = $(this);
+            let href = $this.attr("href") || "";
+
+            // 避免重复添加 ?href=
+            if (!href.includes("href=")) {
+                const separator = href.includes("?") ? "&" : "?"; // 判断已有查询参数
+                $this.attr("href", href + separator + "href=" + encodeURIComponent(window.location.href));
+            }
+        });
+    </script>
+</body>
+</html>

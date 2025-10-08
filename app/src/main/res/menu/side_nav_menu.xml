@@ -42,6 +42,11 @@
         android:title="@string/chat_board"
         app:showAsAction="ifRoom" />
     <item
+        android:id="@+id/action_toolbox"
+        android:icon="@drawable/home_repair_service_24dp"
+        android:title="@string/toolbox"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/action_settings"
         android:icon="@drawable/settings_24dp"
         android:title="@string/settings"

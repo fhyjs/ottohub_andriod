@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="../assets/jquery-3.7.1.min.js"></script>
+    <script src="../assets/sweetalert2.js"></script>
+
+    <script type="importmap">
+        {
+          "imports": {
+            "@material/web/": "https://esm.run/@material/web/",
+            "@material/material-color-utilities": "https://esm.run/@material/material-color-utilities"
+          }
+        }
+    </script>
+    <script type="module">
+        import '@material/web/all.js';
+        import { argbFromHex, themeFromSourceColor, applyTheme } from "@material/material-color-utilities";
+        import {styles as typescaleStyles} from '@material/web/typography/md-typescale-styles.js';
+
+        document.adoptedStyleSheets.push(typescaleStyles.styleSheet);
+
+        // Get the theme from a hex color
+        const theme = themeFromSourceColor(argbFromHex(hanana.colorToHex(hanana.getBgColor())), []);
+
+        // Check if the user has dark mode turned on
+        const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+        // Apply the theme to the body by updating custom properties for material tokens
+        applyTheme(theme, {target: document.body, dark: systemDark});
+
+    </script>
+</head>
+<body>
+<h1>转载</h1>
+<hr>
+<label>
+    二选一
+    <br>
+    <md-outlined-text-field type="text" id="bvid" placeholder="bv号(BV...)"></md-outlined-text-field><br/>
+    <md-outlined-text-field type="text" id="avid" placeholder="av号(AV...)"></md-outlined-text-field><br/>
+    <md-filled-button id="next">下一步</md-filled-button>
+
+</label>
+<hr>
+<label style="display:none;">
+    <a href="3.html?href=batch1.html" >实验性功能！ -- 批量转载<br/>警示:可能导致服务器或客户端崩溃!!</a>
+</label>
+<hr>
+版本: v1 <br>
+<a href="ottohub://about" target="_blank">源代码</a>
+<script>
+    $("#next").click(function(){
+        var bvid = $("#bvid").val();
+        var avid = $("#avid").val();
+        var type="";
+        var vid="";
+        if (avid!=""){
+            console.log("av");
+            type="av";
+            vid=avid;
+        } else if(bvid!=""){
+            console.log("bv");
+            type="bv";
+            vid=bvid;
+        }else{
+            Swal.fire({
+                title: "ERROR",
+                text: "二选一",
+                icon: "error"
+            });
+            return;
+        }
+        if(vid.toLowerCase().startsWith("av")||vid.toLowerCase().startsWith("bv")){
+            vid=vid.substring(2);
+        }
+        window.location.href=`2.html?type=${type}&vid=${vid}`;
+    });
+</script>
+</body>
+</html>

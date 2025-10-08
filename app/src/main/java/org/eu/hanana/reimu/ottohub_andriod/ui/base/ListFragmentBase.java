@@ -76,7 +76,7 @@ public abstract class ListFragmentBase<T extends CardAdapterBase<E,N>,N extends 
                     break;
                 case ERROR:
                     adapter.hideLoading();
-                    showError(resource.message);
+                    showError(resource.msg);
                     break;
             }
         });
@@ -91,51 +91,13 @@ public abstract class ListFragmentBase<T extends CardAdapterBase<E,N>,N extends 
             adapter.notifyItemRangeInserted(oldSize, data.size());
         }
     }
-    private void showError(String message) {
+    private void showError(Throwable message) {
         error=true;
         // 检查 Fragment 是否已附加到 Activity
         if (getContext() == null || isDetached()) return;
-        if (true){
-            AlertUtil.showError(getContext(),message);
-            return;
-        }
-        // 加载自定义布局
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_error, null);
+        AlertUtil.showErrorWithThrowable(getContext(), message);
+        return;
 
-        // 绑定控件
-        TextView tvMessage = view.findViewById(R.id.tv_message);
-        Button btnOk = view.findViewById(R.id.btn_ok);
-        tvMessage.setText(message);
-
-        // 构建对话框
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setView(view);
-        builder.setCancelable(false); // 禁止点击外部关闭
-
-        AlertDialog dialog = builder.create();
-
-        // 设置窗口参数（可选）
-        Window window = dialog.getWindow();
-        if (window != null) {
-            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        }
-
-        // 确认按钮点击
-        btnOk.setOnClickListener(v -> dialog.dismiss());
-
-        try {
-            dialog.show();
-            // 此时设置布局
-            if (window != null) {
-                window.setLayout(
-                        (int)(getContext().getResources().getDisplayMetrics().widthPixels * 0.8),
-                        WindowManager.LayoutParams.WRAP_CONTENT
-                );
-            }
-        } catch (WindowManager.BadTokenException e) {
-            // 捕获非法窗口异常（防御性编程）
-            Log.e("showError", "尝试显示 Dialog 时发生错误: " + e.getMessage());
-        }
     }
     public abstract int getSpanCount();
     public abstract RecyclerView findRecyclerView(View view);

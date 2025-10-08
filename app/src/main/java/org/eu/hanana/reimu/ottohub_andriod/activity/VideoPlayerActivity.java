@@ -93,6 +93,7 @@ import com.kuaishou.akdanmaku.ui.DanmakuView;
 import org.eu.hanana.reimu.lib.ottohub.api.ApiResultBase;
 import org.eu.hanana.reimu.lib.ottohub.api.common.EmptyResult;
 import org.eu.hanana.reimu.lib.ottohub.api.danmaku.DanmakuListResult;
+import org.eu.hanana.reimu.lib.ottohub.api.danmaku.DanmakuResult;
 import org.eu.hanana.reimu.lib.ottohub.api.video.VideoResult;
 import org.eu.hanana.reimu.ottohub_andriod.MyAppApplicationLike;
 import org.eu.hanana.reimu.ottohub_andriod.R;
@@ -773,6 +774,14 @@ public class VideoPlayerActivity extends BaseActivity {
     }
 
     private void loadDanmaku() {
+        DanmakuResult danmakuResultEmpty = new DanmakuResult();
+        danmakuResultEmpty.text="";
+        danmakuResultEmpty.danmaku_id=Integer.MAX_VALUE;
+        danmakuResultEmpty.mode="top";
+        danmakuResultEmpty.color="#000000";
+        danmakuResultEmpty.font_size="0px";
+        danmakuResultEmpty.time=0;
+        danmakuData.data.add(danmakuResultEmpty);
         for (int i = 0; i < danmakuData.data.size(); i++) {
             var data = danmakuData.data.get(i);
             var mode = 0;

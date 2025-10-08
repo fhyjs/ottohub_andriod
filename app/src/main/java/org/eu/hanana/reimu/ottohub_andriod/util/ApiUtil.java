@@ -3,7 +3,11 @@ package org.eu.hanana.reimu.ottohub_andriod.util;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
@@ -25,13 +29,21 @@ import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.data.api.DataSerializerEntity;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.security.SecureRandom;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -180,6 +192,104 @@ public class ApiUtil {
                 }
             }
         }
+    }
+    public static String downloadFileToBase64(String fileUrl) throws Exception {
+        // 下载文件到字节数组
+        byte[] fileBytes = downloadFileAsBytes(fileUrl);
+
+        // 转换为 Base64
+        String base64 = Base64.getEncoder().encodeToString(fileBytes);
+
+        // 获取 MIME 类型
+        String mimeType = getMimeType(fileUrl);
+
+        // 生成 data URL
+        return "data:" + mimeType + ";base64," + base64;
+    }
+    public static String getMimeType(String uri) {
+        if (uri.contains("?")) {
+            uri = uri.substring(0, uri.indexOf('?'));
+        }
+        String finalUri = uri;
+        String extension = (String) Optional.ofNullable(uri).filter((u) -> {
+            return u.contains(".");
+        }).map((u) -> {
+            return u.substring(finalUri.lastIndexOf(46) + 1);
+        }).orElse("");
+
+        try {
+            String type = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                // Android 8.0 及以上使用标准库
+                type = Files.probeContentType(Paths.get("dummy." + extension));
+            } else {
+                // 旧版本使用 MIMETypeMap 兼容方案
+                type = android.webkit.MimeTypeMap.getSingleton()
+                        .getMimeTypeFromExtension(extension.toLowerCase(Locale.ROOT));
+            }
+
+            // 如果 MIMETypeMap 返回 null，可再兜底一下
+            if (type == null) {
+                type = switch (extension.toLowerCase(Locale.ROOT)) {
+                    case "jpg", "jpeg" -> "image/jpeg";
+                    case "png" -> "image/png";
+                    case "gif" -> "image/gif";
+                    case "mp4" -> "video/mp4";
+                    case "webm" -> "video/webm";
+                    case "mp3" -> "audio/mpeg";
+                    case "json" -> "application/json";
+                    case "txt" -> "text/plain";
+                    case "html" -> "text/html";
+                    default -> "application/octet-stream";
+                };
+            }
+            if (type.startsWith("text/")) {
+                type = type + "; charset=UTF-8";
+            }
+
+            return type;
+        } catch (IOException var3) {
+            IOException e = var3;
+            return "application/octet-stream";
+        }
+    }
+    private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    private static final SecureRandom RANDOM = new SecureRandom();
+    public static String generateRandomString(int length) {
+        StringBuilder sb = new StringBuilder(length);
+
+        for(int i = 0; i < length; ++i) {
+            sb.append("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".charAt(RANDOM.nextInt("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".length())));
+        }
+
+        return sb.toString();
+    }
+    // 下载文件到字节数组
+    public static byte[] downloadFileAsBytes(String fileUrl) throws Exception {
+        URL url = new URL(fileUrl);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        connection.setConnectTimeout(5000);
+        connection.setReadTimeout(5000);
+
+        try (InputStream inputStream = connection.getInputStream();
+             ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+            return outputStream.toByteArray();
+        }
+    }
+    public static boolean isNetworkConnected(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm != null) {
+            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+            return activeNetwork != null && activeNetwork.isConnected();
+        }
+        return false;
     }
     public static void fetchMsgCount() {
         if (!isLogin()) return;

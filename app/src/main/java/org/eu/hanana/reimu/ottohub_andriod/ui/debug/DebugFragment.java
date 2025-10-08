@@ -19,6 +19,7 @@ import com.tencent.tinker.lib.tinker.Tinker;
 import com.tencent.tinker.lib.tinker.TinkerInstaller;
 
 import org.eu.hanana.reimu.ottohub_andriod.R;
+import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.TinkerManager;
 
 import java.io.File;
@@ -106,6 +107,13 @@ public class DebugFragment extends Fragment {
         Toast.makeText(getContext(), "TinkerPatchTest", Toast.LENGTH_SHORT).show();
         view.findViewById(R.id.btn_crash).setOnClickListener(v -> {
             throw new RuntimeException("Crash Test");
+        });
+        view.findViewById(R.id.btn_throw).setOnClickListener(v -> {
+            Thread thread = new Thread(() -> {
+                throw new RuntimeException("Test Thread Crashed!");
+            });
+            thread.setUncaughtExceptionHandler(new AlertUtil.ThreadAlert(getActivity()));
+            thread.start();
         });
         view.findViewById(R.id.btn_load_patch).setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);

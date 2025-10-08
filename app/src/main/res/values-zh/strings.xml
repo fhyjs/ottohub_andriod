@@ -155,6 +155,7 @@
     <string name="under_review">审核中</string>
     <string name="appeal">申诉</string>
     <string name="appeal_content">稿件被退回了!\n提交复审请求?</string>
+    <string name="share_content">[%s] - OTTOHUB 安卓版 %s</string>
     <string name="delete_msg">你会永久失去它(真的很久!!)</string>
     <string name="theme_color">主题色</string>
     <string name="theme_default">OH蓝</string>
@@ -203,4 +204,17 @@
     <string name="collection">合集</string>
     <string name="collection_mgr">合集管理</string>
     <string name="none">无</string>
+    <string name="show_details">查看详情</string>
+    <string name="retry">重试</string>
+    <string name="unknown_error">未知错误</string>
+    <string name="stack_track">堆栈跟踪:</string>
+    <string name="network_error">网络错误</string>
+    <string name="no_network_avable">网络不可用</string>
+    <string name="operation_error">操作错误</string>
+    <string name="pls_check">请检查您的操作是否正确</string>
+    <string name="pls_check_network">请检查您的网络连接</string>
+    <string name="server_error_msg">服务器响应了错误的JSON,可能服务器发生了故障！</string>
+    <string name="toolbox">工具箱</string>
+    <string name="server_error">服务器错误</string>
+    <string name="forward_tool">转载工具</string>
 </resources>

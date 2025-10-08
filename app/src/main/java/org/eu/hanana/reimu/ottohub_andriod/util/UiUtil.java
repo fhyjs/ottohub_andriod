@@ -1,5 +1,8 @@
 package org.eu.hanana.reimu.ottohub_andriod.util;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -47,6 +50,61 @@ import java.util.List;
 import java.util.Locale;
 
 public class UiUtil {
+
+    /**
+     * 动画显示或隐藏 View
+     * @param view 目标 View
+     * @param show true 显示，false 隐藏
+     * @param duration 动画时长 (ms)
+     */
+    public static void animateView(final View view, boolean show, int duration) {
+        if (show) {
+            // 测量目标高度
+            view.measure(View.MeasureSpec.makeMeasureSpec(view.getWidth(), View.MeasureSpec.EXACTLY),
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+            final int targetHeight = view.getMeasuredHeight();
+
+            // 初始状态
+            view.getLayoutParams().height = 0;
+            view.setAlpha(0f);
+            view.setVisibility(View.VISIBLE);
+
+            // 高度 + alpha 动画
+            ValueAnimator animator = ValueAnimator.ofInt(0, targetHeight);
+            animator.addUpdateListener(animation -> {
+                view.getLayoutParams().height = (int) animation.getAnimatedValue();
+                view.requestLayout();
+            });
+            animator.setDuration(duration).start();
+
+            view.animate().alpha(1f).setDuration(duration).start();
+
+        } else {
+            final int initialHeight = view.getHeight();
+
+            ValueAnimator animator = ValueAnimator.ofInt(initialHeight, 0);
+            animator.addUpdateListener(animation -> {
+                view.getLayoutParams().height = (int) animation.getAnimatedValue();
+                view.requestLayout();
+            });
+            animator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    view.setVisibility(View.GONE);
+                }
+            });
+            animator.setDuration(duration).start();
+
+            view.animate().alpha(0f).setDuration(duration).start();
+        }
+    }
+
+    /**
+     * 默认动画时长 300ms
+     */
+    public static void animateView(final View view, boolean show) {
+        animateView(view, show, 300);
+    }
     public static void copyToClipboard(Context context, String text) {
         ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
         if (clipboard != null) {

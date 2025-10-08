@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="../assets/jquery-3.7.1.min.js"></script>
+    <script src="../assets/sweetalert2.js"></script>
+</head>
+<body>
+    <h1>转载</h1>
+    <div id="main">
+        <h2>视频信息</h2>
+        <hr>
+        <label for="title">标题:</label><input type="text" id="title"><span id="title_length"></span><br>
+        <label for="desc">简介:<span id="intro_length"></span></label><br><textarea rows="12" cols="70" id="desc">LOADING...</textarea><br>
+        清晰度:
+        <select id="accept_quality">
+        </select>(登录更高清)<br>
+        封面:<input type="file" id="sel_pic" accept="image/*"><br><img id="pic" alt="pic" style="width: 26vw; height: 15vw overflow-clip-margin: content-box; overflow: clip;"><br>
+        标签: <br>
+        <div id="tags"></div>
+        <label for="add_tag">添加:</label><input type="text" id="add_tag"><button id="addtag">+</button><br>
+        版权:
+        <label><input type="radio" name="right" checked value="1"> 转载</label>
+        <label><input type="radio" name="right" value="2"> 自制</label>
+        <label><input type="radio" name="right" value="3"> 其他</label><br>
+        分区:
+        <span id="catalogs">
+        </span>
+        <hr>
+        <button id="next">下一步</button>
+        <hr/>
+        <a href="https://m.ottohub.cn/b/8263" target="_blank">Oh shit! 我需要帮助!</a>
+    </div>
+    <div id="progress" style="display: none;">
+        <h2>运行日志</h2>
+        <h3>状态:<span id="status"></span>,进度:<span id="prg"></span></h3>
+        <button id="back">返回上一步</button>
+        <hr>
+        <div id="log"></div>
+    </div>
+    <script>
+        function getQueryParam(key) {
+            return new URLSearchParams(window.location.search).get(key);
+        }
+        function removeAtIndex(arr, index) {
+            if (index >= 0 && index < arr.length) {
+                arr.splice(index, 1);
+            }
+            return arr;
+        }
+        var cid = getQueryParam("cid");
+        var qn = getQueryParam("qn");
+        if(qn==null){
+            qn=127;
+        }
+        var vdata = $.parseJSON(ft.getVidInfo("av",getQueryParam("aid")));
+        var tdata = $.parseJSON(ft.getTagInfo(getQueryParam("aid")));
+        var udata = $.parseJSON(ft.getUrlInfo("av",cid,getQueryParam("aid")));
+        var cdata = $.parseJSON(`{"title_length":44,"intro_length":222,"video_catalogs":{"怀旧":6.0,"鬼畜":1.0,"人力VOCALOID":3.0,"其他":0.0,"剧场":4.0,"游戏":5.0,"音乐":7.0},"max_batch_count":2,"max_batch_task_count":5,"max_batch_global":100}`);
+        var pdata = null;
+        var tags = [];
+        udata.data.accept_quality.forEach(function(v,i){
+            if(udata.sizes[v]!=-1){
+                $("#accept_quality").append(`<option value="${v}">${udata.data.accept_description[i]}(~${(udata.sizes[v]/1048576).toFixed(2) }MB)</option>`);
+            }
+        });
+        tdata.data.forEach(function(v,i){
+            tags[i]=v.tag_name;
+        });
+        vdata.data.pages.forEach(function(v,i){
+            if(v.cid==cid) {
+                pdata=v;
+            }
+        });
+        for (const key in cdata.video_catalogs) {
+            if (cdata.video_catalogs.hasOwnProperty(key)) { // 过滤掉原型链上的属性
+                let val = cdata.video_catalogs[key];
+                $("#catalogs").append(`<label><input type="radio" name="tp" value="${val}"> ${key}</label>`);
+            }
+        }
+        console.log(pdata);
+        $(document).ready(function(){
+            if (pdata==null){
+                Swal.fire({
+                    title: 'error',
+                    text: 'cid mismatch!',
+                    icon: 'error'
+                });
+                return;
+            }
+            if(vdata.data.pages.length<=1){
+                $("#title").val(vdata.data.title);
+            }else{
+                $("#title").val(pdata.part);
+            }
+            $("#title").on("input", function() {
+                $("#title_length").html($("#title").val().length+"/"+cdata.title_length);
+            });
+            $("#title_length").html($("#title").val().length+"/"+cdata.title_length);
+            $("#desc").val(`转载bilbili: AV${vdata.data.aid}
+up主: ${vdata.data.owner.name}
+安卓应用(https://m.ottohub.cn/b/25187)
+原视频简介:
+${vdata.data.desc}
+`);
+            $("#desc").on("input", function() {
+                $("#intro_length").html($("#desc").val().length+"/"+cdata.intro_length);
+            });
+            $("#intro_length").html($("#desc").val().length+"/"+cdata.intro_length);
+            $("#pic").attr("src",vdata.data.pic);
+            updateTags();
+            $("#accept_quality").on("change", function() {
+                qn = $(this).val();
+                const selectedText = $(this).find("option:selected").text();
+                console.log(`选中值: ${qn}, 文本: ${selectedText}`);
+            });
+        });
+        document.getElementById("sel_pic").addEventListener("change", function(event) {
+            let file = event.target.files[0];
+            if (file) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById("pic").src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        $("#addtag").click(function(){
+            var tag = $("#add_tag").val();
+            if(tag=='') return;
+            tags.push(tag);
+            updateTags();
+        });
+        function removeTag(e){
+            e=$(e);
+            tags=removeAtIndex(tags,e.attr("tagid"));
+            updateTags();
+        };
+        function updateTags(){
+            $("#tags").html("");
+            tags.forEach(function(v,i){
+                $("#tags").append(`<span class="tag_item" tagid="${i}">${v}</span><button class="tag_remove" onclick="removeTag(this);" tagid="${i}">X</button><br/>`);
+            });
+        }
+        $("#back").click(function(){
+            $("#main").show();
+            $("#progress").hide();
+        });
+        $("#next").click(function(){
+            $("#main").hide();
+            $("#progress").show();
+            $("#back").hide();
+            $("#log").html('');
+
+            const img = document.getElementById("pic");
+                    const canvas = document.createElement("canvas");
+                    const ctx = canvas.getContext("2d");
+
+                    // 设置 Canvas 大小与图片相同
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+
+                    // 绘制图片到 Canvas
+                    ctx.drawImage(img, 0, 0);
+
+                    // 转换为 Base64
+                    const base64String = canvas.toDataURL("image/jpeg"); // 可换成 "image/jpeg"
+                    var data1={
+                        aid: getQueryParam("aid"),
+                        cid: getQueryParam("cid"),
+                        pic: base64String,
+                        qn: qn,
+                        title: $("#title").val(),
+                        desc: $("#desc").val(),
+                        right: $("input[name='right']:checked").val(),
+                        type: $("input[name='tp']:checked").val(),
+                        tags: tags,
+                    };
+                    ft.start(JSON.stringify({op:"start",data:data1}));
+        });
+        // 监听消息接收
+            onmessage = function (data) {
+                data=$.parseJSON(data);
+                console.log("收到消息:", data);
+                if (data.op=='status'){
+                    $("#status").html(data.data);
+                }else if (data.op=='progress'){
+                    $("#progress #prg").html(data.data);
+                }else if (data.op=='msg'){
+                    $("#log").append(`<span>${data.data}</span><br/>`);
+                }else if (data.op=='start_pre'){
+
+                }else if (data.op=='error'){
+                    Swal.fire({
+                        title: 'error',
+                        text: decodeURIComponent(escape(atob(data.data))),
+                        icon: 'error'
+                    });
+                }else if (data.op=='success'){
+                    Swal.fire({
+                        title: '操作完成',
+                        text: data.data,
+                        icon: 'success'
+                    }).then((result) => {
+                        document.location.href="ok.html";
+                    });
+                }
+            };
+
+            // 监听错误
+            onerror = function (error) {
+                console.error("WebSocket 发生错误:", error);
+            };
+
+            // 监听关闭
+            onclose = function (event) {
+                console.log("WebSocket 连接关闭:", event);
+                $("#back").show();
+            };
+    </script>
+</body>
+</html>

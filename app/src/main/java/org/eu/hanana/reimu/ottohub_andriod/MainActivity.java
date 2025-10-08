@@ -41,6 +41,7 @@ import org.eu.hanana.reimu.ottohub_andriod.activity.FragActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.LauncherActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.LoginActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.MessageActivity;
+import org.eu.hanana.reimu.ottohub_andriod.activity.ToolboxActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.UploadBlogActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.UploadVideoActivity;
 import org.eu.hanana.reimu.ottohub_andriod.service.UpdateMessageCountBackgroundService;
@@ -300,6 +301,8 @@ public class MainActivity extends BaseActivity {
             bundle.putInt(CommentFragmentBase.ARG_ID,5311);
             bundle.putString(CommentFragmentBase.ARG_TYPE,CommentFragmentBase.TYPE_BLOG);
             startActivity(FragActivity.create(this, CommentFragmentBase.class,bundle,getString(R.string.chat_board)));
+        } else if (item.getItemId()==R.id.action_toolbox){
+            startActivity(new Intent(this, ToolboxActivity.class));
         }
     }
 

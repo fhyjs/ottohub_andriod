@@ -75,6 +75,8 @@ public class OttoHubDeepLinkActivity extends AppCompatActivity {
                     target.putExtras(bundle);
 
                 }
+            } else if ("about".equals(uri.getHost())) {
+                target = new Intent(this, AboutActivity.class);
             }
             if (target!=null) {
                 startActivity(target);

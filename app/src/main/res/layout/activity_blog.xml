@@ -19,62 +19,46 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".activity.BlogActivity">
-
-
         <LinearLayout
             android:orientation="vertical"
-            android:nestedScrollingEnabled="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
             <LinearLayout
-                android:id="@+id/linearLayout"
+                android:id="@+id/clAuthorInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                android:paddingStart="5dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/clAuthorInfo"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="5dp"
-                    android:paddingTop="5dp"
-                    android:paddingBottom="5dp">
+                <ImageView
 
-                    <com.google.android.material.imageview.ShapeableImageView
-
-                        android:id="@+id/ivAvatar"
-                        android:layout_width="55dp"
-                        android:layout_height="55dp"
-                        android:src="@drawable/ic_launcher_background"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:shapeAppearanceOverlay="@style/CircleImageViewStyle" />
-
-                    <TextView
-                        android:id="@+id/tvAuthor"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:tag="themed"
-                        android:text="@string/app_name"
-                        android:textColor="@color/black"
-                        android:textSize="25sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/ivAvatar" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <org.eu.hanana.reimu.ottohub_andriod.util.CustomWebView
-                    android:id="@+id/wvContent"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:id="@+id/ivAvatar"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    android:src="@drawable/ic_launcher_background"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:shapeAppearanceOverlay="@style/CircleImageViewStyle" />
 
-                </org.eu.hanana.reimu.ottohub_andriod.util.CustomWebView>
+                <TextView
+                    android:id="@+id/tvAuthor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:tag="themed"
+                    android:text="@string/app_name"
+                    android:textColor="@color/black"
+                    android:textSize="25sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_gravity="bottom"
+                    app:layout_constraintStart_toEndOf="@+id/ivAvatar" />
             </LinearLayout>
-
+            <org.eu.hanana.reimu.ottohub_andriod.util.CustomWebView
+                android:id="@+id/wvContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
             <include
                 android:id="@+id/ll_actionBar"
                 layout="@layout/action_bar_card"

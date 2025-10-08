@@ -53,11 +53,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Ottohub_andriod"
         tools:targetApi="36">
+        <activity
+            android:name=".activity.tool.ForwardToolActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.ToolboxActivity"
+            android:exported="false" />
+
         <service
-            android:process=":remote"
             android:name=".service.CrashService"
+            android:exported="false"
             android:foregroundServiceType="specialUse"
-            android:exported="false"/>
+            android:process=":remote" />
+
         <activity
             android:name=".activity.CrashActivity"
             android:exported="false" />

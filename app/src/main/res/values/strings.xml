@@ -169,7 +169,7 @@
     <string name="under_review">Under review</string>
     <string name="appeal">Appeal</string>
     <string name="appeal_content">Contribution has been reject! \nApply for review?</string>
-    <string name="share_content" translatable="false">[%s] - OTTOHUB\n%s</string>
+    <string name="share_content">[%s] - OTTOHUB android \n%s</string>
     <string name="delete_msg">You\'ll lose it forever!(It\'s really been a long time)</string>
     <string name="theme_color">Theme Color</string>
     <string name="theme_default">Default</string>
@@ -218,4 +218,17 @@
     <string name="collection">Collection</string>
     <string name="collection_mgr">Manage Collection</string>
     <string name="none">None</string>
+    <string name="show_details">show details</string>
+    <string name="retry">Retry</string>
+    <string name="unknown_error">Unknown Error</string>
+    <string name="stack_track">Starck Track</string>
+    <string name="network_error">Network Error</string>
+    <string name="no_network_avable">No Available Network</string>
+    <string name="operation_error">Operation Error</string>
+    <string name="pls_check">Please check whether your operation is correct.</string>
+    <string name="pls_check_network">Please check your network connection.</string>
+    <string name="server_error_msg">Server sent json with wrong format which was becaues the remote server was down!</string>
+    <string name="toolbox">Toolbox</string>
+    <string name="server_error">server Error</string>
+    <string name="forward_tool">Forward tool</string>
 </resources>

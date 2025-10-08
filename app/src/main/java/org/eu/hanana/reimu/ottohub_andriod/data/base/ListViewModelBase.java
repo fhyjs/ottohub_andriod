@@ -12,6 +12,7 @@ import org.eu.hanana.reimu.ottohub_andriod.MyApp;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.ListFragmentBase;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.concurrent.Executors;
 
@@ -23,23 +24,25 @@ public abstract class ListViewModelBase<E> extends ViewModel {
         public final Status status;
         public final T data;
         public final String message;
+        public final Throwable msg;
 
-        private Resource(Status status, T data, String message) {
+        private Resource(Status status, T data, String message, Throwable msg) {
             this.status = status;
             this.data = data;
             this.message = message;
+            this.msg=msg;
         }
 
         public static <T> Resource<T> loading() {
-            return new Resource<>(Status.LOADING, null, null);
+            return new Resource<>(Status.LOADING, null, null, null);
         }
 
         public static <T> Resource<T> success(T data) {
-            return new Resource<>(Status.SUCCESS, data, null);
+            return new Resource<>(Status.SUCCESS, data, null, null);
         }
 
-        public static <T> Resource<T> error(String msg) {
-            return new Resource<>(Status.ERROR, null, msg);
+        public static <T> Resource<T> error(Throwable msg) {
+            return new Resource<>(Status.ERROR, null, msg.toString(),msg);
         }
 
         public enum Status {
@@ -50,7 +53,7 @@ public abstract class ListViewModelBase<E> extends ViewModel {
     public void loadVideos(ListFragmentBase videoListFragment) {
         if (videoListFragment.error) return;
         if (!isNetworkAvailable()) {
-            videos.postValue(Resource.error("网络不可用"));
+            videos.postValue(Resource.error(new UnknownHostException("网络不可用")));
             return;
         }
 
@@ -59,10 +62,8 @@ public abstract class ListViewModelBase<E> extends ViewModel {
             try {
                 List<E> data = fetchFromNetwork(videoListFragment);
                 videos.postValue(Resource.success(data));
-            } catch (IOException e) {
-                videos.postValue(Resource.error("网络请求失败：" + e.getMessage()));
             } catch (Exception e) {
-                videos.postValue(Resource.error("发生未知错误:"+e));
+                videos.postValue(Resource.error(e));
             }
         });
     }
