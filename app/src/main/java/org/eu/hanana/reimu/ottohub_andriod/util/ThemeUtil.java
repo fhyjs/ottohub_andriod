@@ -125,6 +125,7 @@ public class ThemeUtil {
                 var item = ((Toolbar) view);
                 item.getOverflowIcon().setTint(userColor.getColorOnPrimary());
                 item.setTitleTextColor(userColor.getColorOnPrimary());
+                item.setSubtitleTextColor(userColor.getColorOnPrimarySecond());
                 if (item.getNavigationIcon() != null) {
                     item.getNavigationIcon().setTint(userColor.getColorOnPrimary());
                 }

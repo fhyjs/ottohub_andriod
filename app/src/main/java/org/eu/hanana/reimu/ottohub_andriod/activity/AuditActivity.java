@@ -59,6 +59,8 @@ public class AuditActivity extends BaseActivity {
                     frag = AuditFragment.newInstance(AuditFragment.TYPE_BLOG);
                 }else if (position==4){
                     frag = AuditFragment.newInstance(AuditFragment.TYPE_COMMENT);
+                }else if (position==5){
+                    frag = AuditFragment.newInstance(AuditFragment.TYPE_DANMAKU);
                 }else
                     frag =  new Fragment();
                 fragmentMap.put(position, frag);
@@ -67,7 +69,7 @@ public class AuditActivity extends BaseActivity {
 
             @Override
             public int getItemCount() {
-                return 5;
+                return tabTitles.length;
             }
         });
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {

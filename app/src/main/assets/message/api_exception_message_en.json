@@ -3,5 +3,10 @@
   "not_reviewer": "You are not reviewer",
   "system_error": "system error",
   "error_uid": "User not found!",
+  "error_email": "Invalid Email!",
+  "email_unexist": "Email unexist!",
+  "error_pw": "Invalid Password!",
+  "too_short_message": "Message too short!",
+  "error_verification_code": "Invalid verification code!",
   "content_too_shore": "Where's the text???"
 }

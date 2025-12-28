@@ -1,22 +1,30 @@
 package org.eu.hanana.reimu.ottohub_andriod.ui.user;
 
 import static android.content.Context.MODE_PRIVATE;
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.TextureView;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.gson.Gson;
 
 import org.eu.hanana.reimu.ottohub_andriod.MyApp;
 import org.eu.hanana.reimu.ottohub_andriod.R;
+import org.eu.hanana.reimu.ottohub_andriod.activity.FragActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.ProfileActivity;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.CardAdapterBase;
+import org.eu.hanana.reimu.ottohub_andriod.ui.message.ChatFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.SharedPreferencesKeys;
@@ -82,6 +90,8 @@ public class UserListCardAdapter extends CardAdapterBase<UserCard, UserCardViewH
             }
             return false;
         });
+        TextView badge = holder.itemView.findViewById(R.id.badge_text_view);
+        badge.setVisibility(GONE);
         if (userListFragment.type.equals(UserListFragment.TYPE_SWITCH_ACCOUNT)){
            if (ApiUtil.isLogin()){
                if (Integer.parseInt(ApiUtil.getAppApi().getLoginResult().uid)==object.uid) {
@@ -91,6 +101,14 @@ public class UserListCardAdapter extends CardAdapterBase<UserCard, UserCardViewH
                    holder.itemView.setBackgroundTintList(null);
                }
            }
+        }else if (userListFragment.type.equals(UserListFragment.TYPE_CHAT_GENERAL)){
+            badge.setText(String.valueOf(object.result.new_message_num));
+            badge.setVisibility(object.result.new_message_num!=0?VISIBLE:GONE);
+            holder.itemView.setOnClickListener(v -> {
+                var arg = new Bundle();
+                arg.putString("data",new Gson().toJson(object.getResult()));
+                userListFragment.startActivity(FragActivity.create(userListFragment.requireContext(), ChatFragment.class,arg,userListFragment.getString(R.string.chat_with,object.username)));
+            });
         }
     }
 }

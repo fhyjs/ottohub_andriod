@@ -4,6 +4,7 @@ package org.eu.hanana.reimu.ottohub_andriod.ui.audit;
 import static org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity.TYPE_AUDIT;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.audit.AuditFragment.TYPE_AVATAR;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.audit.AuditFragment.TYPE_BLOG;
+import static org.eu.hanana.reimu.ottohub_andriod.ui.audit.AuditFragment.TYPE_COMMENT;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.audit.AuditFragment.TYPE_COVER;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.audit.AuditFragment.TYPE_VIDEO;
 
@@ -19,8 +20,10 @@ import androidx.media3.common.util.UnstableApi;
 import com.google.gson.Gson;
 
 import org.eu.hanana.reimu.lib.ottohub.api.blog.BlogResult;
+import org.eu.hanana.reimu.lib.ottohub.api.comment.CommentResult;
 import org.eu.hanana.reimu.lib.ottohub.api.user.UserResult;
 import org.eu.hanana.reimu.lib.ottohub.api.video.VideoResult;
+import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.ImageAuditActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.VideoPlayerActivity;
@@ -79,6 +82,18 @@ public class AuditAdapter extends TextCardAdapter {
                     ApiUtil.getAppApi().getProfileApi().approve_cover(id);
                 }else {
                     ApiUtil.getAppApi().getProfileApi().reject_cover(id);
+                }
+            }else if (type.equals(TYPE_COMMENT+"b")){
+                if (pass){
+                    ApiUtil.getAppApi().getCommentApi().approve_blog_comment(id);
+                }else {
+                    ApiUtil.getAppApi().getCommentApi().reject_blog_comment(id);
+                }
+            }else if (type.equals(TYPE_COMMENT+"v")){
+                if (pass){
+                    ApiUtil.getAppApi().getCommentApi().approve_video_comment(id);
+                }else {
+                    ApiUtil.getAppApi().getCommentApi().reject_video_comment(id);
                 }
             }
             AuditAdapter.this.frag.getActivity().runOnUiThread(frag::refresh);
@@ -139,6 +154,15 @@ public class AuditAdapter extends TextCardAdapter {
                 bundle.putString(ImageAuditActivity.KEY_TYPE,TYPE_COVER);
                 intent.putExtras(bundle);
                 launcher.launch(intent);
+            });
+        }else if (getFrag().type.equals(TYPE_COMMENT)){
+            var extra = ((CommentResult) object.extra);
+            holder.itemView.setOnClickListener(v -> {
+                AlertUtil.showYesNo(getFrag().getActivity(), getFrag().getString(R.string.audit_comment_confirm),extra.content, (d,b) -> {
+                    performAction(true,extra.getCid(),TYPE_COMMENT+(extra.bcid>extra.vcid?"b":"v"));
+                },(d,b)->{
+                    performAction(false,extra.getCid(),TYPE_COMMENT+(extra.bcid>extra.vcid?"b":"v"));
+                }).show();
             });
         }
     }

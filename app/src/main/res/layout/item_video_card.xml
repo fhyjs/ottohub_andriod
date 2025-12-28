@@ -120,32 +120,50 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:visibility="gone">
+                <com.google.android.material.button.MaterialButton
+                    android:text="@string/expand"
+                    android:id="@+id/btn_expand"
+                    android:layout_width="match_parent"
+                    android:tag="themed"
+                    android:layout_height="wrap_content"/>
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:id="@+id/group_manage_btns"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <com.google.android.material.button.MaterialButton
 
-                <com.google.android.material.button.MaterialButton
-                    android:tag="themed"
-                    android:id="@+id/btn_audit_status"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                        android:tag="themed"
+                        android:id="@+id/btn_audit_status"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:tag="themed"
-                    android:id="@+id/btn_share"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/share" />
+                    <com.google.android.material.button.MaterialButton
+                        android:tag="themed"
+                        android:id="@+id/btn_share"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/share" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:tag="themed"
-                    android:id="@+id/btn_delete"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/delete" />
-                <com.google.android.material.button.MaterialButton
-                    android:tag="themed"
-                    android:id="@+id/btn_collection"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/collection_mgr" />
+                    <com.google.android.material.button.MaterialButton
+                        android:tag="themed"
+                        android:id="@+id/btn_delete"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/delete" />
+                    <com.google.android.material.button.MaterialButton
+                        android:tag="themed"
+                        android:id="@+id/btn_collection"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/collection_mgr" />
+                    <com.google.android.material.button.MaterialButton
+                        android:tag="themed"
+                        android:id="@+id/btn_reedit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/re_edit" />
+                </LinearLayout>
             </LinearLayout>
 
         </LinearLayout>

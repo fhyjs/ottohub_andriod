@@ -13,14 +13,36 @@
         android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/ivAvatar"
+        <FrameLayout
             android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:scaleType="centerCrop"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_launcher_background"
-            app:shapeAppearanceOverlay="@style/CircleImageViewStyle" />
+            android:layout_height="50dp">
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/ivAvatar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_launcher_background"
+                app:shapeAppearanceOverlay="@style/CircleImageViewStyle" />
+            <TextView
+                android:id="@+id/badge_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="18dp"
+                android:layout_gravity="top|end"
+                android:layout_marginTop="7dp"
+                android:layout_marginEnd="10dp"
+                android:translationX="10dp"
+                android:translationY="-7dp"
+                android:background="@drawable/badge_background"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                android:minWidth="18dp"
+                android:text="2"
+                android:gravity="center"
+                android:visibility="visible" />
+
+        </FrameLayout>
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

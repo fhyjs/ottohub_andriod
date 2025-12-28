@@ -11,6 +11,7 @@ import com.google.android.material.tabs.TabLayout;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.ui.message.MessageListFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.message.SendMessageFragment;
+import org.eu.hanana.reimu.ottohub_andriod.ui.user.UserListFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 
@@ -47,17 +48,19 @@ public class MessageActivity extends BaseActivity {
     protected void initUi() {
         setTitle(getString(R.string.message)+" "+ ApiUtil.getNewMegCount()+"*");
         msgType.setEnabled(true);
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, MessageListFragment.newInstance(MessageListFragment.TYPE_UNREAD)).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, UserListFragment.newInstance(UserListFragment.TYPE_CHAT_GENERAL,"")).commit();
         msgType.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 if (tab.getPosition()==0){
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, MessageListFragment.newInstance(MessageListFragment.TYPE_UNREAD)).commit();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, UserListFragment.newInstance(UserListFragment.TYPE_CHAT_GENERAL,"")).commit();
                 }else if (tab.getPosition()==1){
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, MessageListFragment.newInstance(MessageListFragment.TYPE_READ)).commit();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, MessageListFragment.newInstance(MessageListFragment.TYPE_UNREAD)).commit();
                 }else if (tab.getPosition()==2){
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, MessageListFragment.newInstance(MessageListFragment.TYPE_SENT)).commit();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, MessageListFragment.newInstance(MessageListFragment.TYPE_READ)).commit();
                 }else if (tab.getPosition()==3){
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, MessageListFragment.newInstance(MessageListFragment.TYPE_SENT)).commit();
+                }else if (tab.getPosition()==4){
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, SendMessageFragment.newInstance()).commit();
                 }
             }

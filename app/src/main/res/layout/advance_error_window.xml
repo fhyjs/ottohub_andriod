@@ -96,14 +96,13 @@
             android:orientation="horizontal">
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_confirm"
-                app:cornerRadius="10dp"
-                android:text="@string/conform"
-                android:layout_weight="1"
+                style="?attr/materialIconButtonStyle"
                 android:layout_width="0dp"
-                android:backgroundTint="@android:color/transparent"
-                android:textColor="@color/black"
-                android:layout_marginEnd="10dp"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/conform"
+                app:cornerRadius="10dp"
+                android:layout_marginEnd="10dp" />
             <com.google.android.material.button.MaterialButton
                 app:cornerRadius="10dp"
                 android:id="@+id/btn_retry"

@@ -80,9 +80,9 @@ public class BlogViewModel extends ViewModel {
     private List<BlogResult> fetchFromNetwork(BlogListFragment blogListFragment) throws IOException {
         BlogListResult listResult = null;
         if (blogListFragment.uid==null&&blogListFragment.data==null&&blogListFragment.action==null) {
-            if (blogListFragment.selectedButton.getTag(R.id.btn_add_tag).equals(blogListFragment.buttonLabels[0])) {
+            if (blogListFragment.selectedButton.getTag(R.id.btn_add_tag).equals(blogListFragment.buttonLabels[1])) {
                 listResult = MyAppApplicationLike.getInstance().getOttohubApi().getBlogApi().random_blog_list(12);
-            } else if (blogListFragment.selectedButton.getTag(R.id.btn_add_tag).equals(blogListFragment.buttonLabels[1])) {
+            } else if (blogListFragment.selectedButton.getTag(R.id.btn_add_tag).equals(blogListFragment.buttonLabels[0])) {
                 listResult = MyAppApplicationLike.getInstance().getOttohubApi().getBlogApi().new_blog_list(blogListFragment.currentPage * 12, 12);
             } else if (blogListFragment.selectedButton.getTag(R.id.btn_add_tag).equals(blogListFragment.buttonLabels[2])) {
                 listResult = MyAppApplicationLike.getInstance().getOttohubApi().getBlogApi().popular_blog_list(7, blogListFragment.currentPage * 12, 12);

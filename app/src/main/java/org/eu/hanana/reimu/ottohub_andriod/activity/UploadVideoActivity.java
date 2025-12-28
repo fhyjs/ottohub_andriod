@@ -16,12 +16,14 @@ import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.gson.Gson;
 
 import org.eu.hanana.reimu.lib.ottohub.api.common.EmptyResult;
+import org.eu.hanana.reimu.lib.ottohub.api.video.VideoResult;
 import org.eu.hanana.reimu.lib.ottohub.util.InputStreamRequestBody;
 import org.eu.hanana.reimu.lib.ottohub.util.ProgressedRequestBody;
 import org.eu.hanana.reimu.ottohub_andriod.R;
@@ -35,6 +37,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.Locale;
 
 import okhttp3.MediaType;
@@ -45,6 +48,8 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class UploadVideoActivity extends BaseActivity {
+    @Nullable
+    public Integer vid;
     public final char[] punctuationMarks = new char[]{
             '!', '"', '#', '$', '%', '&', '\'', '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~', '—',
             '！', '“', '”', '＃', '￥', '％', '＆', '’', '（', '）', '＊', '＋', '，', '－', '．', '／', '：', '；', '＜', '＝', '＞', '？', '＠', '［', '＼', '］', '＾', '＿', '｀', '｛', '｜', '｝', '～',
@@ -105,6 +110,7 @@ public class UploadVideoActivity extends BaseActivity {
                 }
             }
     );
+    private VideoResult data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,7 +127,10 @@ public class UploadVideoActivity extends BaseActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-
+        if (getIntent().hasExtra("vid")){
+            vid = getIntent().getIntExtra("vid",-1);
+            setTitle(R.string.re_edit);
+        }
         AutoCompleteTextView category = findViewById(R.id.actv_category);
         String[] categories = getResources().getStringArray(R.array.vid_category);
 
@@ -170,7 +179,65 @@ public class UploadVideoActivity extends BaseActivity {
             tagBtn.setText("#"+tag);
             tagBtn.setOnClickListener(v1 -> ((LinearLayout) findViewById(R.id.ll_tag)).removeView(v1));
         });
+        if (vid != null) {
+            AlertDialog loading = AlertUtil.showLoading(this, "Loading");
+            loading.show();
+            Thread thread = new Thread(() -> {
+                loadVData();
+                runOnUiThread(()->{
+                    loadVDataUi();
+                    loading.dismiss();
+                });
+            });
+            thread.setUncaughtExceptionHandler(new AlertUtil.ThreadAlert(this){
+                @Override
+                public void uncaughtException(@NonNull Thread t, @NonNull Throwable e) {
+                    UploadVideoActivity.this.runOnUiThread(loading::dismiss);
+                    super.uncaughtException(t, e);
+                }
+            });
+            thread.start();
+        }
     }
+
+    private void loadVDataUi() {
+        ((EditText) findViewById(R.id.et_title)).setText(data.title);
+        ((EditText) findViewById(R.id.et_intro)).setText(data.intro);
+        String[] vcv = getResources().getStringArray(R.array.vid_category_value);
+        String[] vtv = getResources().getStringArray(R.array.vid_type_value);
+        for (int i=0;i<vcv.length;i++) {
+            var s = vcv[i];
+            if (Integer.parseInt(s)==data.category) {
+                categoryValue=data.category;
+                ((AutoCompleteTextView) findViewById(R.id.actv_category)).setText(getResources().getStringArray(R.array.vid_category)[i],false);
+                break;
+            }
+        }
+
+        for (int i=0;i<vtv.length;i++) {
+            var s = vcv[i];
+            if (Integer.parseInt(s)==data.type) {
+                typeValue=data.type;
+                ((AutoCompleteTextView) findViewById(R.id.actv_type)).setText(getResources().getStringArray(R.array.vid_type)[i],false);
+                break;
+            }
+        }
+        for (String s : data.tag.split("#")) {
+            if (s.isEmpty()) continue;
+            Button tagBtn = (Button) UiUtil.clone(findViewById(R.id.btn_tag_base),new MaterialButton(this));
+            tagBtn.setTag("themed");
+            tagBtn.setText("#"+s);
+            tagBtn.setOnClickListener(v1 -> ((LinearLayout) findViewById(R.id.ll_tag)).removeView(v1));
+            ((LinearLayout) findViewById(R.id.ll_tag)).addView(tagBtn);
+        }
+        UiUtil.loadImgToImageView(findViewById(R.id.ivThumbnail),data.cover_url);
+    }
+
+    private void loadVData() {
+        data = ApiUtil.getAppApi().getVideoApi().get_video_detail(vid);
+        ApiUtil.throwApiError(data);
+    }
+
     public String getTags(){
         LinearLayout tags = findViewById(R.id.ll_tag);
         var sb = new StringBuffer();
@@ -186,14 +253,14 @@ public class UploadVideoActivity extends BaseActivity {
         alertDialog.show();
         new Thread(()-> {
             var os = new ByteArrayOutputStream();
-            if (cover==null) {
+            if (cover==null&&vid==null) {
                 runOnUiThread(()->AlertUtil.showError(this,getString(R.string.no_cover)).show());
                 alertDialog.dismiss();
                 return;
             }
             try (
-                    InputStream inputStream = getContentResolver().openInputStream(cover);
-                    InputStream inputStreamVideo = getContentResolver().openInputStream(video);
+                    InputStream inputStream = vid==null?getContentResolver().openInputStream(cover): URI.create(data.cover_url).toURL().openStream();
+                    InputStream inputStreamVideo = vid==null?getContentResolver().openInputStream(video): URI.create(data.video_url).toURL().openStream();
             ) {
                 if (((TextView) findViewById(R.id.et_title)).getText().toString().isEmpty()) throw new IllegalStateException(getString(R.string.empty_title));
                 if (((TextView) findViewById(R.id.et_intro)).getText().toString().isEmpty()) throw new IllegalStateException(getString(R.string.empty_intro));
@@ -221,26 +288,31 @@ public class UploadVideoActivity extends BaseActivity {
 
         MultipartBody.Builder builder = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart("action", "submit_video")
+                .addFormDataPart("action", vid==null?"submit_video":"update_video")
                 .addFormDataPart("token", ApiUtil.getAppApi().getLoginToken())
                 .addFormDataPart("title", title)
                 .addFormDataPart("intro", intro)
                 .addFormDataPart("type", typeValue+"")
                 .addFormDataPart("category", categoryValue+"")
                 .addFormDataPart("tag", tags);
-
+        if (vid!=null) builder.addFormDataPart("vid",vid+"");
+        //)
         // 添加 InputStream 文件
-        builder.addFormDataPart("file_mp4", "video.mp4",
-                new InputStreamRequestBody(video, MediaType.get("video/mp4")));
-        builder.addFormDataPart("file_jpg", "cover.jpg",
-                new InputStreamRequestBody(cover, MediaType.get("image/jpeg")));
+        if (vid==null||this.video!=null) {
+            builder.addFormDataPart("file_mp4", "video.mp4",
+                    new InputStreamRequestBody(video, MediaType.get("video/mp4")));
+        }
+        if (vid==null||this.cover!=null) {
+            builder.addFormDataPart("file_jpg", "cover.jpg",
+                    new InputStreamRequestBody(cover, MediaType.get("image/jpeg")));
+        }
 
         RequestBody requestBody = new ProgressedRequestBody(builder.build(), (l, l1, v) -> {
             runOnUiThread(() -> dialog.setTitle("Uploading..." + l / (float)size * 100 + "%"));
         });
 
         Request request = new Request.Builder()
-                .url("https://api.ottohub.cn/module/creator/submit_video.php")
+                .url(vid==null?"https://api.ottohub.cn/module/creator/submit_video.php":"https://api.ottohub.cn/module/creator/update_video.php")
                 .post(requestBody)
                 .build();
 

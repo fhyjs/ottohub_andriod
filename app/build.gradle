@@ -30,12 +30,12 @@ android {
     defaultConfig {
         android.buildFeatures.buildConfig = true
         applicationId "org.eu.hanana.reimu.ottohub_andriod"
-        minSdk 21
+        minSdk 23
         multiDexEnabled true
         multiDexKeepProguard file("tinker_multidexkeep.pro")
         targetSdk 36
-        versionCode 298
-        versionName "2.9.8_Code.Sanae"
+        versionCode 299
+        versionName "2.9.9_Code.Sanae"
         resConfigs "en", "zh" // Example: Support English and Spanish
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "BUILD_TIME", "\"${new Date().format("yyyy-MM-dd HH:mm:ss")}\""

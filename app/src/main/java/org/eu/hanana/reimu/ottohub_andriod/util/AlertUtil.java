@@ -139,7 +139,9 @@ public class AlertUtil {
         ((Button) Objects.requireNonNull(dialog.findViewById(R.id.btn_detail))).setOnClickListener(v -> {
             UiUtil.animateView(dialog.findViewById(R.id.ll_detail),dialog.findViewById(R.id.ll_detail).getVisibility()== GONE);
         });
-        dialogB.show();
+        try {
+            dialogB.show();
+        }catch (Exception e){}
         ((Button) Objects.requireNonNull(dialog.findViewById(R.id.btn_confirm))).setOnClickListener(v -> dialogB.dismiss());
         return dialogB;
     }

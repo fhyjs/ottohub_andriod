@@ -136,7 +136,7 @@ public abstract class ListFragmentBase<T extends CardAdapterBase<E,N>,N extends 
     }
 
     // 定义 MenuProvider
-    private class MyMenuProvider implements MenuProvider {
+    public class MyMenuProvider implements MenuProvider {
         @Override
         public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
             // 加载菜单布局

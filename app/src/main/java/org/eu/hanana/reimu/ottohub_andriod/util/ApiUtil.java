@@ -318,7 +318,7 @@ public class ApiUtil {
 
         sharedPreferences = MyApp.getInstance().getSharedPreferences(SharedPreferencesKeys.Perf_Account_List, MODE_PRIVATE);
         var gson = new Gson();
-        var copy = new LoginResult(null,null,null,null,null);
+        var copy = new LoginResult(null,null,null,null);
         try {
             ClassUtil.copyFields(LoginResult.class,LoginResult.class,copy,result,false);
         } catch (IllegalAccessException e) {

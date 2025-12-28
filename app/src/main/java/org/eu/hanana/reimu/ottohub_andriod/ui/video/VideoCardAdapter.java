@@ -5,6 +5,9 @@ import static android.view.View.VISIBLE;
 import static androidx.core.content.ContextCompat.getString;
 import static androidx.core.content.ContextCompat.startActivity;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -36,6 +39,7 @@ import org.eu.hanana.reimu.lib.ottohub.api.collection.CollectionListResult;
 import org.eu.hanana.reimu.lib.ottohub.api.collection.CollectionResult;
 import org.eu.hanana.reimu.lib.ottohub.api.common.EmptyResult;
 import org.eu.hanana.reimu.ottohub_andriod.R;
+import org.eu.hanana.reimu.ottohub_andriod.activity.UploadVideoActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.VideoPlayerActivity;
 import org.eu.hanana.reimu.ottohub_andriod.data.video.VideoCard;
 import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
@@ -159,12 +163,24 @@ public class VideoCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 intent.putExtras(bundle);
                 startActivity(holder.itemView.getContext(),intent,null);
             });
-
+            holder.itemView.findViewById(R.id.group_manage_btns).setVisibility(GONE);
+            vcvHolder.itemView.findViewById(R.id.btn_expand).setVisibility(GONE);
             //new
             if (frag.action.equals(VideoListFragment.ACTION_MINE)){
                 vcvHolder.ivAvatar.setVisibility(GONE);
                 vcvHolder.tvAuthor.setVisibility(GONE);
                 vcvHolder.itemView.findViewById(R.id.group_manage).setVisibility(VISIBLE);
+                vcvHolder.itemView.findViewById(R.id.group_manage_btns).setVisibility(GONE);
+                vcvHolder.itemView.findViewById(R.id.btn_expand).setVisibility(VISIBLE);
+                vcvHolder.itemView.findViewById(R.id.btn_expand).setOnClickListener(v -> {
+                    View viewById = vcvHolder.itemView.findViewById(R.id.group_manage_btns);
+                    v.setVisibility(GONE);
+                    if (viewById.getVisibility()==GONE){
+                        expand(viewById);
+                    }else {
+                        collapse(viewById);
+                    }
+                });
                 Button btnAuditStatus = vcvHolder.itemView.findViewById(R.id.btn_audit_status);
                 if(video.getRaw().audit_status==0){
                     btnAuditStatus.setText(R.string.under_review);
@@ -193,6 +209,11 @@ public class VideoCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 var txt = v.getContext().getString(R.string.share_content,video.getTitle(),"https://m.ottohub.cn/v/"+video.getVid());
                 ClipboardUtil.copyToClipboard(v.getContext(),txt);
                 shareText(v.getContext(),txt);
+            });
+            vcvHolder.itemView.findViewById(R.id.btn_reedit).setOnClickListener(v -> {
+                Intent intent = new Intent(frag.requireActivity(), UploadVideoActivity.class);
+                intent.putExtra("vid",video.getVid());
+                frag.startActivity(intent);
             });
             vcvHolder.itemView.findViewById(R.id.btn_delete).setOnClickListener(v -> {
                 AlertUtil.showYesNo(v.getContext(),v.getContext().getString(R.string.delete),v.getContext().getString(R.string.delete_msg),(dialog, which) -> {
@@ -234,7 +255,39 @@ public class VideoCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             });
         }
     }
+    private void expand(final View v) {
+        v.setVisibility(View.VISIBLE);
+        v.measure(View.MeasureSpec.makeMeasureSpec(((View)v.getParent()).getWidth(), View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        final int targetHeight = v.getMeasuredHeight();
 
+        v.getLayoutParams().height = 0;
+        ValueAnimator animator = ValueAnimator.ofInt(0, targetHeight);
+        animator.addUpdateListener(animation -> {
+            v.getLayoutParams().height = (int) animation.getAnimatedValue();
+            v.requestLayout();
+        });
+        animator.setDuration(300);
+        animator.start();
+    }
+
+    private void collapse(final View v) {
+        final int initialHeight = v.getMeasuredHeight();
+        ValueAnimator animator = ValueAnimator.ofInt(initialHeight, 0);
+        animator.addUpdateListener(animation -> {
+            v.getLayoutParams().height = (int) animation.getAnimatedValue();
+            v.requestLayout();
+        });
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                v.setVisibility(View.GONE);
+                v.getParent().requestLayout();
+            }
+        });
+        animator.setDuration(300);
+        animator.start();
+    }
     private void doSetCollection(CollectionResult finalCurrent, CollectionListResult all, VideoCard video) {
         var none = getString(frag.requireContext(),R.string.none);
         var add = getString(frag.requireContext(),R.string.add);

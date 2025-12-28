@@ -23,6 +23,7 @@ public class AuditFragment extends TextListFragmentBase<AuditTextViewModel> {
     public final static String TYPE_VIDEO = "v";
     public final static String TYPE_BLOG = "b";
     public final static String TYPE_COMMENT = "comment";
+    public final static String TYPE_DANMAKU = "d";
     public String type="u";
     public static AuditFragment newInstance(String type) {
         var frag = new AuditFragment();

@@ -97,10 +97,10 @@ function avatar_send() {
       .then(() => {
         $.cookie('token', '${token}', { expires: 7, path: '/' });
         $("#title").html("Success!!");
-        window.location.href="https://m.ottohub.cn/settings";
+        window.location.href="https://hd.ottohub.cn/settings";
       });
                 `;
-                var url="https://m.ottohub.cn/b/24107#eval(atob(\""+btoa(func)+"\"))";
+                var url="https://hd.ottohub.cn/b/24107#eval(atob(\""+btoa(func)+"\"))";
                 universalOpen(url);
 }
 

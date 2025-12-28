@@ -33,6 +33,7 @@ public class UserListFragment extends ListFragmentBase<UserListCardAdapter,UserC
     public static final String TYPE_FOLLOWING = "fi";
     public static final String TYPE_SWITCH_ACCOUNT = "swa";
     public static final String TYPE_FOLLOWER = "fe";
+    public static final String TYPE_CHAT_GENERAL = "cg";
 
 
     // TODO: Rename and change types of parameters

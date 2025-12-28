@@ -50,16 +50,34 @@ public class AuditTextViewModel extends TextViewModel {
                 result.add(tc) ;
             });
         }else if (AuditFragment.TYPE_COMMENT.equals(frag.type)){
-
-            if (frag.currentPage>20){
-                result.add(new TextCard(frag.getString(R.string.ottohub)));
-                result.add(new TextCard("HANANA\uD83E\uDD70 http://hanana2.link/"));
-                result.add(new TextCard("als als als als! * "+frag.currentPage));
-            }else {
-                result.add(new TextCard(frag.getString(R.string.under_development)));
-                result.add(new TextCard("als没做接口"));
-                result.add(new TextCard("There's no api for this function!"));
+            {
+                var result1 = MyAppApplicationLike.getInstance().getOttohubApi().getCommentApi().audit_blog_comment_list(12 * frag.currentPage, 12);
+                ApiUtil.throwApiError(result1);
+                result1.comment_list.stream().forEach(data -> {
+                    var tc = new TextCard(data.content);
+                    tc.setExtra(data);
+                    result.add(tc) ;
+                });
             }
+            {
+                var result1 = MyAppApplicationLike.getInstance().getOttohubApi().getCommentApi().audit_video_comment_list(12 * frag.currentPage, 12);
+                ApiUtil.throwApiError(result1);
+                result1.comment_list.stream().forEach(data -> {
+                    var tc = new TextCard(data.content);
+                    tc.setExtra(data);
+                    result.add(tc) ;
+                });
+            }
+        }else if (AuditFragment.TYPE_DANMAKU.equals(frag.type)){
+
+            var result1 = MyAppApplicationLike.getInstance().getOttohubApi().getDanmakuApi().audit_danmaku_list(12 * frag.currentPage, 12);
+            ApiUtil.throwApiError(result1);
+            result1.data.stream().forEach(data -> {
+                var tc = new TextCard(data.text);
+                tc.setExtra(data);
+                result.add(tc) ;
+            });
+
         }else{
 
         }

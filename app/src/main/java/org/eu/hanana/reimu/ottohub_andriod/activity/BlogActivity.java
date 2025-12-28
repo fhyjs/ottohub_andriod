@@ -116,7 +116,7 @@ public class BlogActivity extends BaseActivity {
 
         bid=getIntent().getExtras().getInt(KEY_BID);
         webView = findViewById(R.id.wvContent);
-        //webView.allowJsHeightAuto=false;
+        webView.allowJsHeightAuto=false;
         webView.addJavascriptInterface(new JsBridge(this), "blog"); // "AndroidBridge" 是 JS 调用的对象名
         webView.loadUrl(blogPage);
 

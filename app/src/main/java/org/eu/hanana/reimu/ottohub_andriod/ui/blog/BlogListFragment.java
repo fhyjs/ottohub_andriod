@@ -92,7 +92,7 @@ public class BlogListFragment extends BaseFragment implements IScrollTopChecker 
     private InfiniteScrollListener scrollListener;
     public Button selectedButton;
     public boolean error;
-    public int[] buttonLabels = {R.string.recommend,R.string.latest,R.string.week_hot,R.string.monthly_hot,R.string.sesson_hot};
+    public int[] buttonLabels = {R.string.latest,R.string.recommend,R.string.week_hot,R.string.monthly_hot,R.string.sesson_hot};
     private View view;
     @Override
     public void onCreate(Bundle savedInstanceState) {

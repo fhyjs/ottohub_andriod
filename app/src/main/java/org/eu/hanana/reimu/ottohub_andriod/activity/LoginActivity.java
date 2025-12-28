@@ -1,6 +1,7 @@
 package org.eu.hanana.reimu.ottohub_andriod.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -111,6 +112,16 @@ public class LoginActivity extends BaseActivity {
 
         loginButton.setOnClickListener(v -> {
            login();
+        });
+        binding.tvForgotPassword.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ForgotPasswordActivity.class);
+            intent.putExtra(ForgotPasswordActivity.ACTION, ForgotPasswordActivity.ACTION_RESET);
+            startActivity(intent);
+        });
+        binding.tvRegister.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ForgotPasswordActivity.class);
+            intent.putExtra(ForgotPasswordActivity.ACTION, ForgotPasswordActivity.ACTION_REGISTER);
+            startActivity(intent);
         });
     }
     public void login(){

@@ -217,4 +217,16 @@
     <string name="toolbox">工具箱</string>
     <string name="server_error">服务器错误</string>
     <string name="forward_tool">转载工具</string>
+    <string name="register">注册</string>
+    <string name="fogot_pw">忘记密码</string>
+    <string name="email">电子邮箱</string>
+    <string name="prompt_password_confirm">确认密码</string>
+    <string name="verification_code">验证码</string>
+    <string name="send_code">发送验证码</string>
+    <string name="pw_not_match">密码不一致</string>
+    <string name="audit_comment_confirm">是否通过？</string>
+    <string name="general">总览</string>
+    <string name="chat_with">与%s聊天</string>
+    <string name="expand">展开</string>
+    <string name="re_edit">再次编辑</string>
 </resources>

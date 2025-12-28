@@ -167,6 +167,7 @@ public class BiliPlaybackUtil {
         JsonObject sizes = new JsonObject();
         JsonObject asJsonObjectFinal = JsonParser.parseString(
                 client.newCall(new Request.Builder()
+                                .addHeader("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:146.0) Gecko/20100101 Firefox/146.0")
                                 .url("https://api.bilibili.com/x/player/playurl?" + paramBase)
                                 .get()
                                 .build())
@@ -185,6 +186,7 @@ public class BiliPlaybackUtil {
             ), imgKey, subKey);
 
             Request req = new Request.Builder()
+                    .addHeader("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:146.0) Gecko/20100101 Firefox/146.0")
                     .url("https://api.bilibili.com/x/player/playurl?" + param1)
                     .get()
                     .build();

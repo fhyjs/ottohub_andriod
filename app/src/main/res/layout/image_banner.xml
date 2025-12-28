@@ -8,7 +8,7 @@
         android:id="@+id/imageBanner"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerInside" />
+        android:scaleType="center" />
 
     <!-- 底部半透明黑条 -->
     <LinearLayout

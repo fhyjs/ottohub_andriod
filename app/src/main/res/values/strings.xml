@@ -231,4 +231,16 @@
     <string name="toolbox">Toolbox</string>
     <string name="server_error">server Error</string>
     <string name="forward_tool">Forward tool</string>
+    <string name="register">Register</string>
+    <string name="fogot_pw">Foget password?</string>
+    <string name="email">Email</string>
+    <string name="prompt_password_confirm">Confirm Password</string>
+    <string name="verification_code">Verification Code</string>
+    <string name="send_code">Send Code</string>
+    <string name="pw_not_match">Password not match!</string>
+    <string name="audit_comment_confirm">Approve Comment?</string>
+    <string name="general">General</string>
+    <string name="chat_with">Chat with %s</string>
+    <string name="expand">Expand</string>
+    <string name="re_edit">reedit</string>
 </resources>
