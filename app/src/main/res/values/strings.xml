@@ -243,4 +243,13 @@
     <string name="chat_with">Chat with %s</string>
     <string name="expand">Expand</string>
     <string name="re_edit">reedit</string>
+    <string name="today">today</string>
+    <string name="yesterday">yasterday</string>
+    <string name="playback_error">Playback Error</string>
+    <string name="invalid_uid">invaild Uid</string>
+    <string name="show_short_video_entry">show short video entry</string>
+    <string name="media_lib">Media Lib</string>
+    <string name="media_lib_title">Medias</string>
+    <string name="media_lib_subtitle">The Ottohub media library</string>
+    <string name="home">Home</string>
 </resources>

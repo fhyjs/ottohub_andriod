@@ -86,7 +86,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             v.setLayoutParams(lp);
             return insets;
         });
-        if (this.getClass()!= MainActivity.class) {
+        if (this.getClass()!= MainActivity.class&&needBottomPadding()) {
             ViewCompat.setOnApplyWindowInsetsListener(wrapper, (v, insets) -> {
                 var systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
                 v.setPadding(0, 0, 0, systemBars.bottom);
@@ -94,5 +94,9 @@ public abstract class BaseActivity extends AppCompatActivity {
             });
         }
         ThemeUtil.onPostCreate(this);
+    }
+
+    protected boolean needBottomPadding(){
+        return true;
     }
 }

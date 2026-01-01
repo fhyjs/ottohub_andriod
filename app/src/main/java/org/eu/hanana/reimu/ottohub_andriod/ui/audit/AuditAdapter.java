@@ -6,6 +6,7 @@ import static org.eu.hanana.reimu.ottohub_andriod.ui.audit.AuditFragment.TYPE_AV
 import static org.eu.hanana.reimu.ottohub_andriod.ui.audit.AuditFragment.TYPE_BLOG;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.audit.AuditFragment.TYPE_COMMENT;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.audit.AuditFragment.TYPE_COVER;
+import static org.eu.hanana.reimu.ottohub_andriod.ui.audit.AuditFragment.TYPE_DANMAKU;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.audit.AuditFragment.TYPE_VIDEO;
 
 import android.app.Activity;
@@ -21,6 +22,7 @@ import com.google.gson.Gson;
 
 import org.eu.hanana.reimu.lib.ottohub.api.blog.BlogResult;
 import org.eu.hanana.reimu.lib.ottohub.api.comment.CommentResult;
+import org.eu.hanana.reimu.lib.ottohub.api.danmaku.DanmakuResult;
 import org.eu.hanana.reimu.lib.ottohub.api.user.UserResult;
 import org.eu.hanana.reimu.lib.ottohub.api.video.VideoResult;
 import org.eu.hanana.reimu.ottohub_andriod.R;
@@ -95,6 +97,12 @@ public class AuditAdapter extends TextCardAdapter {
                 }else {
                     ApiUtil.getAppApi().getCommentApi().reject_video_comment(id);
                 }
+            }else if (type.equals(TYPE_DANMAKU)){
+                if (pass){
+                    ApiUtil.getAppApi().getDanmakuApi().approve_danmaku(id);
+                }else {
+                    ApiUtil.getAppApi().getDanmakuApi().reject_danmaku(id);
+                }
             }
             AuditAdapter.this.frag.getActivity().runOnUiThread(frag::refresh);
         });
@@ -162,6 +170,15 @@ public class AuditAdapter extends TextCardAdapter {
                     performAction(true,extra.getCid(),TYPE_COMMENT+(extra.bcid>extra.vcid?"b":"v"));
                 },(d,b)->{
                     performAction(false,extra.getCid(),TYPE_COMMENT+(extra.bcid>extra.vcid?"b":"v"));
+                }).show();
+            });
+        }else if (getFrag().type.equals(TYPE_DANMAKU)){
+            var extra = ((DanmakuResult) object.extra);
+            holder.itemView.setOnClickListener(v -> {
+                AlertUtil.showYesNo(getFrag().getActivity(), getFrag().getString(R.string.audit_comment_confirm),extra.text, (d,b) -> {
+                    performAction(true, (int) extra.danmaku_id,TYPE_DANMAKU);
+                },(d,b)->{
+                    performAction(false, (int) extra.danmaku_id,TYPE_DANMAKU);
                 }).show();
             });
         }

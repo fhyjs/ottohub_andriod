@@ -45,7 +45,10 @@ import org.eu.hanana.reimu.ottohub_andriod.activity.VideoPlayerActivity;
 
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -338,6 +341,39 @@ public class UiUtil {
             method.invoke(view, state);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+    public static String formatTimeSmart(Context context, String timeStr) {
+        try {
+            SimpleDateFormat srcFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+            Date date = srcFormat.parse(timeStr);
+            if (date == null) return timeStr;
+
+            Calendar now = Calendar.getInstance();
+            Calendar todayStart = (Calendar) now.clone();
+            todayStart.set(Calendar.HOUR_OF_DAY, 0);
+            todayStart.set(Calendar.MINUTE, 0);
+            todayStart.set(Calendar.SECOND, 0);
+            todayStart.set(Calendar.MILLISECOND, 0);
+
+            Calendar yesterdayStart = (Calendar) todayStart.clone();
+            yesterdayStart.add(Calendar.DAY_OF_MONTH, -1);
+
+            SimpleDateFormat hmFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            SimpleDateFormat yhmFormat = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
+
+            if (date.after(todayStart.getTime())) {
+                // 今天
+                return context.getString(R.string.today)+" " + hmFormat.format(date);
+            } else if (date.after(yesterdayStart.getTime())) {
+                // 昨天
+                return context.getString(R.string.yesterday)+" " + hmFormat.format(date);
+            } else {
+                // 更早
+                return yhmFormat.format(date);
+            }
+        } catch (Exception e) {
+            return timeStr;
         }
     }
     /**

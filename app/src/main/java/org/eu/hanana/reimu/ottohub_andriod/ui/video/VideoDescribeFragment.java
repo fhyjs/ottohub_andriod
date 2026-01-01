@@ -2,6 +2,7 @@ package org.eu.hanana.reimu.ottohub_andriod.ui.video;
 
 import static org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase.ARG_TYPE;
 import static org.eu.hanana.reimu.ottohub_andriod.ui.comment.CommentFragmentBase.TYPE_VIDEO;
+import static org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment.ARG_ACTION;
 import static org.eu.hanana.reimu.ottohub_andriod.util.UiUtil.shareText;
 
 import android.annotation.SuppressLint;
@@ -117,11 +118,15 @@ public class VideoDescribeFragment extends BaseFragment {
             startActivity(intent);
         });
         // 默认加载第一个 Fragment
-        VideoListFragment videoListFragment = VideoListFragment.newInstance();
-        videoListFragment.videosInRow=1;
+        VideoListFragment fragment = new VideoListFragment();
+        Bundle args = new Bundle();
+        args.putString(VideoListFragment.ARG_ACTION, VideoListFragment.ACTION_RELATED);
+        args.putString(VideoListFragment.ARG_DATA, String.valueOf(vData.vid));
+        fragment.setArguments(args);
+        fragment.videosInRow=1;
         getChildFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fragment_container,videoListFragment )
+                .replace(R.id.fragment_container,fragment )
                 .commit();
 
 
@@ -199,7 +204,7 @@ public class VideoDescribeFragment extends BaseFragment {
         });
         ThemeUtil.apply(tagsArea);
         view.findViewById(R.id.btn_share).setOnClickListener(v -> {
-            var txt = v.getContext().getString(R.string.share_content,vData.title,"https://m.ottohub.cn/v/"+vData.vid);
+            var txt = v.getContext().getString(R.string.share_content,vData.title,"https://hd.ottohub.cn/v/"+vData.vid);
             ClipboardUtil.copyToClipboard(v.getContext(),txt);
             shareText(v.getContext(),txt);
         });

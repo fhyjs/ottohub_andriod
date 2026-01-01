@@ -39,7 +39,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Show error dialog"/>
+            <com.google.android.material.materialswitch.MaterialSwitch
 
+                android:id="@+id/switch_enable_bugsvc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Bug Service" />
             <com.google.android.material.materialswitch.MaterialSwitch
 
                 android:id="@+id/switch_enable_bugrep"
@@ -52,6 +57,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="rem_empty_collection" />
+            <com.google.android.material.materialswitch.MaterialSwitch
+
+                android:id="@+id/switch_show_media_lib_entry"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="show_media_lib_entry" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

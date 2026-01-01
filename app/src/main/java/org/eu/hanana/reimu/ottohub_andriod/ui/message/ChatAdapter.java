@@ -1,22 +1,30 @@
 package org.eu.hanana.reimu.ottohub_andriod.ui.message;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.google.android.material.card.MaterialCardView;
 
 import org.eu.hanana.reimu.lib.ottohub.api.im.MessageResult;
+import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.data.base.text.TextCard;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.list.TextCardAdapter;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.list.TextCardViewHolder;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.list.TextListFragmentBase;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ThemeUtil;
+import org.eu.hanana.reimu.ottohub_andriod.util.UiUtil;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class ChatAdapter extends TextCardAdapter {
     public ChatAdapter(List<TextCard> messageList, ChatFragment textListFragmentBase) {
@@ -50,10 +58,15 @@ public class ChatAdapter extends TextCardAdapter {
                 layoutParams.gravity = Gravity.START;
                 llv.setGravity(Gravity.START);
             }
-        }if (object.extra instanceof String ext) {
+        }
+        ((TextView)(llv.getChildAt(0))).setTextSize(UiUtil.dpToPx(llv.getContext(),7));
+        if (object.extra instanceof String ext) {
+            ((TextView)(llv.getChildAt(0))).setTextSize(UiUtil.dpToPx(llv.getContext(),4));
             layoutParams.gravity = Gravity.CENTER;
             llv.setGravity(Gravity.CENTER);
+
         }
         mcv.setLayoutParams(layoutParams);
     }
+
 }

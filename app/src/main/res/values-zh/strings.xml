@@ -229,4 +229,13 @@
     <string name="chat_with">与%s聊天</string>
     <string name="expand">展开</string>
     <string name="re_edit">再次编辑</string>
+    <string name="today">今天</string>
+    <string name="yesterday">昨天</string>
+    <string name="playback_error">播放器错误</string>
+    <string name="invalid_uid">无效的uid</string>
+    <string name="show_short_video_entry">显示短视频入口</string>
+    <string name="media_lib">媒体库模式</string>
+    <string name="media_lib_title">素材库</string>
+    <string name="media_lib_subtitle">我传输你的材</string>
+    <string name="home">主页</string>
 </resources>

@@ -11,8 +11,8 @@
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "versionCode": 298,
-      "versionName": "2.9.8_Code.Sanae_Git.e54e65c",
+      "versionCode": 299,
+      "versionName": "2.9.9_Code.Tenshi_Git.f433a20",
       "outputFile": "app-release.apk"
     }
   ],
@@ -33,5 +33,5 @@
       ]
     }
   ],
-  "minSdkVersionForDexing": 21
+  "minSdkVersionForDexing": 23
 }

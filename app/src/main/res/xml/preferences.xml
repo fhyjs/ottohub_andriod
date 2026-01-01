@@ -42,6 +42,11 @@
             android:summary="@string/show_message"
             android:title="@string/force_service_running" />
         <org.eu.hanana.reimu.ottohub_andriod.ui.preference.M3SwitchPreference
+            android:icon="@drawable/animated_images_24dp"
+            android:defaultValue="false"
+            android:key="show_short_video_entry"
+            android:title="@string/show_short_video_entry" />
+        <org.eu.hanana.reimu.ottohub_andriod.ui.preference.M3SwitchPreference
             android:icon="@drawable/shield_toggle_24dp"
             android:defaultValue="true"
             android:key="permission_check"

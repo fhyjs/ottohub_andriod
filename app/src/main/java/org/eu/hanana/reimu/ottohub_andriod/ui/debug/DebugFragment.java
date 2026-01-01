@@ -141,5 +141,14 @@ public class DebugFragment extends Fragment {
             PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean("rem_empty_collection",isChecked).apply();
         });
 
+        ((MaterialSwitch) view.findViewById(R.id.switch_show_media_lib_entry)).setChecked(PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("show_media_lib_entry",false));
+        ((MaterialSwitch) view.findViewById(R.id.switch_show_media_lib_entry)).setOnCheckedChangeListener((buttonView, isChecked) -> {
+            PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean("show_media_lib_entry",isChecked).apply();
+        });
+
+        ((MaterialSwitch) view.findViewById(R.id.switch_enable_bugsvc)).setChecked(PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("switch_enable_bugsvc",true));
+        ((MaterialSwitch) view.findViewById(R.id.switch_enable_bugsvc)).setOnCheckedChangeListener((buttonView, isChecked) -> {
+            PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putBoolean("switch_enable_bugsvc",isChecked).apply();
+        });
     }
 }

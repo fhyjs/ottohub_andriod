@@ -35,7 +35,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
     @Override
     public void uncaughtException(Thread t, Throwable e) {
-        if (!PreferenceManager.getDefaultSharedPreferences(context).getBoolean("bug_rep",true)){
+        if (!PreferenceManager.getDefaultSharedPreferences(context).getBoolean("switch_enable_bugsvc",true)){
             defaultHandler.uncaughtException(t, e);
             return;
         }
@@ -79,6 +79,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             pw.println("Android版本: " + Build.VERSION.RELEASE);
             pw.println("SDK版本: " + Build.VERSION.SDK_INT);
             pw.println("App版本: " + BuildConfig.VERSION_NAME + "(" + BuildConfig.VERSION_CODE + ")");
+            pw.println("UID: "+ApiUtil.getAppApi().getLoginResult().uid);
             pw.println("--------------------\n");
 
             // 写入崩溃堆栈

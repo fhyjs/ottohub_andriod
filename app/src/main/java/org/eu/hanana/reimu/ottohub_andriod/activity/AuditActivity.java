@@ -21,7 +21,7 @@ public class AuditActivity extends BaseActivity {
 
     private ViewPager2 viewPager;
     private TabLayout tabLayout;
-    private final int[] tabTitles={R.string.avatar,R.string.cover,R.string.videos,R.string.blogs,R.string.comment};
+    private final int[] tabTitles={R.string.avatar,R.string.cover,R.string.videos,R.string.blogs,R.string.comment,R.string.danmaku};
     private final SparseArray<Fragment> fragmentMap = new SparseArray<>();
     public Fragment getFragment(int position) {
         return fragmentMap.get(position);

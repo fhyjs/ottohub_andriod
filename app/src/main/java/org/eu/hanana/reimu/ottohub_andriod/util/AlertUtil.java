@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.media3.exoplayer.ExoPlaybackException;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -113,10 +114,14 @@ public class AlertUtil {
         return dialog;
     }
     public static BottomSheetDialog showInput(Context context, InputCallback callback) {
+        return showInput(context,"text",callback);
+    }
+    public static BottomSheetDialog showInput(Context context,String hint, InputCallback callback) {
         BottomSheetDialog dialog = new BottomSheetDialog(context);
         View view = LayoutInflater.from(context).inflate(R.layout.dialog_input_bottom, null);
         ThemeUtil.apply(view);
         EditText editText = view.findViewById(R.id.edit_input);
+        editText.setHint(hint);
         view.findViewById(R.id.btn_confirm).setOnClickListener(v -> {
             if (callback != null) {
                 callback.onInput(editText.getText().toString());
@@ -163,6 +168,8 @@ public class AlertUtil {
         }else if (e instanceof JsonParseException){
             type=activity.getString(R.string.server_error);
             msg=activity.getString(R.string.server_error_msg);
+        }else if (e instanceof ExoPlaybackException){
+            type=activity.getString(R.string.playback_error);
         }
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         PrintWriter pw = new PrintWriter(os);

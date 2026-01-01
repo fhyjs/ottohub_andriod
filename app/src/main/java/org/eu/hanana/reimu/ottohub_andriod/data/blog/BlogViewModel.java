@@ -18,6 +18,7 @@ import org.eu.hanana.reimu.ottohub_andriod.MyApp;
 import org.eu.hanana.reimu.ottohub_andriod.MyAppApplicationLike;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.ui.blog.BlogListFragment;
+import org.eu.hanana.reimu.ottohub_andriod.util.UiUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -114,6 +115,7 @@ public class BlogViewModel extends ViewModel {
         //username用于存储额外信息.
         for (BlogResult blogResult : listResult.blog_list) {
             blogResult.username=blogListFragment.getString(R.string.video_card_info_short,blogResult.view_count,blogResult.like_count,blogResult.favorite_count);
+            blogResult.time= UiUtil.formatTimeSmart(blogListFragment.requireContext(),blogResult.time);
         }
         return new ArrayList<>(listResult.blog_list);
     }

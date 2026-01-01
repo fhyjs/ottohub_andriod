@@ -29,6 +29,7 @@ import androidx.annotation.OptIn;
 import androidx.core.view.MenuProvider;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.util.UnstableApi;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.ConcatAdapter;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -40,6 +41,7 @@ import org.eu.hanana.reimu.ottohub_andriod.MainActivity;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.activity.SearchActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.ShortVideoActivity;
+import org.eu.hanana.reimu.ottohub_andriod.activity.media.MediaMainActivity;
 import org.eu.hanana.reimu.ottohub_andriod.data.video.VideoCard;
 import org.eu.hanana.reimu.ottohub_andriod.data.video.VideoViewModel;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.BaseFragment;
@@ -79,6 +81,7 @@ public class VideoListFragment extends BaseFragment implements IScrollTopChecker
     public static final String ACTION_SEARCH = "search";
     public static final String ACTION_FAVOURITE = "fav";
     public static final String ACTION_HISTORY = "history";
+    public static final String ACTION_RELATED = "related";
     public String action=ACTION_DEFAULT;
     private HeaderAdapter headerAdapter;
     private boolean hideButtons;
@@ -342,6 +345,7 @@ public class VideoListFragment extends BaseFragment implements IScrollTopChecker
     // 定义 MenuProvider
     private class MyMenuProvider implements MenuProvider {
         protected MenuItem shorts;
+        protected MenuItem media;
         @Override
         public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
             if ((getActivity()!=null&&getActivity().getClass()!=MainActivity.class)||(getParentFragment()!=null&&getParentFragment().getClass()== ProfileFragment.class))
@@ -350,9 +354,15 @@ public class VideoListFragment extends BaseFragment implements IScrollTopChecker
             // 加载菜单布局
             shorts = menu.add(getString(R.string.shorts));
             shorts.setEnabled(true);
-            shorts.setVisible(true);
+            shorts.setVisible(PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("show_short_video_entry",false));
             shorts.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
             shorts.setIcon(R.drawable.animated_images_24dp);
+
+            media = menu.add(getString(R.string.media_lib));
+            media.setEnabled(true);
+            media.setVisible(PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("show_media_lib_entry",false));
+            media.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            media.setIcon(R.drawable.browse_24dp);
 
             menuInflater.inflate(R.menu.video_list_menu, menu);
         }
@@ -380,8 +390,7 @@ public class VideoListFragment extends BaseFragment implements IScrollTopChecker
             if (id == R.id.action_refresh_button) {
                 refresh();
                 return true;
-            }
-            if (id == R.id.action_search_button) {
+            }else if (id == R.id.action_search_button) {
                 // 创建 Intent
                 Intent intent = new Intent(getActivity(), SearchActivity.class);
 
@@ -391,13 +400,17 @@ public class VideoListFragment extends BaseFragment implements IScrollTopChecker
                 // 启动 Activity
                 startActivity(intent); // 简单启动
                 return true;
-            }
-            if (menuItem == shorts) {
+            }else if (menuItem == shorts) {
                 Intent intent = new Intent(getActivity(), ShortVideoActivity.class);
 
                 // 添加额外数据（可选）
                 intent.putExtra(ARG_TYPE, TYPE_VIDEO);
 
+                // 启动 Activity
+                startActivity(intent); // 简单启动
+                return true;
+            } else if (menuItem == media) {
+                Intent intent = new Intent(getActivity(), MediaMainActivity.class);
                 // 启动 Activity
                 startActivity(intent); // 简单启动
                 return true;

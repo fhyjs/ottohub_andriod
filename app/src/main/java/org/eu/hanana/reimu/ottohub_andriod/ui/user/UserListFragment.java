@@ -14,11 +14,18 @@ import androidx.annotation.Nullable;
 import androidx.core.view.MenuProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
+
+import org.eu.hanana.reimu.lib.ottohub.api.user.UserResult;
 import org.eu.hanana.reimu.ottohub_andriod.R;
+import org.eu.hanana.reimu.ottohub_andriod.activity.FragActivity;
 import org.eu.hanana.reimu.ottohub_andriod.activity.LoginActivity;
 import org.eu.hanana.reimu.ottohub_andriod.data.user.UserListViewModel;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.ListFragmentBase;
+import org.eu.hanana.reimu.ottohub_andriod.ui.message.ChatFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment;
+import org.eu.hanana.reimu.ottohub_andriod.util.AlertUtil;
+import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 
 import java.util.List;
 
@@ -46,7 +53,7 @@ public class UserListFragment extends ListFragmentBase<UserListCardAdapter,UserC
 
     @Override
     protected void registerMenuProviders() {
-        if (type.equals(TYPE_SWITCH_ACCOUNT)){
+        if (type.equals(TYPE_SWITCH_ACCOUNT)||type.equals(TYPE_CHAT_GENERAL)){
             requireActivity().addMenuProvider(new AddMenuProvider(), getViewLifecycleOwner());
         }
     }
@@ -110,16 +117,44 @@ public class UserListFragment extends ListFragmentBase<UserListCardAdapter,UserC
         @Override
         public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
             menuInflater.inflate(R.menu.add_menu,menu);
+            if (type.equals(TYPE_CHAT_GENERAL)) {
+                menuInflater.inflate(R.menu.video_list_menu, menu);
+                menu.findItem(R.id.action_search_button).setVisible(false);
+            }
         }
 
         @Override
         public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
             if (menuItem.getItemId()==R.id.action_menu_add){
-                Intent intent = new Intent(getContext(), LoginActivity.class);
-                // 启动 Activity
-                startActivity(intent); // 简单启动
-                getActivity().finish();
+                if (type.equals(TYPE_SWITCH_ACCOUNT)){
+                    Intent intent = new Intent(getContext(), LoginActivity.class);
+                    // 启动 Activity
+                    startActivity(intent); // 简单启动
+                    getActivity().finish();
+                }else if (type.equals(TYPE_CHAT_GENERAL)){
+                    AlertUtil.showInput(requireContext(),"uid",input ->{
+                        int uid = -1;
+                        try {
+                            uid=Integer.parseInt(input);
+                        }catch (NumberFormatException e){
+                            AlertUtil.showError(requireContext(),getString(R.string.invalid_uid)).show();
+                            return;
+                        }
+                        int finalUid = uid;
+                        Thread thread = new Thread(() -> {
+                            var arg = new Bundle();
+                            var userDataResult = ApiUtil.getAppApi().getUserApi().get_user_detail(finalUid);
+                            ApiUtil.throwApiError(userDataResult);
+                            arg.putString("data",new Gson().toJson(userDataResult));
+                            startActivity(FragActivity.create(getContext(), ChatFragment.class,arg,getString(R.string.chat_with,userDataResult.username)));
+                        });
+                        thread.setUncaughtExceptionHandler(new AlertUtil.ThreadAlert(requireActivity()));
+                        thread.start();
+                    }).show();
+                }
                 return true;
+            }else if (menuItem.getItemId()==R.id.action_refresh_button){
+                refresh();
             }
             return false;
         }

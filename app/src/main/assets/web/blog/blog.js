@@ -71,7 +71,7 @@ function matchLink(){
         }).each(function () {
           var html = this.nodeValue.replace(regex, function (match, type, num) {
             // 保留原始大小写 match，用于显示；统一小写 type 用于构造链接路径
-            return '<a href="https://m.ottohub.cn/' + type.toLowerCase() + '/' + num + '" target="_blank">' + match + '</a>';
+            return '<a href="https://hd.ottohub.cn/' + type.toLowerCase() + '/' + num + '" target="_blank">' + match + '</a>';
           });
 
           $(this).replaceWith(html);

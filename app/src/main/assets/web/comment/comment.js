@@ -13,7 +13,7 @@
                 return this.nodeType === 3 && regex.test(this.nodeValue);
             }).each(function () {
                 var html = this.nodeValue.replace(regex, function (match, type, num) {
-                    return '<a href="https://m.ottohub.cn/' + type.toLowerCase() + '/' + num + '" target="_blank">' + match + '</a>';
+                    return '<a href="https://hd.ottohub.cn/' + type.toLowerCase() + '/' + num + '" target="_blank">' + match + '</a>';
                 });
                 $(this).replaceWith(html);
             });

@@ -7,6 +7,7 @@ import org.eu.hanana.reimu.ottohub_andriod.data.base.text.TextViewModel;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.ListFragmentBase;
 import org.eu.hanana.reimu.ottohub_andriod.ui.message.ChatFragment;
 import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
+import org.eu.hanana.reimu.ottohub_andriod.util.UiUtil;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -36,7 +37,7 @@ public class ChatViewModule extends TextViewModel {
             }catch (Exception ignored){}
             if (currentDate!=null&&currentDate.getDate()!=date){
                 date=currentDate.getDate();
-                TextCard e = new TextCard(messageResult.time);
+                TextCard e = new TextCard(UiUtil.formatTimeSmart(cFragment.requireContext(),messageResult.time));
                 e.extra="time";
                 cards.add(e);
             }
@@ -44,6 +45,7 @@ public class ChatViewModule extends TextViewModel {
             textCard.extra=messageResult;
             cards.add(textCard);
         }
+        cFragment.hasMoreData=!cards.isEmpty();
         return cards;
     }
 }

@@ -1,10 +1,19 @@
 package org.eu.hanana.reimu.ottohub_andriod.activity;
 
+import android.annotation.SuppressLint;
+import android.content.ClipData;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewConfiguration;
+import android.view.ViewParent;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -32,6 +41,7 @@ import org.eu.hanana.reimu.ottohub_andriod.util.ApiUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.FileUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.ImageConverterUtil;
 import org.eu.hanana.reimu.ottohub_andriod.util.UiUtil;
+import org.eu.hanana.reimu.ottohub_andriod.util.VibrateUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -173,11 +183,7 @@ public class UploadVideoActivity extends BaseActivity {
             }
             if (tag.isEmpty()) return;
             tagEt.setText("");
-            Button tagBtn = (Button) UiUtil.clone(findViewById(R.id.btn_tag_base),new MaterialButton(this));
-            tagBtn.setTag("themed");
-            ((LinearLayout) findViewById(R.id.ll_tag)).addView(tagBtn);
-            tagBtn.setText("#"+tag);
-            tagBtn.setOnClickListener(v1 -> ((LinearLayout) findViewById(R.id.ll_tag)).removeView(v1));
+            addTagBtn(tag);
         });
         if (vid != null) {
             AlertDialog loading = AlertUtil.showLoading(this, "Loading");
@@ -200,6 +206,67 @@ public class UploadVideoActivity extends BaseActivity {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
+    private void addTagBtn(String tag) {
+        Button tagBtn = (Button) UiUtil.clone(findViewById(R.id.btn_tag_base),new MaterialButton(this));
+        tagBtn.setTag("themed");
+        ((LinearLayout) findViewById(R.id.ll_tag)).addView(tagBtn);
+        tagBtn.setText("#"+ tag);
+        tagBtn.setOnClickListener(v1 -> ((LinearLayout) findViewById(R.id.ll_tag)).removeView(v1));
+
+
+    }
+    private void resetView(View v) {
+        // 恢复视觉状态
+        v.animate()
+                .scaleX(1f)
+                .scaleY(1f)
+                .alpha(1f)
+                .setDuration(150)
+                .start();
+
+        // 清理状态标记（如果你有用）
+        v.setPressed(false);
+        v.clearAnimation();
+    }
+
+    private int findTargetIndex(LinearLayout parent, float rawX) {
+        for (int i = 0; i < parent.getChildCount(); i++) {
+            View child = parent.getChildAt(i);
+
+            int[] loc = new int[2];
+            child.getLocationOnScreen(loc);
+
+            int centerX = loc[0] + child.getWidth() / 2;
+
+            if (rawX < centerX) {
+                return i;
+            }
+        }
+        return parent.getChildCount();
+    }
+    private void handleReorder(View dragged, MotionEvent event) {
+        LinearLayout parent = (LinearLayout) dragged.getParent();
+        float rawX = event.getRawX();
+
+        int from = parent.indexOfChild(dragged);
+        int to = findTargetIndex(parent, rawX);
+
+        if (to != -1 && to != from) {
+            parent.removeView(dragged);
+            parent.addView(dragged, to);
+        }
+    }
+    private void finishDrag(View v) {
+        v.animate()
+                .scaleX(1f)
+                .scaleY(1f)
+                .alpha(1f)
+                .setDuration(150)
+                .start();
+
+        // TODO: 保存顺序 / 回调
+    }
     private void loadVDataUi() {
         ((EditText) findViewById(R.id.et_title)).setText(data.title);
         ((EditText) findViewById(R.id.et_intro)).setText(data.intro);
@@ -215,7 +282,7 @@ public class UploadVideoActivity extends BaseActivity {
         }
 
         for (int i=0;i<vtv.length;i++) {
-            var s = vcv[i];
+            var s = vtv[i];
             if (Integer.parseInt(s)==data.type) {
                 typeValue=data.type;
                 ((AutoCompleteTextView) findViewById(R.id.actv_type)).setText(getResources().getStringArray(R.array.vid_type)[i],false);
@@ -224,11 +291,7 @@ public class UploadVideoActivity extends BaseActivity {
         }
         for (String s : data.tag.split("#")) {
             if (s.isEmpty()) continue;
-            Button tagBtn = (Button) UiUtil.clone(findViewById(R.id.btn_tag_base),new MaterialButton(this));
-            tagBtn.setTag("themed");
-            tagBtn.setText("#"+s);
-            tagBtn.setOnClickListener(v1 -> ((LinearLayout) findViewById(R.id.ll_tag)).removeView(v1));
-            ((LinearLayout) findViewById(R.id.ll_tag)).addView(tagBtn);
+            addTagBtn(s);
         }
         UiUtil.loadImgToImageView(findViewById(R.id.ivThumbnail),data.cover_url);
     }
@@ -327,7 +390,7 @@ public class UploadVideoActivity extends BaseActivity {
                 alertDialog.setOnDismissListener(dialog1 -> finish());
                 alertDialog.show();
             });
-
+        response.close();
         } else {
             throw new IOException("HTTP Failed: " + response.code());
         }

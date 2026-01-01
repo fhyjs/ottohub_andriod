@@ -33,4 +33,4 @@
 - [OTTOHUB-API](https://github.com/fhyjs/ottohub_api)
 - [OTTOHUB官网](https://ottohub.com/)
 - [另一款安卓应用(作者LHStudioNetwork233),推荐尝试](https://github.com/LHStudioNetwork233/OTTOHub)
-- [作者主页](https://m.ottohub.cn/u/4384)
+- [作者主页](https://hd.ottohub.cn/u/4384)

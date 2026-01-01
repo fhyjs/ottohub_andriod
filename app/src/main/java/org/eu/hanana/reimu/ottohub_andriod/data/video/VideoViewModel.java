@@ -14,6 +14,7 @@ import org.eu.hanana.reimu.lib.ottohub.api.video.VideoResult;
 import org.eu.hanana.reimu.ottohub_andriod.MyAppApplicationLike;
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment;
+import org.eu.hanana.reimu.ottohub_andriod.util.UiUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -140,10 +141,15 @@ public class VideoViewModel extends ViewModel {
                 var data = videoListFragment.data.split("\\$:\\$");
                 videoListResult = MyAppApplicationLike.getInstance().getOttohubApi().getCollectionApi().video_collection_list(Integer.parseInt(data[1]), data[0]);
                 videoListFragment.hasMoreData=false;
+            }else if (videoListFragment.action.equals(VideoListFragment.ACTION_RELATED)){
+                if (videoListFragment.data != null) {
+                    videoListResult = MyAppApplicationLike.getInstance().getOttohubApi().getVideoApi().related_video_list(Integer.parseInt(videoListFragment.data),videoListFragment.currentPage*12, 12);
+                }
             }
         }
         if (videoListResult.video_list != null) {
             for (VideoResult videoResult : videoListResult.video_list) {
+                videoResult.time= UiUtil.formatTimeSmart(videoListFragment.requireContext(),videoResult.time);
                 objects.add(new VideoCard(
                         videoResult.cover_url,
                         videoResult.avatar_url,

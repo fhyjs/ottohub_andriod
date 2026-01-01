@@ -54,6 +54,9 @@
         android:theme="@style/Theme.Ottohub_andriod"
         tools:targetApi="36">
         <activity
+            android:name=".activity.media.MediaMainActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.ForgotPasswordActivity"
             android:exported="false" />
         <activity

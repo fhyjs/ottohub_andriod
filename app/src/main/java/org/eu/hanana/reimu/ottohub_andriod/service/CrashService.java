@@ -12,6 +12,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.preference.PreferenceManager;
 
 import org.eu.hanana.reimu.ottohub_andriod.R;
 import org.eu.hanana.reimu.ottohub_andriod.activity.CrashActivity;
@@ -47,7 +48,8 @@ public class CrashService extends Service {
         try {
             log=readCrashFile(new File(Objects.requireNonNull(intent.getStringExtra("crash_path"))));
         }catch (Exception ignored){}
-        sendCrashReport("https://hanana2.link/ottohub/app/report/bug_rp.php",log);
+        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("bug_rep",true))
+            sendCrashReport("https://hanana2.link/ottohub/app/report/bug_rp.php",log);
         return START_STICKY;
     }
     private String readCrashFile(File file) {

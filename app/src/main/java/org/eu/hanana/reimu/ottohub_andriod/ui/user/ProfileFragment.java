@@ -46,8 +46,10 @@ import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.tabs.TabLayout;
+import com.google.gson.Gson;
 
 import org.eu.hanana.reimu.lib.ottohub.api.ApiResultBase;
+import org.eu.hanana.reimu.lib.ottohub.api.OttohubApi;
 import org.eu.hanana.reimu.lib.ottohub.api.blog.BlogListResult;
 import org.eu.hanana.reimu.lib.ottohub.api.following.FollowStatusResult;
 import org.eu.hanana.reimu.lib.ottohub.api.profile.ProfileResult;
@@ -63,6 +65,7 @@ import org.eu.hanana.reimu.ottohub_andriod.ui.base.BaseFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.IScrollTopChecker;
 import org.eu.hanana.reimu.ottohub_andriod.ui.blog.BlogListFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.collection.CollectionListFragment;
+import org.eu.hanana.reimu.ottohub_andriod.ui.message.ChatFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.message.SendMessageFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.settings.SettingsFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.video.VideoListFragment;
@@ -178,6 +181,9 @@ public class ProfileFragment extends BaseFragment {
             userResult.status=result.status;
             userResult.message=result.getMessage();
             ApiUtil.fetchMsgCount();
+            userDataResult.uid=result.profile.uid;
+            userDataResult.avatar_url= ApiUtil.getAppApi().getLoginResult().avatar_url;
+            userDataResult.username= result.profile.username;
         }else {
             userDataResult=safeFatchUserData();
             userResult=new ProfileResult();
@@ -565,9 +571,9 @@ public class ProfileFragment extends BaseFragment {
                 } else if (menuItem.getItemId() == R.id.btn_view_cover) {
                     ImageViewActivity.start(getContext(),isSelf()?MyAppApplicationLike.getInstance().getOttohubApi().getLoginResult().cover_url:userDataResult.cover_url);
                 } else if (menuItem.getItemId() == R.id.btn_send_message) {
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("receiver",getUid());
-                    startActivity(FragActivity.create(getContext(), SendMessageFragment.class,bundle,getString(R.string.send_msg_1)));
+                    var arg = new Bundle();
+                    arg.putString("data",new Gson().toJson(userDataResult));
+                    startActivity(FragActivity.create(getContext(), ChatFragment.class,arg,getString(R.string.chat_with,userDataResult.username)));
                 } else if (menuItem.getItemId() == R.id.btn_user_settings) {
                     var target = new Intent(getContext(), UserSettingsActivity.class);
                     startActivity(target);

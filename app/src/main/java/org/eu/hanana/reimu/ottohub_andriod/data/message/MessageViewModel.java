@@ -28,7 +28,7 @@ public class MessageViewModel extends ListViewModelBase<MessageCard> {
         var result = new ArrayList<MessageCard>();
         throwApiError(messageListResult);
         messageListResult.message_list.stream().forEach(messageResult -> {
-            if (messageResult.sender_avatar_url!=null&&messageResult.sender_avatar_url.startsWith("/")) messageResult.sender_avatar_url="https://m.ottohub.cn"+messageResult.sender_avatar_url;
+            if (messageResult.sender_avatar_url!=null&&messageResult.sender_avatar_url.startsWith("/")) messageResult.sender_avatar_url="https://hd.ottohub.cn"+messageResult.sender_avatar_url;
         });
         messageListResult.message_list.stream().map(comment -> new MessageCard(comment.msg_id,comment.sender,comment.content,comment.receiver_name,comment.sender_avatar_url).withRaw(comment)).forEach(result::add);
 

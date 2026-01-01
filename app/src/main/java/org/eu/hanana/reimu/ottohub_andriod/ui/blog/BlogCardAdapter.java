@@ -149,7 +149,7 @@ public class BlogCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 }
             }
             vcvHolder.itemView.findViewById(R.id.btn_share).setOnClickListener(v -> {
-                var txt = v.getContext().getString(R.string.share_content,blogResult.title,"https://m.ottohub.cn/b/"+blogResult.bid);
+                var txt = v.getContext().getString(R.string.share_content,blogResult.title,"https://hd.ottohub.cn/b/"+blogResult.bid);
                 ClipboardUtil.copyToClipboard(v.getContext(),txt);
                 shareText(v.getContext(),txt);
             });
