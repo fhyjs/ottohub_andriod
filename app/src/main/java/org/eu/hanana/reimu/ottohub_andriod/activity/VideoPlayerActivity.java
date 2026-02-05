@@ -339,7 +339,7 @@ public class VideoPlayerActivity extends BaseActivity {
             outState.putLong(KEY_PLAYER_TIME,mediaPlayer.getCurrentPosition());
         }
     }
-    Intent intentService = new Intent(this, PlaybackService.class);
+    Intent intentService;
     public void init(){
         setTitle("loading...");
         initDanmaku();
