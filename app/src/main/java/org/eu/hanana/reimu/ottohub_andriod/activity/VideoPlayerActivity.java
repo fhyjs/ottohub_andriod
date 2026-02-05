@@ -14,7 +14,10 @@ import static org.eu.hanana.reimu.ottohub_andriod.activity.BlogActivity.TYPE_VIE
 import static org.eu.hanana.reimu.ottohub_andriod.util.UiUtil.getScaleTypeVideoInt;
 
 import android.annotation.SuppressLint;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -27,6 +30,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.PersistableBundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -35,6 +39,8 @@ import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -57,11 +63,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.MenuProvider;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.media3.common.MediaItem;
+import androidx.media3.common.MediaMetadata;
 import androidx.media3.common.PlaybackException;
 import androidx.media3.common.PlaybackParameters;
 import androidx.media3.common.Player;
@@ -97,6 +106,7 @@ import org.eu.hanana.reimu.lib.ottohub.api.danmaku.DanmakuResult;
 import org.eu.hanana.reimu.lib.ottohub.api.video.VideoResult;
 import org.eu.hanana.reimu.ottohub_andriod.MyAppApplicationLike;
 import org.eu.hanana.reimu.ottohub_andriod.R;
+import org.eu.hanana.reimu.ottohub_andriod.service.PlaybackService;
 import org.eu.hanana.reimu.ottohub_andriod.ui.audit.AuditVideoFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.FragmentFragment;
 import org.eu.hanana.reimu.ottohub_andriod.ui.base.UnlockedDanmakuRender;
@@ -129,6 +139,29 @@ public class VideoPlayerActivity extends BaseActivity {
     public static final String KEY_DATA="data";
     private static final String TAG = "VideoPlayerActivity";
     private ExoPlayer mediaPlayer;
+    private PlaybackService playbackService;
+    private final ServiceConnection exoPlayerConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            PlaybackService.LocalBinder binder =
+                    (PlaybackService.LocalBinder) service;
+            mediaPlayer = binder.getService().getPlayer();
+            playbackService = binder.getService();
+            //setupPlayerUI();
+            if (onServiceConnected!=null){
+                VideoPlayerActivity.this.runOnUiThread(onServiceConnected);
+                onServiceConnected=null;
+            }else {
+                Log.e(TAG, "onServiceConnected: WTF! onServiceConnected=null" );
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mediaPlayer = null;
+        }
+    };
+    private Runnable onServiceConnected;
     private PlayerView videoSurface;
     private DanmakuView danmakuView;
     private DanmakuPlayer danmakuPlayer;
@@ -254,14 +287,33 @@ public class VideoPlayerActivity extends BaseActivity {
     protected boolean lastPlayStatus;
     @Override
     protected void onPause() {
+        if (mediaPlayer==null) {
+            super.onPause();
+            return;
+        }
         lastPlayStatus=mediaPlayer.isPlaying();
         mediaPlayer.pause();
         super.onPause();
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
+        if (mediaPlayer==null) {
+            return;
+        }
+        handler.postDelayed(()->{
+            if (!playbackService.isAlive()&&!this.isFinishing()){
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
+            }
+        },1000);
         int orientation = getResources().getConfiguration().orientation;
 
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -287,24 +339,29 @@ public class VideoPlayerActivity extends BaseActivity {
             outState.putLong(KEY_PLAYER_TIME,mediaPlayer.getCurrentPosition());
         }
     }
-
+    Intent intentService = new Intent(this, PlaybackService.class);
     public void init(){
         setTitle("loading...");
         initDanmaku();
         Thread thread = new Thread(() -> {
             preinit();
             initPlayer();
+
             if (mediaPlayer == null) return;
-            ;
+
             loadData(false);
             if (mediaPlayer == null) return;
-            ;
+
             postinit();
         });
         thread.setUncaughtExceptionHandler(new AlertUtil.ThreadAlert(this));
-        thread.start();
+        //连接到服务并获取player
+        onServiceConnected= thread::start;
+        intentService = new Intent(this, PlaybackService.class);
+        intentService.setAction(PlaybackService.BIND_LOCAL);
+        ContextCompat.startForegroundService(this, intentService);
+        bindService(intentService, exoPlayerConnection, BIND_AUTO_CREATE);
     }
-
 
     private void postinit() {
         findViewById(R.id.btnDanmaku).setOnClickListener(v -> {
@@ -485,6 +542,26 @@ public class VideoPlayerActivity extends BaseActivity {
                 }
             });
         });
+
+        if(TYPE_VIEW.equals(type)){
+            addMenuProvider(new MenuProvider() {
+                @Override
+                public void onCreateMenu(@org.jspecify.annotations.NonNull Menu menu, @org.jspecify.annotations.NonNull MenuInflater menuInflater) {
+                    menuInflater.inflate(R.menu.video_player_info, menu);
+                }
+
+                @Override
+                public boolean onMenuItemSelected(@org.jspecify.annotations.NonNull MenuItem menuItem) {
+                    if (menuItem.getItemId()==R.id.action_float){
+                        Intent intent = new Intent(VideoPlayerActivity.this, PlaybackService.class);
+                        intent.setAction("SHOW_FLOATING");
+                        startService(intent);
+                        return true;
+                    }
+                    return false;
+                }
+            });
+        }
     }
 
     private void preinit() {
@@ -500,8 +577,13 @@ public class VideoPlayerActivity extends BaseActivity {
         }
         if (mediaPlayer != null) {
             mediaPlayer.stop();
-            mediaPlayer.release();
-            mediaPlayer=null;
+            //mediaPlayer.release();
+            //mediaPlayer=null;
+            try {
+                unbindService(exoPlayerConnection);
+            } catch (Exception ignored) {
+            }
+            stopService(intentService);
         }
     }
     // 调用系统方法创建 PopupWindow
@@ -553,7 +635,7 @@ public class VideoPlayerActivity extends BaseActivity {
         // 创建媒体播放器
         View fullscreenView = findViewById(R.id.video_view_wrapper);
         danmakuView=findViewById(R.id.sv_danmaku);
-        mediaPlayer = new ExoPlayer.Builder(this).build();
+        //mediaPlayer = new ExoPlayer.Builder(this).build();
         runOnUiThread(()->{
             WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
             videoSurface.setPlayer(mediaPlayer);
@@ -660,6 +742,7 @@ public class VideoPlayerActivity extends BaseActivity {
             @Override
             public void onPositionDiscontinuity(Player.PositionInfo oldPosition, Player.PositionInfo newPosition, int reason) {
                 Player.Listener.super.onPositionDiscontinuity(oldPosition, newPosition, reason);
+                if (danmakuPlayer==null) return;
                 danmakuPlayer.seekTo(newPosition.positionMs);
                 internalTimeCheck();
             }
@@ -815,7 +898,7 @@ public class VideoPlayerActivity extends BaseActivity {
     @OptIn(markerClass = UnstableApi.class)
     public void setMedia(Uri uri){
         // 加载媒体
-        MediaItem mediaItem = MediaItem.fromUri(uri);
+        MediaItem mediaItem = new MediaItem.Builder().setUri(uri).setMediaMetadata(new MediaMetadata.Builder().setTitle(netData.title).setArtworkUri(Uri.parse(netData.cover_url)).build()).build();
         // 设置 Referer 头
         HttpDataSource.Factory httpDataSourceFactory =
                 new DefaultHttpDataSource.Factory()
@@ -881,6 +964,11 @@ public class VideoPlayerActivity extends BaseActivity {
 
     @Override
     protected void onStop() {
+        try {
+            unbindService(exoPlayerConnection   );
+        } catch (IllegalArgumentException e) {
+            // 服务未绑定，忽略
+        }
         super.onStop();
     }
     @Override

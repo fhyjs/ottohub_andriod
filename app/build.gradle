@@ -34,8 +34,8 @@ android {
         multiDexEnabled true
         multiDexKeepProguard file("tinker_multidexkeep.pro")
         targetSdk 36
-        versionCode 300
-        versionName "3.0.0_Code.Tenshi"
+        versionCode 301
+        versionName "3.0.1_Code.Hinanawi"
         resConfigs "en", "zh" // Example: Support English and Spanish
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "BUILD_TIME", "\"${new Date().format("yyyy-MM-dd HH:mm:ss")}\""
@@ -106,6 +106,7 @@ def getTinkerIdValue() {
     // return "1.0-${System.currentTimeMillis()}"
 }
 dependencies {
+    implementation libs.media3.session
     implementation libs.flexbox
     implementation libs.multidex
     //tinker的核心库

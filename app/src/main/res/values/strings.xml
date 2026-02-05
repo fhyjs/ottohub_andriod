@@ -252,4 +252,5 @@
     <string name="media_lib_title">Medias</string>
     <string name="media_lib_subtitle">The Ottohub media library</string>
     <string name="home">Home</string>
+    <string name="play_in_mini_player">Play in float window</string>
 </resources>
